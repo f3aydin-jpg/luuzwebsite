@@ -187,9 +187,9 @@ export default function WallArtShop() {
 
       {/* Categories */}
       <section className="max-w-7xl mx-auto px-4 py-6">
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        <div className="flex flex-wrap justify-center gap-2 pb-2">
           {categories.map(cat => (
-            <button key={cat} onClick={() => setSelectedCategory(cat)} className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all ${selectedCategory === cat ? 'text-stone-900 shadow-lg' : `${theme.card} ${theme.textSecondary} border`}`} style={selectedCategory === cat ? {background: theme.accent} : {}}>{cat}</button>
+            <button key={cat} onClick={() => setSelectedCategory(cat)} className={`px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all ${selectedCategory === cat ? 'text-stone-900 shadow-lg' : `${theme.card} ${theme.textSecondary} border hover:border-stone-500`}`} style={selectedCategory === cat ? {background: theme.accent} : {}}>{cat}</button>
           ))}
         </div>
       </section>
@@ -381,9 +381,9 @@ export default function WallArtShop() {
             <div>
               <h4 className="text-xl tracking-widest font-light mb-4" style={{fontFamily: "'Raleway', sans-serif", letterSpacing: '0.3em', color: theme.accent}}>LUUZ</h4>
               <p className={`${theme.textMuted} text-xs`}>Ã–zgÃ¼n duvar sanatÄ± tasarÄ±mlarÄ±.</p>
-              <div className="flex gap-3 mt-4"><a href="#" className={theme.textMuted}><Instagram size={18} /></a><a href="#" className={theme.textMuted}><Twitter size={18} /></a><a href="#" className={theme.textMuted}><Facebook size={18} /></a></div>
+              <div className="flex gap-3 mt-4"><button className={theme.textMuted}><Instagram size={18} /></button><button className={theme.textMuted}><Twitter size={18} /></button><button className={theme.textMuted}><Facebook size={18} /></button></div>
             </div>
-            <div><h5 className={`font-medium mb-3 text-sm ${theme.text}`}>Linkler</h5><ul className={`space-y-2 ${theme.textMuted} text-xs`}><li><a href="#">{t.collection}</a></li><li><button onClick={() => setShowAbout(true)}>{t.about}</button></li><li><button onClick={() => setShowFAQ(true)}>{t.faq}</button></li></ul></div>
+            <div><h5 className={`font-medium mb-3 text-sm ${theme.text}`}>Linkler</h5><ul className={`space-y-2 ${theme.textMuted} text-xs`}><li><button onClick={() => document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' })}>{t.collection}</button></li><li><button onClick={() => setShowAbout(true)}>{t.about}</button></li><li><button onClick={() => setShowFAQ(true)}>{t.faq}</button></li></ul></div>
             <div><h5 className={`font-medium mb-3 text-sm ${theme.text}`}>YardÄ±m</h5><ul className={`space-y-2 ${theme.textMuted} text-xs`}><li>Kargo Bilgileri</li><li>Ä°ade & DeÄŸiÅŸim</li><li><button onClick={() => setShowOrderHistory(true)}>{t.orderHistory}</button></li></ul></div>
             <div><h5 className={`font-medium mb-3 text-sm ${theme.text}`}>Ä°letiÅŸim</h5><ul className={`space-y-2 ${theme.textMuted} text-xs`}><li>info@luuz.com.tr</li><li>+90 212 555 00 00</li><li>Ä°stanbul, TÃ¼rkiye</li></ul></div>
           </div>
@@ -428,14 +428,65 @@ export default function WallArtShop() {
                     {selectedProduct.reviews.map((r, idx) => <div key={idx} className="py-2"><div className="flex gap-0.5 mb-1">{[...Array(r.rating)].map((_, i) => <Star key={i} size={10} fill={theme.accent} color={theme.accent} />)}</div><p className={`text-xs ${theme.textSecondary}`}>"{r.comment}" - {r.name}</p></div>)}
                   </div>
                 )}
+                {/* Frame Selection */}
                 <div className="space-y-2 pt-4">
-                  <button onClick={() => addToCart(selectedProduct, false)} disabled={selectedProduct.stock === 0} className={`w-full border ${theme.border} hover:border-amber-500 py-3 rounded-xl transition flex justify-between items-center px-4 ${selectedProduct.stock === 0 ? 'opacity-50' : ''}`}>
-                    <div className="text-left"><span className={`font-medium ${theme.text}`}>{t.unframed}</span><p className={`text-xs ${theme.textMuted}`}>Premium baskÄ±</p></div>
-                    <div>{selectedProduct.discount > 0 ? <><span className={`text-sm ${theme.textMuted} line-through mr-2`}>{selectedProduct.priceUnframed}â‚º</span><span className="font-bold text-lg text-green-400">{Math.round(selectedProduct.priceUnframed * (1 - selectedProduct.discount/100))}â‚º</span></> : <span className={`font-bold text-lg ${theme.text}`}>{selectedProduct.priceUnframed}â‚º</span>}</div>
-                  </button>
-                  <button onClick={() => addToCart(selectedProduct, true)} disabled={selectedProduct.stock === 0} className={`w-full text-stone-900 py-3 rounded-xl flex justify-between items-center px-4 shadow-lg ${selectedProduct.stock === 0 ? 'opacity-50' : ''}`} style={{background: theme.accent}}>
-                    <div className="text-left"><span className="font-medium">{t.framed}</span><p className="text-xs text-stone-600">AhÅŸap Ã§erÃ§eve</p></div>
-                    <div>{selectedProduct.discount > 0 ? <><span className="text-sm text-stone-500 line-through mr-2">{selectedProduct.priceFramed}â‚º</span><span className="font-bold text-lg">{Math.round(selectedProduct.priceFramed * (1 - selectedProduct.discount/100))}â‚º</span></> : <span className="font-bold text-lg">{selectedProduct.priceFramed}â‚º</span>}</div>
+                  <p className={`text-sm font-medium ${theme.text} mb-2`}>SeÃ§enek:</p>
+                  <div 
+                    onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: false})}
+                    className={`w-full border ${selectedProduct.selectedFrame === false ? 'border-amber-500 ring-2 ring-amber-500/30' : theme.border} hover:border-amber-500 py-3 rounded-xl transition flex justify-between items-center px-4 cursor-pointer ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    <div className="text-left">
+                      <span className={`font-medium ${theme.text}`}>{t.unframed}</span>
+                      <p className={`text-xs ${theme.textMuted}`}>Premium baskÄ±</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {selectedProduct.discount > 0 ? (
+                        <>
+                          <span className={`text-sm ${theme.textMuted} line-through`}>{selectedProduct.priceUnframed}â‚º</span>
+                          <span className="font-bold text-lg text-green-400">{Math.round(selectedProduct.priceUnframed * (1 - selectedProduct.discount/100))}â‚º</span>
+                        </>
+                      ) : (
+                        <span className={`font-bold text-lg ${theme.text}`}>{selectedProduct.priceUnframed}â‚º</span>
+                      )}
+                      {selectedProduct.selectedFrame === false && <Check size={18} className="text-amber-500 ml-2" />}
+                    </div>
+                  </div>
+                  <div 
+                    onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: true})}
+                    className={`w-full border ${selectedProduct.selectedFrame === true ? 'border-amber-500 ring-2 ring-amber-500/30' : theme.border} hover:border-amber-500 py-3 rounded-xl transition flex justify-between items-center px-4 cursor-pointer ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    <div className="text-left">
+                      <span className={`font-medium ${theme.text}`}>{t.framed}</span>
+                      <p className={`text-xs ${theme.textMuted}`}>AhÅŸap Ã§erÃ§eve</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {selectedProduct.discount > 0 ? (
+                        <>
+                          <span className={`text-sm ${theme.textMuted} line-through`}>{selectedProduct.priceFramed}â‚º</span>
+                          <span className="font-bold text-lg text-green-400">{Math.round(selectedProduct.priceFramed * (1 - selectedProduct.discount/100))}â‚º</span>
+                        </>
+                      ) : (
+                        <span className={`font-bold text-lg ${theme.text}`}>{selectedProduct.priceFramed}â‚º</span>
+                      )}
+                      {selectedProduct.selectedFrame === true && <Check size={18} className="text-amber-500 ml-2" />}
+                    </div>
+                  </div>
+                  
+                  {/* Add to Cart Button */}
+                  <button 
+                    onClick={() => {
+                      if (selectedProduct.selectedFrame !== undefined) {
+                        addToCart(selectedProduct, selectedProduct.selectedFrame);
+                      } else {
+                        alert('LÃ¼tfen bir seÃ§enek seÃ§in (Ã‡erÃ§eveli veya Ã‡erÃ§evesiz)');
+                      }
+                    }} 
+                    disabled={selectedProduct.stock === 0}
+                    className={`w-full text-stone-900 py-4 rounded-xl font-semibold shadow-lg mt-4 flex items-center justify-center gap-2 ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'}`}
+                    style={{background: theme.accent}}
+                  >
+                    <ShoppingCart size={20} />
+                    {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
                   </button>
                 </div>
                 <div className="pt-4">
