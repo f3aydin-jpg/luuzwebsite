@@ -12,7 +12,7 @@ export default function WallArtShop() {
   const [showChat, setShowChat] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('TÃ¼mÃ¼');
+  const [selectedCategory, setSelectedCategory] = useState('Tümü');
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
@@ -40,7 +40,7 @@ export default function WallArtShop() {
 
   const products = [
     { id: 1, name: "Minimal Çizgiler", images: ["https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?w=600&q=80", "https://images.unsplash.com/photo-1549887534-1541e9326642?w=600&q=80"], priceFramed: 850, priceUnframed: 450, category: "Minimal", description: "Modern ve minimal Ã§izgilerle tasarlanmÄ±ÅŸ.", size: "50x70 cm", stock: 12, isNew: false, isBestSeller: true, discount: 0, reviews: [{ name: "AyÅŸe K.", rating: 5, comment: "Harika!" }] },
-    { id: 2, name: "Soyut Kompozisyon", images: ["https://images.unsplash.com/photo-1561214115-f2f134cc4912?w=600&q=80"], priceFramed: 920, priceUnframed: 520, category: "Soyut", description: "Cesur fırça darbeleri.", size: "60x80 cm", stock: 8, isNew: true, isBestSeller: false, discount: 15, reviews: [] },
+    { id: 2, name: "Soyut Kompozisyon", images: ["https://unsplash.com/illustrations/puppet-masters-controlling-figures-with-strings--BUWHvWDHm0"], priceFramed: 920, priceUnframed: 520, category: "Soyut", description: "Cesur fırça darbeleri.", size: "60x80 cm", stock: 8, isNew: true, isBestSeller: false, discount: 15, reviews: [] },
     { id: 3, name: "Botanik Siluet", images: ["https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=600&q=80"], priceFramed: 780, priceUnframed: 380, category: "DoÄŸa", description: "Doğadan ilham alan tasarÄ±m.", size: "40x60 cm", stock: 15, isNew: false, isBestSeller: true, discount: 0, reviews: [] },
     { id: 4, name: "Geometrik Denge", images: ["https://images.unsplash.com/photo-1578301978162-7aae4d755744?w=600&q=80"], priceFramed: 890, priceUnframed: 490, category: "Geometrik", description: "Simetri ve geometrik formlar.", size: "50x70 cm", stock: 6, isNew: false, isBestSeller: false, discount: 10, reviews: [] },
     { id: 5, name: "Mavi Soyutlama", images: ["https://images.unsplash.com/photo-1549887534-1541e9326642?w=600&q=80"], priceFramed: 950, priceUnframed: 550, category: "Soyut", description: "Mavi tonlarÄ±nÄ±n derinliÄŸi.", size: "70x100 cm", stock: 4, isNew: false, isBestSeller: true, discount: 0, reviews: [{ name: "Elif T.", rating: 5, comment: "MuhteÅŸem!" }] },
@@ -160,7 +160,7 @@ export default function WallArtShop() {
 
       {/* Promo */}
       <div className={`${theme.bgTertiary} ${theme.textSecondary} py-2.5 text-center border-b ${theme.border}`}>
-        <p className="text-xs">ğŸ‰ Yeni MÃ¼ÅŸterilere %15 Ä°ndirim - Kod: <span className="text-white font-semibold">HOSGELDIN15</span></p>
+        <p className="text-xs">ğŸ‰ Yeni Müşterilere %15 İndirim - Kod: <span className="text-white font-semibold">HOSGELDIN15</span></p>
       </div>
 
       {/* Hero */}
@@ -169,7 +169,7 @@ export default function WallArtShop() {
         <div className="max-w-7xl mx-auto px-4 text-center relative z-10">
           <h2 className={`text-5xl font-bold mb-4 ${theme.text}`}>Duvarlarınıza <span style={{color: theme.accent}}>Sanat Katın</span></h2>
           <p className={`text-xl ${theme.textSecondary} max-w-2xl mx-auto mb-8`}>Özgün tasarımlarla mekanlarınıza karakter katın</p>
-          <button onClick={() => document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' })} className="text-stone-900 px-8 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition" style={{background: theme.accent}}>Koleksiyonu KeÅŸfet</button>
+          <button onClick={() => document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' })} className="text-stone-900 px-8 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition" style={{background: theme.accent}}>Koleksiyonu Keşfet</button>
         </div>
       </section>
 
@@ -354,7 +354,7 @@ export default function WallArtShop() {
       {/* Instagram */}
       <section className={`max-w-7xl mx-auto px-4 py-12 ${theme.card} rounded-2xl my-8 border`}>
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-2"><Instagram size={24} style={{color: theme.accent}} /><h3 className={`text-xl font-bold ${theme.text}`}>@luuz.art</h3></div>
+          <div className="flex items-center justify-center gap-2 mb-2"><Instagram size={24} style={{color: theme.accent}} /><h3 className={`text-xl font-bold ${theme.text}`}>@luuzposter</h3></div>
           <p className={`${theme.textSecondary} text-sm`}>Bizi Instagram'da takip edin</p>
         </div>
         <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
@@ -592,7 +592,7 @@ export default function WallArtShop() {
           <div className={`${theme.bgSecondary} rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-2xl`}>
             <div className={`sticky top-0 ${theme.bgSecondary} p-5 border-b ${theme.border} flex justify-between items-center`}><h2 className={`text-xl font-bold ${theme.text}`}>{t.howItWorks}</h2><button onClick={() => setShowHowItWorks(false)} className={theme.textSecondary}><X size={24} /></button></div>
             <div className="p-6 space-y-6">
-              {[{ step: 1, title: 'Eserinizi SeÃ§in', desc: 'Koleksiyonumuzdan size uygun eseri seÃ§in', icon: 'ğŸ¨' }, { step: 2, title: 'Ã‡erÃ§eve SeÃ§eneÄŸi', desc: 'Ã‡erÃ§eveli veya Ã§erÃ§evesiz seÃ§in', icon: 'ğŸ–¼ï¸' }, { step: 3, title: 'GÃ¼venli Ã–deme', desc: '256-bit SSL ile gÃ¼venli Ã¶deme', icon: 'ğŸ”’' }, { step: 4, title: 'HÄ±zlÄ± Teslimat', desc: '2-4 iÅŸ gÃ¼nÃ¼ iÃ§inde kapÄ±nÄ±za', icon: 'ğŸšš' }].map((item, idx) => (
+              {[{ step: 1, title: 'Eserinizi Seçin', desc: 'Koleksiyonumuzdan size uygun eseri seçin', icon: 'ğŸ¨' }, { step: 2, title: 'Ã‡erÃ§eve SeÃ§eneÄŸi', desc: 'Ã‡erÃ§eveli veya Ã§erÃ§evesiz seÃ§in', icon: 'ğŸ–¼ï¸' }, { step: 3, title: 'GÃ¼venli Ã–deme', desc: '256-bit SSL ile gÃ¼venli Ã¶deme', icon: 'ğŸ”’' }, { step: 4, title: 'HÄ±zlÄ± Teslimat', desc: '2-4 iÅŸ gÃ¼nÃ¼ iÃ§inde kapÄ±nÄ±za', icon: 'ğŸšš' }].map((item, idx) => (
                 <div key={idx} className="flex gap-4">
                   <div className="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style={{background: `${theme.accent}20`}}>{item.icon}</div>
                   <div><h3 className={`font-medium ${theme.text}`}>{item.title}</h3><p className={`text-sm ${theme.textMuted}`}>{item.desc}</p></div>
