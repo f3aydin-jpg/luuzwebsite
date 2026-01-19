@@ -55,7 +55,18 @@ export default function WallArtShop() {
     { id: 12, name: "Turuncu Ton", images: ["https://images.unsplash.com/photo-1515405295579-ba7b45403062?w=600&q=80"], priceFramed: 840, priceUnframed: 440, category: "Soyut", description: "Sıcak tonlar.", size: "50x70 cm", stock: 11, isNew: false, isBestSeller: false, discount: 0, reviews: [] }
   ];
 
-  const categories = ['Tümü', 'Minimal', 'Soyut', 'Doğa', 'Geometrik', 'Tipografi', 'Modern', 'Klasik', 'Portre', 'Manzara'];
+  const categories = [
+    { name: 'Tümü', label: 'Tüm Posterler', image: null },
+    { name: 'Minimal', label: 'Minimal Posterler', image: 'https://raw.githubusercontent.com/luuzposter/category-images/main/minimal.jpg' },
+    { name: 'Soyut', label: 'Soyut Posterler', image: 'https://raw.githubusercontent.com/luuzposter/category-images/main/soyut.jpg' },
+    { name: 'Doğa', label: 'Doğa Posterleri', image: 'https://raw.githubusercontent.com/luuzposter/category-images/main/doga.jpg' },
+    { name: 'Geometrik', label: 'Geometrik Posterler', image: 'https://raw.githubusercontent.com/luuzposter/category-images/main/geometrik.jpg' },
+    { name: 'Tipografi', label: 'Tipografi Posterler', image: 'https://raw.githubusercontent.com/luuzposter/category-images/main/tipografi.jpg' },
+    { name: 'Modern', label: 'Modern Posterler', image: 'https://raw.githubusercontent.com/luuzposter/category-images/main/modern.jpg' },
+    { name: 'Klasik', label: 'Klasik Posterler', image: 'https://raw.githubusercontent.com/luuzposter/category-images/main/klasik.jpg' },
+    { name: 'Portre', label: 'Portre Posterler', image: 'https://raw.githubusercontent.com/luuzposter/category-images/main/portre.jpg' },
+    { name: 'Manzara', label: 'Manzara Posterleri', image: 'https://raw.githubusercontent.com/luuzposter/category-images/main/manzara.jpg' }
+  ];
   const sizes = ['40x60 cm', '50x70 cm', '60x80 cm', '70x100 cm'];
   const coupons = { 'HOSGELDIN15': { discount: 15, type: 'percent' }, 'YAZ50': { discount: 50, type: 'fixed' } };
   const faqData = [{ q: 'Kargo ne kadar sürede gelir?', a: '2-4 iş günü içinde teslim edilir.' }, { q: 'İade koşulları nelerdir?', a: '14 gün içinde koşulsuz iade hakkınız var.' }, { q: 'Çerçeve malzemesi nedir?', a: '%100 doğal ahşaptan el işçiliği ile üretilir.' }];
@@ -192,11 +203,31 @@ export default function WallArtShop() {
       </section>
 
       {/* Categories */}
-      <section className="max-w-7xl mx-auto px-4 py-6">
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-          {categories.map(cat => (
-            <button key={cat} onClick={() => setSelectedCategory(cat)} className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all ${selectedCategory === cat ? 'text-stone-900 shadow-lg' : `${theme.card} ${theme.textSecondary} border`}`} style={selectedCategory === cat ? {background: theme.accent} : {}}>{cat}</button>
-          ))}
+      <section className="max-w-7xl mx-auto px-4 py-8">
+        <h3 className={`text-xl font-bold ${theme.text} text-center mb-6`}>Kategoriler</h3>
+        <div className="flex justify-center">
+          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide px-4">
+            {categories.map(cat => (
+              <button 
+                key={cat.name} 
+                onClick={() => setSelectedCategory(cat.name)} 
+                className={`relative flex-shrink-0 rounded-xl overflow-hidden transition-all duration-300 ${selectedCategory === cat.name ? 'ring-2 ring-amber-500 ring-offset-2 ring-offset-stone-900' : 'hover:scale-105'}`}
+                style={{ width: '140px', height: '180px' }}
+              >
+                {cat.image ? (
+                  <img src={cat.image} alt={cat.label} className="w-full h-full object-cover" />
+                ) : (
+                  <div className={`w-full h-full ${theme.card} border flex items-center justify-center`}>
+                    <Grid size={32} className={theme.textMuted} />
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-3">
+                  <span className={`text-white text-sm font-medium ${selectedCategory === cat.name ? 'text-amber-300' : ''}`}>{cat.label}</span>
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -360,7 +391,7 @@ export default function WallArtShop() {
       {/* Instagram */}
       <section className={`max-w-7xl mx-auto px-4 py-12 ${theme.card} rounded-2xl my-8 border`}>
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-2"><Instagram size={24} style={{color: theme.accent}} /><h3 className={`text-xl font-bold ${theme.text}`}>@luuz.art</h3></div>
+          <div className="flex items-center justify-center gap-2 mb-2"><Instagram size={24} style={{color: theme.accent}} /><h3 className={`text-xl font-bold ${theme.text}`}>@luuzposter</h3></div>
           <p className={`${theme.textSecondary} text-sm`}>Bizi Instagram'da takip edin</p>
         </div>
         <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
