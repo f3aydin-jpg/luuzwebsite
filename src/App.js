@@ -354,7 +354,7 @@ export default function WallArtShop() {
       {/* Instagram */}
       <section className={`max-w-7xl mx-auto px-4 py-12 ${theme.card} rounded-2xl my-8 border`}>
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-2"><Instagram size={24} style={{color: theme.accent}} /><h3 className={`text-xl font-bold ${theme.text}`}>@luuz.art</h3></div>
+          <div className="flex items-center justify-center gap-2 mb-2"><Instagram size={24} style={{color: theme.accent}} /><h3 className={`text-xl font-bold ${theme.text}`}>@luuzposter</h3></div>
           <p className={`${theme.textSecondary} text-sm`}>Bizi Instagram'da takip edin</p>
         </div>
         <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
