@@ -33,6 +33,7 @@ export default function WallArtShop() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [openFAQ, setOpenFAQ] = useState(null);
+  const [selectedSize, setSelectedSize] = useState('50x70');
   const [orderHistory] = useState([{ id: 'LUUZ7X8K2M', date: '12.01.2025', total: 1850, status: 'Teslim Edildi', items: 2 }]);
   const [checkoutData, setCheckoutData] = useState({ firstName: '', lastName: '', email: '', phone: '', address: '', city: '', postalCode: '', cardNumber: '', expiry: '', cvv: '' });
 
@@ -72,13 +73,16 @@ export default function WallArtShop() {
   const addToRecentlyViewed = (p) => setRecentlyViewed(prev => [p, ...prev.filter(x => x.id !== p.id)].slice(0, 6));
   const toggleCompare = (p) => compareProducts.find(x => x.id === p.id) ? setCompareProducts(compareProducts.filter(x => x.id !== p.id)) : compareProducts.length < 4 && setCompareProducts([...compareProducts, p]);
 
-  const addToCart = (product, isFramed) => {
-    const price = isFramed ? product.priceFramed : product.priceUnframed;
+  const addToCart = (product, isFramed, size = '50x70') => {
+    const sizeMultiplier = size === '30x40' ? 0.7 : 1;
+    const basePrice = isFramed ? product.priceFramed : product.priceUnframed;
+    const price = Math.round(basePrice * sizeMultiplier);
     const discountedPrice = product.discount > 0 ? Math.round(price * (1 - product.discount / 100)) : price;
-    const cartItem = { ...product, isFramed, price: discountedPrice, cartId: `${product.id}-${isFramed}` };
+    const cartItem = { ...product, isFramed, size: size, price: discountedPrice, cartId: `${product.id}-${isFramed}-${size}` };
     const existing = cart.find(item => item.cartId === cartItem.cartId);
     existing ? setCart(cart.map(item => item.cartId === cartItem.cartId ? { ...item, quantity: item.quantity + 1 } : item)) : setCart([...cart, { ...cartItem, quantity: 1 }]);
     setSelectedProduct(null);
+    setSelectedSize('50x70');
   };
 
   const updateQuantity = (cartId, change) => setCart(cart.map(item => item.cartId === cartId ? { ...item, quantity: Math.max(0, item.quantity + change) } : item).filter(item => item.quantity > 0));
@@ -187,9 +191,9 @@ export default function WallArtShop() {
 
       {/* Categories */}
       <section className="max-w-7xl mx-auto px-4 py-6">
-        <div className="flex flex-wrap justify-center gap-2 pb-2">
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
           {categories.map(cat => (
-            <button key={cat} onClick={() => setSelectedCategory(cat)} className={`px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all ${selectedCategory === cat ? 'text-stone-900 shadow-lg' : `${theme.card} ${theme.textSecondary} border hover:border-stone-500`}`} style={selectedCategory === cat ? {background: theme.accent} : {}}>{cat}</button>
+            <button key={cat} onClick={() => setSelectedCategory(cat)} className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all ${selectedCategory === cat ? 'text-stone-900 shadow-lg' : `${theme.card} ${theme.textSecondary} border`}`} style={selectedCategory === cat ? {background: theme.accent} : {}}>{cat}</button>
           ))}
         </div>
       </section>
@@ -399,7 +403,7 @@ export default function WallArtShop() {
               <h3 className={`text-lg font-bold ${theme.text}`}>{selectedProduct.name}</h3>
               <div className="flex items-center gap-2">
                 <button onClick={() => toggleFavorite(selectedProduct.id)} className={`p-2 rounded-full ${theme.card}`}><Heart size={18} fill={favorites.includes(selectedProduct.id) ? theme.accent : 'none'} color={theme.accent} /></button>
-                <button onClick={() => setSelectedProduct(null)} className={`p-2 rounded-full ${theme.card}`}><X size={18} /></button>
+                <button onClick={() => { setSelectedProduct(null); setSelectedSize('50x70'); }} className={`p-2 rounded-full ${theme.card}`}><X size={18} /></button>
               </div>
             </div>
             <div className="grid md:grid-cols-2 gap-6 p-6">
@@ -428,65 +432,25 @@ export default function WallArtShop() {
                     {selectedProduct.reviews.map((r, idx) => <div key={idx} className="py-2"><div className="flex gap-0.5 mb-1">{[...Array(r.rating)].map((_, i) => <Star key={i} size={10} fill={theme.accent} color={theme.accent} />)}</div><p className={`text-xs ${theme.textSecondary}`}>"{r.comment}" - {r.name}</p></div>)}
                   </div>
                 )}
-                {/* Frame Selection */}
                 <div className="space-y-2 pt-4">
-                  <p className={`text-sm font-medium ${theme.text} mb-2`}>Seçenek:</p>
-                  <div 
-                    onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: false})}
-                    className={`w-full border ${selectedProduct.selectedFrame === false ? 'border-amber-500 ring-2 ring-amber-500/30' : theme.border} hover:border-amber-500 py-3 rounded-xl transition flex justify-between items-center px-4 cursor-pointer ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  >
-                    <div className="text-left">
-                      <span className={`font-medium ${theme.text}`}>{t.unframed}</span>
-                      <p className={`text-xs ${theme.textMuted}`}>Premium baskı</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {selectedProduct.discount > 0 ? (
-                        <>
-                          <span className={`text-sm ${theme.textMuted} line-through`}>{selectedProduct.priceUnframed}₺</span>
-                          <span className="font-bold text-lg text-green-400">{Math.round(selectedProduct.priceUnframed * (1 - selectedProduct.discount/100))}₺</span>
-                        </>
-                      ) : (
-                        <span className={`font-bold text-lg ${theme.text}`}>{selectedProduct.priceUnframed}₺</span>
-                      )}
-                      {selectedProduct.selectedFrame === false && <Check size={18} className="text-amber-500 ml-2" />}
+                  <div className="mb-4">
+                    <p className={`text-sm font-medium ${theme.text} mb-2`}>Boyut Seçin</p>
+                    <div className="flex gap-2">
+                      <button onClick={() => setSelectedSize('30x40')} className={`flex-1 py-2 px-4 rounded-xl border transition ${selectedSize === '30x40' ? 'border-amber-500 bg-amber-500/10' : `${theme.border} hover:border-amber-500`}`}>
+                        <span className={`font-medium ${selectedSize === '30x40' ? 'text-amber-500' : theme.text}`}>30x40 cm</span>
+                      </button>
+                      <button onClick={() => setSelectedSize('50x70')} className={`flex-1 py-2 px-4 rounded-xl border transition ${selectedSize === '50x70' ? 'border-amber-500 bg-amber-500/10' : `${theme.border} hover:border-amber-500`}`}>
+                        <span className={`font-medium ${selectedSize === '50x70' ? 'text-amber-500' : theme.text}`}>50x70 cm</span>
+                      </button>
                     </div>
                   </div>
-                  <div 
-                    onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: true})}
-                    className={`w-full border ${selectedProduct.selectedFrame === true ? 'border-amber-500 ring-2 ring-amber-500/30' : theme.border} hover:border-amber-500 py-3 rounded-xl transition flex justify-between items-center px-4 cursor-pointer ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  >
-                    <div className="text-left">
-                      <span className={`font-medium ${theme.text}`}>{t.framed}</span>
-                      <p className={`text-xs ${theme.textMuted}`}>Ahşap çerçeve</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {selectedProduct.discount > 0 ? (
-                        <>
-                          <span className={`text-sm ${theme.textMuted} line-through`}>{selectedProduct.priceFramed}₺</span>
-                          <span className="font-bold text-lg text-green-400">{Math.round(selectedProduct.priceFramed * (1 - selectedProduct.discount/100))}₺</span>
-                        </>
-                      ) : (
-                        <span className={`font-bold text-lg ${theme.text}`}>{selectedProduct.priceFramed}₺</span>
-                      )}
-                      {selectedProduct.selectedFrame === true && <Check size={18} className="text-amber-500 ml-2" />}
-                    </div>
-                  </div>
-                  
-                  {/* Add to Cart Button */}
-                  <button 
-                    onClick={() => {
-                      if (selectedProduct.selectedFrame !== undefined) {
-                        addToCart(selectedProduct, selectedProduct.selectedFrame);
-                      } else {
-                        alert('Lütfen bir seçenek seçin (Çerçeveli veya Çerçevesiz)');
-                      }
-                    }} 
-                    disabled={selectedProduct.stock === 0}
-                    className={`w-full text-stone-900 py-4 rounded-xl font-semibold shadow-lg mt-4 flex items-center justify-center gap-2 ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'}`}
-                    style={{background: theme.accent}}
-                  >
-                    <ShoppingCart size={20} />
-                    {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
+                  <button onClick={() => addToCart(selectedProduct, false, selectedSize)} disabled={selectedProduct.stock === 0} className={`w-full border ${theme.border} hover:border-amber-500 py-3 rounded-xl transition flex justify-between items-center px-4 ${selectedProduct.stock === 0 ? 'opacity-50' : ''}`}>
+                    <div className="text-left"><span className={`font-medium ${theme.text}`}>{t.unframed}</span><p className={`text-xs ${theme.textMuted}`}>Premium baskı • {selectedSize} cm</p></div>
+                    <div>{selectedProduct.discount > 0 ? <><span className={`text-sm ${theme.textMuted} line-through mr-2`}>{Math.round(selectedProduct.priceUnframed * (selectedSize === '30x40' ? 0.7 : 1))}₺</span><span className="font-bold text-lg text-green-400">{Math.round(selectedProduct.priceUnframed * (selectedSize === '30x40' ? 0.7 : 1) * (1 - selectedProduct.discount/100))}₺</span></> : <span className={`font-bold text-lg ${theme.text}`}>{Math.round(selectedProduct.priceUnframed * (selectedSize === '30x40' ? 0.7 : 1))}₺</span>}</div>
+                  </button>
+                  <button onClick={() => addToCart(selectedProduct, true, selectedSize)} disabled={selectedProduct.stock === 0} className={`w-full text-stone-900 py-3 rounded-xl flex justify-between items-center px-4 shadow-lg ${selectedProduct.stock === 0 ? 'opacity-50' : ''}`} style={{background: theme.accent}}>
+                    <div className="text-left"><span className="font-medium">{t.framed}</span><p className="text-xs text-stone-600">Ahşap çerçeve • {selectedSize} cm</p></div>
+                    <div>{selectedProduct.discount > 0 ? <><span className="text-sm text-stone-500 line-through mr-2">{Math.round(selectedProduct.priceFramed * (selectedSize === '30x40' ? 0.7 : 1))}₺</span><span className="font-bold text-lg">{Math.round(selectedProduct.priceFramed * (selectedSize === '30x40' ? 0.7 : 1) * (1 - selectedProduct.discount/100))}₺</span></> : <span className="font-bold text-lg">{Math.round(selectedProduct.priceFramed * (selectedSize === '30x40' ? 0.7 : 1))}₺</span>}</div>
                   </button>
                 </div>
                 <div className="pt-4">
@@ -511,7 +475,7 @@ export default function WallArtShop() {
                     <img src={item.images[0]} alt="" className="w-20 h-20 object-cover rounded-lg" />
                     <div className="flex-1">
                       <h3 className={`font-medium text-sm ${theme.text}`}>{item.name}</h3>
-                      <p className={`text-xs ${theme.textMuted}`}>{item.isFramed ? t.framed : t.unframed}</p>
+                      <p className={`text-xs ${theme.textMuted}`}>{item.isFramed ? t.framed : t.unframed} • {item.size} cm</p>
                       {item.discount > 0 && <p className="text-xs text-green-400">-{item.discount}%</p>}
                       <p className="font-bold mt-1" style={{color: theme.accent}}>{item.price}₺</p>
                       <div className="flex items-center gap-2 mt-2">
