@@ -1,3 +1,5 @@
+import soyutKompozisyon from "./assets/soyut-kompozisyon.jpg";
+
 import React, { useState, useEffect } from 'react';
 import { ShoppingCart, X, Plus, Minus, Menu, Search, Heart, MessageCircle, Package, Star, ChevronDown, ChevronUp, Filter, Grid, List, ArrowUp, Moon, Sun, Globe, Clock, Truck, Shield, RotateCcw, ChevronLeft, ChevronRight, Check, Copy, Tag, TrendingUp, Eye, Instagram, Twitter, Facebook } from 'lucide-react';
 
@@ -40,7 +42,7 @@ export default function WallArtShop() {
 
   const products = [
     { id: 1, name: "Minimal Çizgiler", images: ["https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?w=600&q=80", "https://images.unsplash.com/photo-1549887534-1541e9326642?w=600&q=80"], priceFramed: 850, priceUnframed: 450, category: "Minimal", description: "Modern ve minimal Ã§izgilerle tasarlanmÄ±ÅŸ.", size: "50x70 cm", stock: 12, isNew: false, isBestSeller: true, discount: 0, reviews: [{ name: "AyÅŸe K.", rating: 5, comment: "Harika!" }] },
-    { id: 2, name: "Soyut Kompozisyon", images: ["https://unsplash.com/illustrations/puppet-masters-controlling-figures-with-strings--BUWHvWDHm0"], priceFramed: 920, priceUnframed: 520, category: "Soyut", description: "Cesur fırça darbeleri.", size: "60x80 cm", stock: 8, isNew: true, isBestSeller: false, discount: 15, reviews: [] },
+    { id: 2, name: "Soyut Kompozisyon", images: ["kare1"], priceFramed: 920, priceUnframed: 520, category: "Soyut", description: "Cesur fırça darbeleri.", size: "60x80 cm", stock: 8, isNew: true, isBestSeller: false, discount: 15, reviews: [] },
     { id: 3, name: "Botanik Siluet", images: ["https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=600&q=80"], priceFramed: 780, priceUnframed: 380, category: "DoÄŸa", description: "Doğadan ilham alan tasarÄ±m.", size: "40x60 cm", stock: 15, isNew: false, isBestSeller: true, discount: 0, reviews: [] },
     { id: 4, name: "Geometrik Denge", images: ["https://images.unsplash.com/photo-1578301978162-7aae4d755744?w=600&q=80"], priceFramed: 890, priceUnframed: 490, category: "Geometrik", description: "Simetri ve geometrik formlar.", size: "50x70 cm", stock: 6, isNew: false, isBestSeller: false, discount: 10, reviews: [] },
     { id: 5, name: "Mavi Soyutlama", images: ["https://images.unsplash.com/photo-1549887534-1541e9326642?w=600&q=80"], priceFramed: 950, priceUnframed: 550, category: "Soyut", description: "Mavi tonlarÄ±nÄ±n derinliÄŸi.", size: "70x100 cm", stock: 4, isNew: false, isBestSeller: true, discount: 0, reviews: [{ name: "Elif T.", rating: 5, comment: "MuhteÅŸem!" }] },
