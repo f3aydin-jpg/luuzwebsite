@@ -34,6 +34,7 @@ export default function WallArtShop() {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [openFAQ, setOpenFAQ] = useState(null);
   const [selectedSize, setSelectedSize] = useState('50x70');
+  const [selectedFramed, setSelectedFramed] = useState(false);
   const [orderHistory] = useState([{ id: 'LUUZ7X8K2M', date: '12.01.2025', total: 1850, status: 'Teslim Edildi', items: 2 }]);
   const [checkoutData, setCheckoutData] = useState({ firstName: '', lastName: '', email: '', phone: '', address: '', city: '', postalCode: '', cardNumber: '', expiry: '', cvv: '' });
 
@@ -83,6 +84,7 @@ export default function WallArtShop() {
     existing ? setCart(cart.map(item => item.cartId === cartItem.cartId ? { ...item, quantity: item.quantity + 1 } : item)) : setCart([...cart, { ...cartItem, quantity: 1 }]);
     setSelectedProduct(null);
     setSelectedSize('50x70');
+    setSelectedFramed(false);
   };
 
   const updateQuantity = (cartId, change) => setCart(cart.map(item => item.cartId === cartId ? { ...item, quantity: Math.max(0, item.quantity + change) } : item).filter(item => item.quantity > 0));
@@ -403,7 +405,7 @@ export default function WallArtShop() {
               <h3 className={`text-lg font-bold ${theme.text}`}>{selectedProduct.name}</h3>
               <div className="flex items-center gap-2">
                 <button onClick={() => toggleFavorite(selectedProduct.id)} className={`p-2 rounded-full ${theme.card}`}><Heart size={18} fill={favorites.includes(selectedProduct.id) ? theme.accent : 'none'} color={theme.accent} /></button>
-                <button onClick={() => { setSelectedProduct(null); setSelectedSize('50x70'); }} className={`p-2 rounded-full ${theme.card}`}><X size={18} /></button>
+                <button onClick={() => { setSelectedProduct(null); setSelectedSize('50x70'); setSelectedFramed(false); }} className={`p-2 rounded-full ${theme.card}`}><X size={18} /></button>
               </div>
             </div>
             <div className="grid md:grid-cols-2 gap-6 p-6">
@@ -444,13 +446,39 @@ export default function WallArtShop() {
                       </button>
                     </div>
                   </div>
-                  <button onClick={() => addToCart(selectedProduct, false, selectedSize)} disabled={selectedProduct.stock === 0} className={`w-full border ${theme.border} hover:border-amber-500 py-3 rounded-xl transition flex justify-between items-center px-4 ${selectedProduct.stock === 0 ? 'opacity-50' : ''}`}>
-                    <div className="text-left"><span className={`font-medium ${theme.text}`}>{t.unframed}</span><p className={`text-xs ${theme.textMuted}`}>Premium baskı • {selectedSize} cm</p></div>
-                    <div>{selectedProduct.discount > 0 ? <><span className={`text-sm ${theme.textMuted} line-through mr-2`}>{Math.round(selectedProduct.priceUnframed * (selectedSize === '30x40' ? 0.7 : 1))}₺</span><span className="font-bold text-lg text-green-400">{Math.round(selectedProduct.priceUnframed * (selectedSize === '30x40' ? 0.7 : 1) * (1 - selectedProduct.discount/100))}₺</span></> : <span className={`font-bold text-lg ${theme.text}`}>{Math.round(selectedProduct.priceUnframed * (selectedSize === '30x40' ? 0.7 : 1))}₺</span>}</div>
-                  </button>
-                  <button onClick={() => addToCart(selectedProduct, true, selectedSize)} disabled={selectedProduct.stock === 0} className={`w-full text-stone-900 py-3 rounded-xl flex justify-between items-center px-4 shadow-lg ${selectedProduct.stock === 0 ? 'opacity-50' : ''}`} style={{background: theme.accent}}>
-                    <div className="text-left"><span className="font-medium">{t.framed}</span><p className="text-xs text-stone-600">Ahşap çerçeve • {selectedSize} cm</p></div>
-                    <div>{selectedProduct.discount > 0 ? <><span className="text-sm text-stone-500 line-through mr-2">{Math.round(selectedProduct.priceFramed * (selectedSize === '30x40' ? 0.7 : 1))}₺</span><span className="font-bold text-lg">{Math.round(selectedProduct.priceFramed * (selectedSize === '30x40' ? 0.7 : 1) * (1 - selectedProduct.discount/100))}₺</span></> : <span className="font-bold text-lg">{Math.round(selectedProduct.priceFramed * (selectedSize === '30x40' ? 0.7 : 1))}₺</span>}</div>
+                  <div className="mb-4">
+                    <p className={`text-sm font-medium ${theme.text} mb-2`}>Çerçeve Seçin</p>
+                    <div className="flex gap-2">
+                      <button onClick={() => setSelectedFramed(false)} className={`flex-1 py-3 px-4 rounded-xl border transition ${!selectedFramed ? 'border-amber-500 bg-amber-500/10' : `${theme.border} hover:border-amber-500`}`}>
+                        <span className={`font-medium ${!selectedFramed ? 'text-amber-500' : theme.text}`}>{t.unframed}</span>
+                        <p className={`text-xs ${theme.textMuted} mt-1`}>Premium baskı</p>
+                      </button>
+                      <button onClick={() => setSelectedFramed(true)} className={`flex-1 py-3 px-4 rounded-xl border transition ${selectedFramed ? 'border-amber-500 bg-amber-500/10' : `${theme.border} hover:border-amber-500`}`}>
+                        <span className={`font-medium ${selectedFramed ? 'text-amber-500' : theme.text}`}>{t.framed}</span>
+                        <p className={`text-xs ${theme.textMuted} mt-1`}>Ahşap çerçeve</p>
+                      </button>
+                    </div>
+                  </div>
+                  <div className={`p-4 rounded-xl ${theme.card} border mb-4`}>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className={`text-sm ${theme.textMuted}`}>{selectedSize} cm • {selectedFramed ? t.framed : t.unframed}</p>
+                      </div>
+                      <div className="text-right">
+                        {selectedProduct.discount > 0 ? (
+                          <>
+                            <span className={`text-sm ${theme.textMuted} line-through mr-2`}>{Math.round((selectedFramed ? selectedProduct.priceFramed : selectedProduct.priceUnframed) * (selectedSize === '30x40' ? 0.7 : 1))}₺</span>
+                            <span className="font-bold text-xl text-green-400">{Math.round((selectedFramed ? selectedProduct.priceFramed : selectedProduct.priceUnframed) * (selectedSize === '30x40' ? 0.7 : 1) * (1 - selectedProduct.discount/100))}₺</span>
+                          </>
+                        ) : (
+                          <span className={`font-bold text-xl`} style={{color: theme.accent}}>{Math.round((selectedFramed ? selectedProduct.priceFramed : selectedProduct.priceUnframed) * (selectedSize === '30x40' ? 0.7 : 1))}₺</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <button onClick={() => addToCart(selectedProduct, selectedFramed, selectedSize)} disabled={selectedProduct.stock === 0} className={`w-full text-stone-900 py-4 rounded-xl font-semibold shadow-lg flex items-center justify-center gap-2 ${selectedProduct.stock === 0 ? 'opacity-50' : 'hover:opacity-90'} transition`} style={{background: theme.accent}}>
+                    <ShoppingCart size={20} />
+                    {t.addToCart}
                   </button>
                 </div>
                 <div className="pt-4">
