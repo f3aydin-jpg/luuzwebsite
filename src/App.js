@@ -1,4 +1,4 @@
-import soyutKompozisyon from "./assets/soyut-kompozisyon.jpg";
+import soyutKompozisyon from "./assets/kare1.jpg";
 
 import React, { useState, useEffect } from 'react';
 import { ShoppingCart, X, Plus, Minus, Menu, Search, Heart, MessageCircle, Package, Star, ChevronDown, ChevronUp, Filter, Grid, List, ArrowUp, Moon, Sun, Globe, Clock, Truck, Shield, RotateCcw, ChevronLeft, ChevronRight, Check, Copy, Tag, TrendingUp, Eye, Instagram, Twitter, Facebook } from 'lucide-react';
