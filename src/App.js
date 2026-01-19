@@ -282,26 +282,26 @@ export default function WallArtShop() {
 
         {/* Products Grid */}
         {filteredProducts.length === 0 ? <div className="text-center py-16"><p className={theme.textMuted}>Ürün bulunamadı</p></div> : viewMode === 'grid' ? (
-          <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {filteredProducts.map(product => (
               <div key={product.id} className="group">
-                <div className={`relative overflow-hidden ${theme.card} rounded-xl shadow-lg border transform hover:-translate-y-1 hover:scale-[1.02] transition-all`}>
-                  {product.isNew && <div className="absolute top-2 left-2 bg-green-500 text-white px-1.5 py-0.5 rounded-full text-[10px] z-10">YENİ</div>}
-                  {product.discount > 0 && <div className="absolute top-2 right-2 bg-red-500 text-white px-1.5 py-0.5 rounded-full text-[10px] z-10">-{product.discount}%</div>}
-                  {product.stock === 0 && <div className="absolute inset-0 bg-black/60 z-10 flex items-center justify-center"><span className="text-white text-xs">{t.outOfStock}</span></div>}
-                  <button onClick={() => toggleFavorite(product.id)} className={`absolute ${product.isNew ? 'left-12' : 'left-2'} top-2 z-20 ${theme.bgTertiary} rounded-full p-1 opacity-0 group-hover:opacity-100 transition`}><Heart size={12} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={theme.accent} /></button>
-                  <button onClick={() => toggleCompare(product)} className={`absolute ${product.isNew ? 'left-12' : 'left-2'} top-8 z-20 ${theme.bgTertiary} rounded-full p-1 opacity-0 group-hover:opacity-100 transition`}><Copy size={12} className={compareProducts.find(p => p.id === product.id) ? 'text-green-400' : ''} /></button>
+                <div className={`relative overflow-hidden ${theme.card} rounded-2xl shadow-lg border transform hover:-translate-y-1 hover:scale-[1.02] transition-all`}>
+                  {product.isNew && <div className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs z-10">YENİ</div>}
+                  {product.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs z-10">-{product.discount}%</div>}
+                  {product.stock === 0 && <div className="absolute inset-0 bg-black/60 z-10 flex items-center justify-center"><span className="text-white text-sm font-medium">{t.outOfStock}</span></div>}
+                  <button onClick={() => toggleFavorite(product.id)} className={`absolute ${product.isNew ? 'left-16' : 'left-3'} top-3 z-20 ${theme.bgTertiary} rounded-full p-2 opacity-0 group-hover:opacity-100 transition`}><Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={theme.accent} /></button>
+                  <button onClick={() => toggleCompare(product)} className={`absolute ${product.isNew ? 'left-16' : 'left-3'} top-12 z-20 ${theme.bgTertiary} rounded-full p-2 opacity-0 group-hover:opacity-100 transition`}><Copy size={16} className={compareProducts.find(p => p.id === product.id) ? 'text-green-400' : ''} /></button>
                   <div className="cursor-pointer" onClick={() => { setSelectedProduct(product); addToRecentlyViewed(product); }}>
                     <img src={product.images[0]} alt={product.name} className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-500" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition flex flex-col justify-end p-2">
-                      <h3 className="text-[10px] font-semibold text-white">{product.name}</h3>
-                      <div className="flex items-center gap-1 mt-0.5">
-                        {product.discount > 0 ? <><p className="text-[10px] text-stone-400 line-through">{product.priceUnframed}₺</p><p className="text-[10px] text-green-400">{Math.round(product.priceUnframed * (1 - product.discount/100))}₺</p></> : <p className="text-[10px] text-stone-300">{product.priceUnframed}₺</p>}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition flex flex-col justify-end p-4">
+                      <h3 className="text-sm font-semibold text-white">{product.name}</h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        {product.discount > 0 ? <><p className="text-sm text-stone-400 line-through">{product.priceUnframed}₺</p><p className="text-sm text-green-400 font-bold">{Math.round(product.priceUnframed * (1 - product.discount/100))}₺</p></> : <p className="text-sm text-stone-300">{product.priceUnframed}₺</p>}
                       </div>
                     </div>
                   </div>
                 </div>
-                <button onClick={() => setSelectedProduct(product)} disabled={product.stock === 0} className={`w-full mt-2 text-stone-900 py-1.5 rounded-lg text-xs font-medium ${product.stock === 0 ? 'opacity-50' : ''}`} style={{background: theme.accent}}>{product.stock === 0 ? t.outOfStock : t.addToCart}</button>
+                <button onClick={() => setSelectedProduct(product)} disabled={product.stock === 0} className={`w-full mt-3 text-stone-900 py-2.5 rounded-xl text-sm font-medium ${product.stock === 0 ? 'opacity-50' : ''}`} style={{background: theme.accent}}>{product.stock === 0 ? t.outOfStock : t.addToCart}</button>
               </div>
             ))}
           </div>
@@ -350,17 +350,6 @@ export default function WallArtShop() {
           <button onClick={() => setCompareProducts([])} className={theme.textMuted}><X size={16} /></button>
         </div>
       )}
-
-      {/* Instagram */}
-      <section className={`max-w-7xl mx-auto px-4 py-12 ${theme.card} rounded-2xl my-8 border`}>
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-2"><Instagram size={24} style={{color: theme.accent}} /><h3 className={`text-xl font-bold ${theme.text}`}>@luuz.art</h3></div>
-          <p className={`${theme.textSecondary} text-sm`}>Bizi Instagram'da takip edin</p>
-        </div>
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
-          {products.slice(0, 6).map((p, idx) => <div key={idx} className="aspect-square overflow-hidden rounded-lg group cursor-pointer"><img src={p.images[0]} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" /></div>)}
-        </div>
-      </section>
 
       {/* Newsletter */}
       <section className={`py-16 ${darkMode ? 'bg-gradient-to-r from-stone-800 to-stone-800' : 'bg-gradient-to-r from-stone-200 to-stone-100'} border-y ${theme.border}`}>
