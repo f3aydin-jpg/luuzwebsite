@@ -33,8 +33,6 @@ export default function WallArtShop() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [openFAQ, setOpenFAQ] = useState(null);
-  const [selectedSize, setSelectedSize] = useState('50x70');
-  const [selectedFramed, setSelectedFramed] = useState(false);
   const [orderHistory] = useState([{ id: 'LUUZ7X8K2M', date: '12.01.2025', total: 1850, status: 'Teslim Edildi', items: 2 }]);
   const [checkoutData, setCheckoutData] = useState({ firstName: '', lastName: '', email: '', phone: '', address: '', city: '', postalCode: '', cardNumber: '', expiry: '', cvv: '' });
 
@@ -55,18 +53,7 @@ export default function WallArtShop() {
     { id: 12, name: "Turuncu Ton", images: ["https://images.unsplash.com/photo-1515405295579-ba7b45403062?w=600&q=80"], priceFramed: 840, priceUnframed: 440, category: "Soyut", description: "Sıcak tonlar.", size: "50x70 cm", stock: 11, isNew: false, isBestSeller: false, discount: 0, reviews: [] }
   ];
 
-  const categories = [
-    { name: 'Tümü', label: 'Tüm Posterler', image: null },
-    { name: 'Minimal', label: 'Minimal Posterler', image: 'https://raw.githubusercontent.com/luuzposter/category-images/main/minimal.jpg' },
-    { name: 'Soyut', label: 'Soyut Posterler', image: 'https://raw.githubusercontent.com/luuzposter/category-images/main/soyut.jpg' },
-    { name: 'Doğa', label: 'Doğa Posterleri', image: 'https://raw.githubusercontent.com/luuzposter/category-images/main/doga.jpg' },
-    { name: 'Geometrik', label: 'Geometrik Posterler', image: 'https://raw.githubusercontent.com/luuzposter/category-images/main/geometrik.jpg' },
-    { name: 'Tipografi', label: 'Tipografi Posterler', image: 'https://raw.githubusercontent.com/luuzposter/category-images/main/tipografi.jpg' },
-    { name: 'Modern', label: 'Modern Posterler', image: 'https://raw.githubusercontent.com/luuzposter/category-images/main/modern.jpg' },
-    { name: 'Klasik', label: 'Klasik Posterler', image: 'https://raw.githubusercontent.com/luuzposter/category-images/main/klasik.jpg' },
-    { name: 'Portre', label: 'Portre Posterler', image: 'https://raw.githubusercontent.com/luuzposter/category-images/main/portre.jpg' },
-    { name: 'Manzara', label: 'Manzara Posterleri', image: 'https://raw.githubusercontent.com/luuzposter/category-images/main/manzara.jpg' }
-  ];
+  const categories = ['Tümü', 'Minimal', 'Soyut', 'Doğa', 'Geometrik', 'Tipografi', 'Modern', 'Klasik', 'Portre', 'Manzara'];
   const sizes = ['40x60 cm', '50x70 cm', '60x80 cm', '70x100 cm'];
   const coupons = { 'HOSGELDIN15': { discount: 15, type: 'percent' }, 'YAZ50': { discount: 50, type: 'fixed' } };
   const faqData = [{ q: 'Kargo ne kadar sürede gelir?', a: '2-4 iş günü içinde teslim edilir.' }, { q: 'İade koşulları nelerdir?', a: '14 gün içinde koşulsuz iade hakkınız var.' }, { q: 'Çerçeve malzemesi nedir?', a: '%100 doğal ahşaptan el işçiliği ile üretilir.' }];
@@ -85,17 +72,13 @@ export default function WallArtShop() {
   const addToRecentlyViewed = (p) => setRecentlyViewed(prev => [p, ...prev.filter(x => x.id !== p.id)].slice(0, 6));
   const toggleCompare = (p) => compareProducts.find(x => x.id === p.id) ? setCompareProducts(compareProducts.filter(x => x.id !== p.id)) : compareProducts.length < 4 && setCompareProducts([...compareProducts, p]);
 
-  const addToCart = (product, isFramed, size = '50x70') => {
-    const sizeMultiplier = size === '30x40' ? 0.7 : 1;
-    const basePrice = isFramed ? product.priceFramed : product.priceUnframed;
-    const price = Math.round(basePrice * sizeMultiplier);
+  const addToCart = (product, isFramed) => {
+    const price = isFramed ? product.priceFramed : product.priceUnframed;
     const discountedPrice = product.discount > 0 ? Math.round(price * (1 - product.discount / 100)) : price;
-    const cartItem = { ...product, isFramed, size: size, price: discountedPrice, cartId: `${product.id}-${isFramed}-${size}` };
+    const cartItem = { ...product, isFramed, price: discountedPrice, cartId: `${product.id}-${isFramed}` };
     const existing = cart.find(item => item.cartId === cartItem.cartId);
     existing ? setCart(cart.map(item => item.cartId === cartItem.cartId ? { ...item, quantity: item.quantity + 1 } : item)) : setCart([...cart, { ...cartItem, quantity: 1 }]);
     setSelectedProduct(null);
-    setSelectedSize('50x70');
-    setSelectedFramed(false);
   };
 
   const updateQuantity = (cartId, change) => setCart(cart.map(item => item.cartId === cartId ? { ...item, quantity: Math.max(0, item.quantity + change) } : item).filter(item => item.quantity > 0));
@@ -203,31 +186,11 @@ export default function WallArtShop() {
       </section>
 
       {/* Categories */}
-      <section className="max-w-7xl mx-auto px-4 py-8">
-        <h3 className={`text-xl font-bold ${theme.text} text-center mb-6`}>Kategoriler</h3>
-        <div className="flex justify-center">
-          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide px-4">
-            {categories.map(cat => (
-              <button 
-                key={cat.name} 
-                onClick={() => setSelectedCategory(cat.name)} 
-                className={`relative flex-shrink-0 rounded-xl overflow-hidden transition-all duration-300 ${selectedCategory === cat.name ? 'ring-2 ring-amber-500 ring-offset-2 ring-offset-stone-900' : 'hover:scale-105'}`}
-                style={{ width: '140px', height: '180px' }}
-              >
-                {cat.image ? (
-                  <img src={cat.image} alt={cat.label} className="w-full h-full object-cover" />
-                ) : (
-                  <div className={`w-full h-full ${theme.card} border flex items-center justify-center`}>
-                    <Grid size={32} className={theme.textMuted} />
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-3">
-                  <span className={`text-white text-sm font-medium ${selectedCategory === cat.name ? 'text-amber-300' : ''}`}>{cat.label}</span>
-                </div>
-              </button>
-            ))}
-          </div>
+      <section className="max-w-7xl mx-auto px-4 py-6">
+        <div className="flex flex-wrap justify-center gap-2 pb-2">
+          {categories.map(cat => (
+            <button key={cat} onClick={() => setSelectedCategory(cat)} className={`px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all ${selectedCategory === cat ? 'text-stone-900 shadow-lg' : `${theme.card} ${theme.textSecondary} border hover:border-stone-500`}`} style={selectedCategory === cat ? {background: theme.accent} : {}}>{cat}</button>
+          ))}
         </div>
       </section>
 
@@ -391,7 +354,7 @@ export default function WallArtShop() {
       {/* Instagram */}
       <section className={`max-w-7xl mx-auto px-4 py-12 ${theme.card} rounded-2xl my-8 border`}>
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-2"><Instagram size={24} style={{color: theme.accent}} /><h3 className={`text-xl font-bold ${theme.text}`}>@luuzposter</h3></div>
+          <div className="flex items-center justify-center gap-2 mb-2"><Instagram size={24} style={{color: theme.accent}} /><h3 className={`text-xl font-bold ${theme.text}`}>@luuz.art</h3></div>
           <p className={`${theme.textSecondary} text-sm`}>Bizi Instagram'da takip edin</p>
         </div>
         <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
@@ -436,7 +399,7 @@ export default function WallArtShop() {
               <h3 className={`text-lg font-bold ${theme.text}`}>{selectedProduct.name}</h3>
               <div className="flex items-center gap-2">
                 <button onClick={() => toggleFavorite(selectedProduct.id)} className={`p-2 rounded-full ${theme.card}`}><Heart size={18} fill={favorites.includes(selectedProduct.id) ? theme.accent : 'none'} color={theme.accent} /></button>
-                <button onClick={() => { setSelectedProduct(null); setSelectedSize('50x70'); setSelectedFramed(false); }} className={`p-2 rounded-full ${theme.card}`}><X size={18} /></button>
+                <button onClick={() => setSelectedProduct(null)} className={`p-2 rounded-full ${theme.card}`}><X size={18} /></button>
               </div>
             </div>
             <div className="grid md:grid-cols-2 gap-6 p-6">
@@ -465,51 +428,65 @@ export default function WallArtShop() {
                     {selectedProduct.reviews.map((r, idx) => <div key={idx} className="py-2"><div className="flex gap-0.5 mb-1">{[...Array(r.rating)].map((_, i) => <Star key={i} size={10} fill={theme.accent} color={theme.accent} />)}</div><p className={`text-xs ${theme.textSecondary}`}>"{r.comment}" - {r.name}</p></div>)}
                   </div>
                 )}
+                {/* Frame Selection */}
                 <div className="space-y-2 pt-4">
-                  <div className="mb-4">
-                    <p className={`text-sm font-medium ${theme.text} mb-2`}>Boyut Seçin</p>
-                    <div className="flex gap-2">
-                      <button onClick={() => setSelectedSize('30x40')} className={`flex-1 py-2 px-4 rounded-xl border transition ${selectedSize === '30x40' ? 'border-amber-500 bg-amber-500/10' : `${theme.border} hover:border-amber-500`}`}>
-                        <span className={`font-medium ${selectedSize === '30x40' ? 'text-amber-500' : theme.text}`}>30x40 cm</span>
-                      </button>
-                      <button onClick={() => setSelectedSize('50x70')} className={`flex-1 py-2 px-4 rounded-xl border transition ${selectedSize === '50x70' ? 'border-amber-500 bg-amber-500/10' : `${theme.border} hover:border-amber-500`}`}>
-                        <span className={`font-medium ${selectedSize === '50x70' ? 'text-amber-500' : theme.text}`}>50x70 cm</span>
-                      </button>
+                  <p className={`text-sm font-medium ${theme.text} mb-2`}>Seçenek:</p>
+                  <div 
+                    onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: false})}
+                    className={`w-full border ${selectedProduct.selectedFrame === false ? 'border-amber-500 ring-2 ring-amber-500/30' : theme.border} hover:border-amber-500 py-3 rounded-xl transition flex justify-between items-center px-4 cursor-pointer ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    <div className="text-left">
+                      <span className={`font-medium ${theme.text}`}>{t.unframed}</span>
+                      <p className={`text-xs ${theme.textMuted}`}>Premium baskı</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {selectedProduct.discount > 0 ? (
+                        <>
+                          <span className={`text-sm ${theme.textMuted} line-through`}>{selectedProduct.priceUnframed}₺</span>
+                          <span className="font-bold text-lg text-green-400">{Math.round(selectedProduct.priceUnframed * (1 - selectedProduct.discount/100))}₺</span>
+                        </>
+                      ) : (
+                        <span className={`font-bold text-lg ${theme.text}`}>{selectedProduct.priceUnframed}₺</span>
+                      )}
+                      {selectedProduct.selectedFrame === false && <Check size={18} className="text-amber-500 ml-2" />}
                     </div>
                   </div>
-                  <div className="mb-4">
-                    <p className={`text-sm font-medium ${theme.text} mb-2`}>Çerçeve Seçin</p>
-                    <div className="flex gap-2">
-                      <button onClick={() => setSelectedFramed(false)} className={`flex-1 py-3 px-4 rounded-xl border transition ${!selectedFramed ? 'border-amber-500 bg-amber-500/10' : `${theme.border} hover:border-amber-500`}`}>
-                        <span className={`font-medium ${!selectedFramed ? 'text-amber-500' : theme.text}`}>{t.unframed}</span>
-                        <p className={`text-xs ${theme.textMuted} mt-1`}>Premium baskı</p>
-                      </button>
-                      <button onClick={() => setSelectedFramed(true)} className={`flex-1 py-3 px-4 rounded-xl border transition ${selectedFramed ? 'border-amber-500 bg-amber-500/10' : `${theme.border} hover:border-amber-500`}`}>
-                        <span className={`font-medium ${selectedFramed ? 'text-amber-500' : theme.text}`}>{t.framed}</span>
-                        <p className={`text-xs ${theme.textMuted} mt-1`}>Ahşap çerçeve</p>
-                      </button>
+                  <div 
+                    onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: true})}
+                    className={`w-full border ${selectedProduct.selectedFrame === true ? 'border-amber-500 ring-2 ring-amber-500/30' : theme.border} hover:border-amber-500 py-3 rounded-xl transition flex justify-between items-center px-4 cursor-pointer ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    <div className="text-left">
+                      <span className={`font-medium ${theme.text}`}>{t.framed}</span>
+                      <p className={`text-xs ${theme.textMuted}`}>Ahşap çerçeve</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {selectedProduct.discount > 0 ? (
+                        <>
+                          <span className={`text-sm ${theme.textMuted} line-through`}>{selectedProduct.priceFramed}₺</span>
+                          <span className="font-bold text-lg text-green-400">{Math.round(selectedProduct.priceFramed * (1 - selectedProduct.discount/100))}₺</span>
+                        </>
+                      ) : (
+                        <span className={`font-bold text-lg ${theme.text}`}>{selectedProduct.priceFramed}₺</span>
+                      )}
+                      {selectedProduct.selectedFrame === true && <Check size={18} className="text-amber-500 ml-2" />}
                     </div>
                   </div>
-                  <div className={`p-4 rounded-xl ${theme.card} border mb-4`}>
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <p className={`text-sm ${theme.textMuted}`}>{selectedSize} cm • {selectedFramed ? t.framed : t.unframed}</p>
-                      </div>
-                      <div className="text-right">
-                        {selectedProduct.discount > 0 ? (
-                          <>
-                            <span className={`text-sm ${theme.textMuted} line-through mr-2`}>{Math.round((selectedFramed ? selectedProduct.priceFramed : selectedProduct.priceUnframed) * (selectedSize === '30x40' ? 0.7 : 1))}₺</span>
-                            <span className="font-bold text-xl text-green-400">{Math.round((selectedFramed ? selectedProduct.priceFramed : selectedProduct.priceUnframed) * (selectedSize === '30x40' ? 0.7 : 1) * (1 - selectedProduct.discount/100))}₺</span>
-                          </>
-                        ) : (
-                          <span className={`font-bold text-xl`} style={{color: theme.accent}}>{Math.round((selectedFramed ? selectedProduct.priceFramed : selectedProduct.priceUnframed) * (selectedSize === '30x40' ? 0.7 : 1))}₺</span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  <button onClick={() => addToCart(selectedProduct, selectedFramed, selectedSize)} disabled={selectedProduct.stock === 0} className={`w-full text-stone-900 py-4 rounded-xl font-semibold shadow-lg flex items-center justify-center gap-2 ${selectedProduct.stock === 0 ? 'opacity-50' : 'hover:opacity-90'} transition`} style={{background: theme.accent}}>
+                  
+                  {/* Add to Cart Button */}
+                  <button 
+                    onClick={() => {
+                      if (selectedProduct.selectedFrame !== undefined) {
+                        addToCart(selectedProduct, selectedProduct.selectedFrame);
+                      } else {
+                        alert('Lütfen bir seçenek seçin (Çerçeveli veya Çerçevesiz)');
+                      }
+                    }} 
+                    disabled={selectedProduct.stock === 0}
+                    className={`w-full text-stone-900 py-4 rounded-xl font-semibold shadow-lg mt-4 flex items-center justify-center gap-2 ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'}`}
+                    style={{background: theme.accent}}
+                  >
                     <ShoppingCart size={20} />
-                    {t.addToCart}
+                    {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
                   </button>
                 </div>
                 <div className="pt-4">
@@ -534,7 +511,7 @@ export default function WallArtShop() {
                     <img src={item.images[0]} alt="" className="w-20 h-20 object-cover rounded-lg" />
                     <div className="flex-1">
                       <h3 className={`font-medium text-sm ${theme.text}`}>{item.name}</h3>
-                      <p className={`text-xs ${theme.textMuted}`}>{item.isFramed ? t.framed : t.unframed} • {item.size} cm</p>
+                      <p className={`text-xs ${theme.textMuted}`}>{item.isFramed ? t.framed : t.unframed}</p>
                       {item.discount > 0 && <p className="text-xs text-green-400">-{item.discount}%</p>}
                       <p className="font-bold mt-1" style={{color: theme.accent}}>{item.price}₺</p>
                       <div className="flex items-center gap-2 mt-2">
