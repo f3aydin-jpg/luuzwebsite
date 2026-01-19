@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ShoppingCart, X, Plus, Minus, Menu, Search, Heart, MessageCircle, Package, Star, ChevronDown, ChevronUp, Filter, Grid, List, ArrowUp, Moon, Sun, Globe, Clock, Truck, Shield, RotateCcw, ChevronLeft, ChevronRight, Check, Copy, Tag, TrendingUp, Eye, Instagram, Twitter, Facebook } from 'lucide-react';
 
-export default function WallArtShop() {
+export default function App() {
   const [darkMode, setDarkMode] = useState(true);
   const [language, setLanguage] = useState('tr');
   const [cart, setCart] = useState([]);
