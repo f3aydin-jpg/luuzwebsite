@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, X, Plus, Minus, Menu, Search, Heart, MessageCircle, Package, Star, ChevronDown, ChevronUp, Filter, Grid, List, ArrowUp, Moon, Sun, Globe, Clock, Truck, Shield, RotateCcw, ChevronLeft, ChevronRight, Check, Copy, Tag, TrendingUp, Eye, Instagram, Twitter, Facebook, ZoomIn } from 'lucide-react';
+import { ShoppingCart, X, Plus, Minus, Menu, Search, Heart, MessageCircle, Package, Star, ChevronDown, ChevronUp, Filter, Grid, List, ArrowUp, Moon, Sun, Globe, Clock, Truck, Shield, RotateCcw, ChevronLeft, ChevronRight, Check, Copy, Tag, TrendingUp, Eye, Instagram, Twitter, Facebook, ZoomIn, Settings } from 'lucide-react';
+import { db } from './firebase';
+import { collection, getDocs } from 'firebase/firestore';
+import AdminPanel from './AdminPanel';
 
 export default function WallArtShop() {
   const [darkMode, setDarkMode] = useState(true);
@@ -38,10 +41,13 @@ export default function WallArtShop() {
   const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
   const [pageTransition, setPageTransition] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState({});
+  const [showAdmin, setShowAdmin] = useState(false);
+  const [products, setProducts] = useState([]);
 
   const t = language === 'tr' ? { collection: 'Koleksiyon', about: 'Hakkımızda', howItWorks: 'Nasıl Çalışır', faq: 'SSS', search: 'Ürün ara...', cart: 'Sepetim', favorites: 'Favorilerim', addToCart: 'Sepete Ekle', checkout: 'Ödemeye Geç', total: 'Toplam', empty: 'Sepetiniz boş', filters: 'Filtreler', price: 'Fiyat', size: 'Boyut', bestSellers: 'Çok Satanlar', newArrivals: 'Yeni Gelenler', allCollection: 'Tüm Koleksiyon', framed: 'Çerçeveli', unframed: 'Çerçevesiz', inStock: 'Stokta', outOfStock: 'Tükendi', similarProducts: 'Benzer Ürünler', applyCoupon: 'Uygula', newsletter: 'Yeni Koleksiyonlardan Haberdar Olun', subscribe: 'Abone Ol', compare: 'Karşılaştır', recentlyViewed: 'Son Görüntülenenler', orderHistory: 'Sipariş Geçmişi' } : { collection: 'Collection', about: 'About', howItWorks: 'How It Works', faq: 'FAQ', search: 'Search...', cart: 'Cart', favorites: 'Favorites', addToCart: 'Add to Cart', checkout: 'Checkout', total: 'Total', empty: 'Cart is empty', filters: 'Filters', price: 'Price', size: 'Size', bestSellers: 'Best Sellers', newArrivals: 'New Arrivals', allCollection: 'All Collection', framed: 'Framed', unframed: 'Unframed', inStock: 'In Stock', outOfStock: 'Out of Stock', similarProducts: 'Similar', applyCoupon: 'Apply', newsletter: 'Stay Updated', subscribe: 'Subscribe', compare: 'Compare', recentlyViewed: 'Recently Viewed', orderHistory: 'Orders' };
 
-  const products = [
+  // Varsayılan ürünler (Firebase boşsa)
+  const defaultProducts = [
     { id: 1, name: "Minimal Çizgiler", images: ["https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?w=600&q=80", "https://images.unsplash.com/photo-1549887534-1541e9326642?w=600&q=80"], priceFramed: 850, priceUnframed: 450, category: "Minimal", description: "Modern ve minimal çizgilerle tasarlanmış.", size: "50x70 cm", stock: 12, isNew: false, isBestSeller: true, discount: 0, reviews: [{ name: "Ayşe K.", rating: 5, comment: "Harika!" }] },
     { id: 2, name: "Soyut Kompozisyon", images: ["https://images.unsplash.com/photo-1561214115-f2f134cc4912?w=600&q=80"], priceFramed: 920, priceUnframed: 520, category: "Soyut", description: "Cesur fırça darbeleri.", size: "60x80 cm", stock: 8, isNew: true, isBestSeller: false, discount: 15, reviews: [] },
     { id: 3, name: "Botanik Siluet", images: ["https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=600&q=80"], priceFramed: 780, priceUnframed: 380, category: "Doğa", description: "Doğadan ilham alan tasarım.", size: "40x60 cm", stock: 15, isNew: false, isBestSeller: true, discount: 0, reviews: [] },
@@ -56,12 +62,40 @@ export default function WallArtShop() {
     { id: 12, name: "Turuncu Ton", images: ["https://images.unsplash.com/photo-1515405295579-ba7b45403062?w=600&q=80"], priceFramed: 840, priceUnframed: 440, category: "Soyut", description: "Sıcak tonlar.", size: "50x70 cm", stock: 11, isNew: false, isBestSeller: false, discount: 0, reviews: [] }
   ];
 
+  // Firebase'den ürünleri çek
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'products'));
+        const firebaseProducts = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        
+        // Firebase'de ürün varsa onları kullan, yoksa varsayılanları
+        if (firebaseProducts.length > 0) {
+          setProducts(firebaseProducts);
+        } else {
+          setProducts(defaultProducts);
+        }
+      } catch (error) {
+        console.error('Firebase hatası:', error);
+        setProducts(defaultProducts);
+      }
+      setIsLoading(false);
+    };
+
+    fetchProducts();
+    
+    const handleScroll = () => setShowScrollTop(window.scrollY > 400);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const categories = ['Tümü', 'Minimal', 'Soyut', 'Doğa', 'Geometrik', 'Tipografi', 'Modern', 'Klasik', 'Portre', 'Manzara'];
   const sizes = ['40x60 cm', '50x70 cm', '60x80 cm', '70x100 cm'];
   const coupons = { 'HOSGELDIN15': { discount: 15, type: 'percent' }, 'YAZ50': { discount: 50, type: 'fixed' } };
   const faqData = [{ q: 'Kargo ne kadar sürede gelir?', a: '2-4 iş günü içinde teslim edilir.' }, { q: 'İade koşulları nelerdir?', a: '14 gün içinde koşulsuz iade hakkınız var.' }, { q: 'Çerçeve malzemesi nedir?', a: '%100 doğal ahşaptan el işçiliği ile üretilir.' }];
-
-  useEffect(() => { setTimeout(() => setIsLoading(false), 1500); const handleScroll = () => setShowScrollTop(window.scrollY > 400); window.addEventListener('scroll', handleScroll); return () => window.removeEventListener('scroll', handleScroll); }, []);
 
   const filteredProducts = products.filter(p => {
     const matchesCategory = selectedCategory === 'Tümü' || p.category === selectedCategory;
@@ -489,9 +523,15 @@ export default function WallArtShop() {
             <div><h5 className={`font-medium mb-3 text-sm ${theme.text}`}>Yardım</h5><ul className={`space-y-2 ${theme.textMuted} text-xs`}><li>Kargo Bilgileri</li><li>İade & Değişim</li><li><button onClick={() => setShowOrderHistory(true)}>{t.orderHistory}</button></li></ul></div>
             <div><h5 className={`font-medium mb-3 text-sm ${theme.text}`}>İletişim</h5><ul className={`space-y-2 ${theme.textMuted} text-xs`}><li>info@luuz.com.tr</li><li>+90 212 555 00 00</li><li>İstanbul, Türkiye</li></ul></div>
           </div>
-          <div className={`border-t ${theme.border} mt-8 pt-8 text-center ${theme.textMuted} text-xs`}>© 2025 LUUZ. Tüm hakları saklıdır.</div>
+          <div className={`border-t ${theme.border} mt-8 pt-8 flex justify-between items-center ${theme.textMuted} text-xs`}>
+            <span>© 2025 LUUZ. Tüm hakları saklıdır.</span>
+            <button onClick={() => setShowAdmin(true)} className="flex items-center gap-1 hover:text-amber-500 transition"><Settings size={14} /> Admin</button>
+          </div>
         </div>
       </footer>
+
+      {/* Admin Panel */}
+      {showAdmin && <AdminPanel onClose={() => setShowAdmin(false)} />}
 
       {/* Page Transition Overlay */}
       {pageTransition && (
