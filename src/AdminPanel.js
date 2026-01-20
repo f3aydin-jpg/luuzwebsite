@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { db, storage } from './firebase';
 import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import { Plus, Trash2, Edit, Save, X, Upload, Eye, LogOut } from 'lucide-react';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { Plus, Trash2, Edit, Save, X, Upload, LogOut } from 'lucide-react';
 
 const ADMIN_PASSWORD = "luuz2025"; // Basit şifre - sonra değiştir
 
