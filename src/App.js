@@ -46,22 +46,6 @@ export default function WallArtShop() {
 
   const t = language === 'tr' ? { collection: 'Koleksiyon', about: 'Hakkımızda', howItWorks: 'Nasıl Çalışır', faq: 'SSS', search: 'Ürün ara...', cart: 'Sepetim', favorites: 'Favorilerim', addToCart: 'Sepete Ekle', checkout: 'Ödemeye Geç', total: 'Toplam', empty: 'Sepetiniz boş', filters: 'Filtreler', price: 'Fiyat', size: 'Boyut', bestSellers: 'Çok Satanlar', newArrivals: 'Yeni Gelenler', allCollection: 'Tüm Koleksiyon', framed: 'Çerçeveli', unframed: 'Çerçevesiz', inStock: 'Stokta', outOfStock: 'Tükendi', similarProducts: 'Benzer Ürünler', applyCoupon: 'Uygula', newsletter: 'Yeni Koleksiyonlardan Haberdar Olun', subscribe: 'Abone Ol', compare: 'Karşılaştır', recentlyViewed: 'Son Görüntülenenler', orderHistory: 'Sipariş Geçmişi' } : { collection: 'Collection', about: 'About', howItWorks: 'How It Works', faq: 'FAQ', search: 'Search...', cart: 'Cart', favorites: 'Favorites', addToCart: 'Add to Cart', checkout: 'Checkout', total: 'Total', empty: 'Cart is empty', filters: 'Filters', price: 'Price', size: 'Size', bestSellers: 'Best Sellers', newArrivals: 'New Arrivals', allCollection: 'All Collection', framed: 'Framed', unframed: 'Unframed', inStock: 'In Stock', outOfStock: 'Out of Stock', similarProducts: 'Similar', applyCoupon: 'Apply', newsletter: 'Stay Updated', subscribe: 'Subscribe', compare: 'Compare', recentlyViewed: 'Recently Viewed', orderHistory: 'Orders' };
 
-  // Varsayılan ürünler (Firebase boşsa)
-  const defaultProducts = [
-    { id: 1, name: "Minimal Çizgiler", images: ["https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?w=600&q=80", "https://images.unsplash.com/photo-1549887534-1541e9326642?w=600&q=80"], priceFramed: 850, priceUnframed: 450, category: "Minimal", description: "Modern ve minimal çizgilerle tasarlanmış.", size: "50x70 cm", stock: 12, isNew: false, isBestSeller: true, discount: 0, reviews: [{ name: "Ayşe K.", rating: 5, comment: "Harika!" }] },
-    { id: 2, name: "Soyut Kompozisyon", images: ["https://images.unsplash.com/photo-1561214115-f2f134cc4912?w=600&q=80"], priceFramed: 920, priceUnframed: 520, category: "Soyut", description: "Cesur fırça darbeleri.", size: "60x80 cm", stock: 8, isNew: true, isBestSeller: false, discount: 15, reviews: [] },
-    { id: 3, name: "Botanik Siluet", images: ["https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=600&q=80"], priceFramed: 780, priceUnframed: 380, category: "Doğa", description: "Doğadan ilham alan tasarım.", size: "40x60 cm", stock: 15, isNew: false, isBestSeller: true, discount: 0, reviews: [] },
-    { id: 4, name: "Geometrik Denge", images: ["https://images.unsplash.com/photo-1578301978162-7aae4d755744?w=600&q=80"], priceFramed: 890, priceUnframed: 490, category: "Geometrik", description: "Simetri ve geometrik formlar.", size: "50x70 cm", stock: 6, isNew: false, isBestSeller: false, discount: 10, reviews: [] },
-    { id: 5, name: "Mavi Soyutlama", images: ["https://images.unsplash.com/photo-1549887534-1541e9326642?w=600&q=80"], priceFramed: 950, priceUnframed: 550, category: "Soyut", description: "Mavi tonlarının derinliği.", size: "70x100 cm", stock: 4, isNew: false, isBestSeller: true, discount: 0, reviews: [{ name: "Elif T.", rating: 5, comment: "Muhteşem!" }] },
-    { id: 6, name: "Modern Tipografi", images: ["https://images.unsplash.com/photo-1554048612-b6a482bc67e5?w=600&q=80"], priceFramed: 820, priceUnframed: 420, category: "Tipografi", description: "Etkileyici tipografik düzenlemeler.", size: "50x70 cm", stock: 10, isNew: true, isBestSeller: false, discount: 0, reviews: [] },
-    { id: 7, name: "Pastel Düşler", images: ["https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=600&q=80"], priceFramed: 880, priceUnframed: 480, category: "Soyut", description: "Yumuşak pastel tonlar.", size: "60x80 cm", stock: 7, isNew: false, isBestSeller: false, discount: 20, reviews: [] },
-    { id: 8, name: "Siyah Beyaz", images: ["https://images.unsplash.com/photo-1567359781514-3b964e2b04d6?w=600&q=80"], priceFramed: 790, priceUnframed: 390, category: "Minimal", description: "Klasik kontrast.", size: "40x60 cm", stock: 0, isNew: false, isBestSeller: false, discount: 0, reviews: [] },
-    { id: 9, name: "Altın Çizgiler", images: ["https://images.unsplash.com/photo-1582561833583-1d4d7d1ac5c2?w=600&q=80"], priceFramed: 990, priceUnframed: 590, category: "Geometrik", description: "Lüks altın detaylar.", size: "50x70 cm", stock: 5, isNew: true, isBestSeller: false, discount: 0, reviews: [] },
-    { id: 10, name: "Yaprak Detayları", images: ["https://images.unsplash.com/photo-1509937528035-ad76254b0356?w=600&q=80"], priceFramed: 750, priceUnframed: 350, category: "Doğa", description: "Doğanın incelikleri.", size: "40x60 cm", stock: 20, isNew: false, isBestSeller: true, discount: 0, reviews: [] },
-    { id: 11, name: "Renkli Daireler", images: ["https://images.unsplash.com/photo-1535952427495-2b0e9a4c5e66?w=600&q=80"], priceFramed: 860, priceUnframed: 460, category: "Geometrik", description: "Oyuncu renkler.", size: "60x80 cm", stock: 9, isNew: false, isBestSeller: false, discount: 25, reviews: [] },
-    { id: 12, name: "Turuncu Ton", images: ["https://images.unsplash.com/photo-1515405295579-ba7b45403062?w=600&q=80"], priceFramed: 840, priceUnframed: 440, category: "Soyut", description: "Sıcak tonlar.", size: "50x70 cm", stock: 11, isNew: false, isBestSeller: false, discount: 0, reviews: [] }
-  ];
-
   // Firebase'den ürünleri çek
   useEffect(() => {
     const fetchProducts = async () => {
@@ -71,16 +55,10 @@ export default function WallArtShop() {
           id: doc.id,
           ...doc.data()
         }));
-        
-        // Firebase'de ürün varsa onları kullan, yoksa varsayılanları
-        if (firebaseProducts.length > 0) {
-          setProducts(firebaseProducts);
-        } else {
-          setProducts(defaultProducts);
-        }
+        setProducts(firebaseProducts);
       } catch (error) {
         console.error('Firebase hatası:', error);
-        setProducts(defaultProducts);
+        setProducts([]);
       }
       setIsLoading(false);
     };
@@ -90,7 +68,6 @@ export default function WallArtShop() {
     const handleScroll = () => setShowScrollTop(window.scrollY > 400);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const categories = ['Tümü', 'Minimal', 'Soyut', 'Doğa', 'Geometrik', 'Tipografi', 'Modern', 'Klasik', 'Portre', 'Manzara'];
