@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, X, Plus, Minus, Menu, Search, Heart, MessageCircle, Package, Star, ChevronDown, ChevronUp, Filter, Grid, List, ArrowUp, Moon, Sun, Globe, Clock, Truck, Shield, RotateCcw, ChevronLeft, ChevronRight, Check, Copy, Tag, TrendingUp, Eye, Instagram, Twitter, Facebook } from 'lucide-react';
+import { ShoppingCart, X, Plus, Minus, Menu, Search, Heart, MessageCircle, Package, Star, ChevronDown, ChevronUp, Filter, Grid, List, ArrowUp, Moon, Sun, Globe, Clock, Truck, Shield, RotateCcw, ChevronLeft, ChevronRight, Check, Copy, Tag, TrendingUp, Eye, Instagram, Twitter, Facebook, ZoomIn } from 'lucide-react';
 
 export default function WallArtShop() {
   const [darkMode, setDarkMode] = useState(true);
@@ -34,6 +34,10 @@ export default function WallArtShop() {
   const [openFAQ, setOpenFAQ] = useState(null);
   const [orderHistory] = useState([{ id: 'LUUZ7X8K2M', date: '12.01.2025', total: 1850, status: 'Teslim Edildi', items: 2 }]);
   const [checkoutData, setCheckoutData] = useState({ firstName: '', lastName: '', email: '', phone: '', address: '', city: '', postalCode: '', cardNumber: '', expiry: '', cvv: '' });
+  const [showZoom, setShowZoom] = useState(false);
+  const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
+  const [pageTransition, setPageTransition] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState({});
 
   const t = language === 'tr' ? { collection: 'Koleksiyon', about: 'Hakkımızda', howItWorks: 'Nasıl Çalışır', faq: 'SSS', search: 'Ürün ara...', cart: 'Sepetim', favorites: 'Favorilerim', addToCart: 'Sepete Ekle', checkout: 'Ödemeye Geç', total: 'Toplam', empty: 'Sepetiniz boş', filters: 'Filtreler', price: 'Fiyat', size: 'Boyut', bestSellers: 'Çok Satanlar', newArrivals: 'Yeni Gelenler', allCollection: 'Tüm Koleksiyon', framed: 'Çerçeveli', unframed: 'Çerçevesiz', inStock: 'Stokta', outOfStock: 'Tükendi', similarProducts: 'Benzer Ürünler', applyCoupon: 'Uygula', newsletter: 'Yeni Koleksiyonlardan Haberdar Olun', subscribe: 'Abone Ol', compare: 'Karşılaştır', recentlyViewed: 'Son Görüntülenenler', orderHistory: 'Sipariş Geçmişi' } : { collection: 'Collection', about: 'About', howItWorks: 'How It Works', faq: 'FAQ', search: 'Search...', cart: 'Cart', favorites: 'Favorites', addToCart: 'Add to Cart', checkout: 'Checkout', total: 'Total', empty: 'Cart is empty', filters: 'Filters', price: 'Price', size: 'Size', bestSellers: 'Best Sellers', newArrivals: 'New Arrivals', allCollection: 'All Collection', framed: 'Framed', unframed: 'Unframed', inStock: 'In Stock', outOfStock: 'Out of Stock', similarProducts: 'Similar', applyCoupon: 'Apply', newsletter: 'Stay Updated', subscribe: 'Subscribe', compare: 'Compare', recentlyViewed: 'Recently Viewed', orderHistory: 'Orders' };
 
@@ -161,15 +165,99 @@ export default function WallArtShop() {
         <p className="text-xs">🎉 Yeni Müşterilere %15 İndirim - Kod: <span className="text-white font-semibold">HOSGELDIN15</span></p>
       </div>
 
-      {/* Hero */}
-      <section className={`relative py-20 overflow-hidden ${darkMode ? 'bg-gradient-to-br from-stone-800 via-stone-900 to-stone-800' : 'bg-gradient-to-br from-stone-100 to-amber-50'}`}>
-        <div className="absolute inset-0 opacity-20"><div className="absolute top-10 left-10 w-64 h-64 bg-amber-500 rounded-full blur-3xl"></div><div className="absolute bottom-10 right-10 w-80 h-80 bg-orange-500 rounded-full blur-3xl"></div></div>
-        <div className="max-w-7xl mx-auto px-4 text-center relative z-10">
-          <h2 className={`text-5xl font-bold mb-4 ${theme.text}`}>Duvarlarınıza <span style={{color: theme.accent}}>Sanat</span> Katın</h2>
-          <p className={`text-xl ${theme.textSecondary} max-w-2xl mx-auto mb-8`}>Özgün tasarımlarla mekanlarınıza karakter katın</p>
-          <button onClick={() => document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' })} className="text-stone-900 px-8 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition" style={{background: theme.accent}}>Koleksiyonu Keşfet</button>
+      {/* Hero with Video Background */}
+      <section className="relative h-[70vh] min-h-[500px] overflow-hidden">
+        {/* Video Background */}
+        <div className="absolute inset-0">
+          <video 
+            autoPlay 
+            muted 
+            loop 
+            playsInline
+            className="w-full h-full object-cover"
+            poster="https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=1920&q=80"
+          >
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-white-sand-beach-and-palm-trees-1564-large.mp4" type="video/mp4" />
+          </video>
+          {/* Dark Overlay */}
+          <div className="absolute inset-0 bg-black/50"></div>
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-stone-900 via-transparent to-transparent"></div>
+        </div>
+        
+        {/* Content */}
+        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4">
+          <h2 className="text-5xl md:text-7xl font-bold mb-6 text-white animate-fade-in">
+            Duvarlarınıza <span style={{color: theme.accent}}>Sanat</span> Katın
+          </h2>
+          <p className="text-xl md:text-2xl text-stone-300 max-w-2xl mx-auto mb-10 animate-fade-in-delay">
+            Özgün tasarımlarla mekanlarınıza karakter katın
+          </p>
+          <button 
+            onClick={() => document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' })} 
+            className="text-stone-900 px-10 py-4 rounded-xl font-semibold text-lg shadow-2xl hover:shadow-xl hover:scale-105 transition-all duration-300 animate-fade-in-delay-2"
+            style={{background: theme.accent}}
+          >
+            Koleksiyonu Keşfet
+          </button>
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+          <ChevronDown size={32} className="text-white/70" />
         </div>
       </section>
+
+      {/* CSS Animations */}
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideIn {
+          from { opacity: 0; transform: translateX(-20px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes scaleIn {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+        .animate-fade-in {
+          animation: fadeIn 0.8s ease-out forwards;
+        }
+        .animate-fade-in-delay {
+          animation: fadeIn 0.8s ease-out 0.2s forwards;
+          opacity: 0;
+        }
+        .animate-fade-in-delay-2 {
+          animation: fadeIn 0.8s ease-out 0.4s forwards;
+          opacity: 0;
+        }
+        .animate-slide-in {
+          animation: slideIn 0.5s ease-out forwards;
+        }
+        .animate-scale-in {
+          animation: scaleIn 0.3s ease-out forwards;
+        }
+        .skeleton {
+          background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+          background-size: 200% 100%;
+          animation: shimmer 1.5s infinite;
+        }
+        .page-transition-enter {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        .page-transition-enter-active {
+          opacity: 1;
+          transform: translateY(0);
+          transition: all 0.3s ease-out;
+        }
+      `}</style>
 
       {/* Features */}
       <section className={`py-8 ${theme.bgSecondary} border-b ${theme.border}`}>
@@ -279,27 +367,54 @@ export default function WallArtShop() {
         )}
 
         {/* Products Grid */}
-        {filteredProducts.length === 0 ? <div className="text-center py-16"><p className={theme.textMuted}>Ürün bulunamadı</p></div> : viewMode === 'grid' ? (
+        {isLoading ? (
+          /* Skeleton Loading */
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {filteredProducts.map(product => (
-              <div key={product.id} className="group">
-                <div className={`relative overflow-hidden ${theme.card} rounded-2xl shadow-lg border transform hover:-translate-y-1 hover:scale-[1.02] transition-all`}>
+            {[...Array(8)].map((_, idx) => (
+              <div key={idx} className="animate-pulse">
+                <div className={`${theme.card} rounded-2xl overflow-hidden border`}>
+                  <div className="skeleton aspect-square"></div>
+                </div>
+                <div className="skeleton h-10 rounded-xl mt-3"></div>
+              </div>
+            ))}
+          </div>
+        ) : filteredProducts.length === 0 ? (
+          <div className="text-center py-16"><p className={theme.textMuted}>Ürün bulunamadı</p></div>
+        ) : viewMode === 'grid' ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {filteredProducts.map((product, idx) => (
+              <div 
+                key={product.id} 
+                className="group animate-fade-in"
+                style={{ animationDelay: `${idx * 0.05}s` }}
+              >
+                <div className={`relative overflow-hidden ${theme.card} rounded-2xl shadow-lg border transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300`}>
                   {product.isNew && <div className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs z-10">YENİ</div>}
                   {product.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs z-10">-{product.discount}%</div>}
                   {product.stock === 0 && <div className="absolute inset-0 bg-black/60 z-10 flex items-center justify-center"><span className="text-white text-sm font-medium">{t.outOfStock}</span></div>}
-                  <button onClick={() => toggleFavorite(product.id)} className={`absolute ${product.isNew ? 'left-16' : 'left-3'} top-3 z-20 ${theme.bgTertiary} rounded-full p-2 opacity-0 group-hover:opacity-100 transition`}><Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={theme.accent} /></button>
-                  <button onClick={() => toggleCompare(product)} className={`absolute ${product.isNew ? 'left-16' : 'left-3'} top-12 z-20 ${theme.bgTertiary} rounded-full p-2 opacity-0 group-hover:opacity-100 transition`}><Copy size={16} className={compareProducts.find(p => p.id === product.id) ? 'text-green-400' : ''} /></button>
-                  <div className="cursor-pointer" onClick={() => { setSelectedProduct(product); addToRecentlyViewed(product); }}>
-                    <img src={product.images[0]} alt={product.name} className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-500" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition flex flex-col justify-end p-4">
-                      <h3 className="text-sm font-semibold text-white">{product.name}</h3>
-                      <div className="flex items-center gap-2 mt-1">
+                  <button onClick={() => toggleFavorite(product.id)} className={`absolute ${product.isNew ? 'left-16' : 'left-3'} top-3 z-20 ${theme.bgTertiary} rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110`}><Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={theme.accent} /></button>
+                  <button onClick={() => toggleCompare(product)} className={`absolute ${product.isNew ? 'left-16' : 'left-3'} top-12 z-20 ${theme.bgTertiary} rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110`}><Copy size={16} className={compareProducts.find(p => p.id === product.id) ? 'text-green-400' : ''} /></button>
+                  <div className="cursor-pointer" onClick={() => { setPageTransition(true); setTimeout(() => { setSelectedProduct(product); addToRecentlyViewed(product); setPageTransition(false); }, 150); }}>
+                    {/* Image with loading state */}
+                    <div className="relative">
+                      {!imagesLoaded[product.id] && <div className="skeleton absolute inset-0"></div>}
+                      <img 
+                        src={product.images[0]} 
+                        alt={product.name} 
+                        className={`w-full aspect-square object-cover group-hover:scale-110 transition-transform duration-700 ${imagesLoaded[product.id] ? 'opacity-100' : 'opacity-0'}`}
+                        onLoad={() => setImagesLoaded(prev => ({...prev, [product.id]: true}))}
+                      />
+                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
+                      <h3 className="text-sm font-semibold text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">{product.name}</h3>
+                      <div className="flex items-center gap-2 mt-1 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 delay-75">
                         {product.discount > 0 ? <><p className="text-sm text-stone-400 line-through">{product.priceUnframed}₺</p><p className="text-sm text-green-400 font-bold">{Math.round(product.priceUnframed * (1 - product.discount/100))}₺</p></> : <p className="text-sm text-stone-300">{product.priceUnframed}₺</p>}
                       </div>
                     </div>
                   </div>
                 </div>
-                <button onClick={() => setSelectedProduct(product)} disabled={product.stock === 0} className={`w-full mt-3 text-stone-900 py-2.5 rounded-xl text-sm font-medium ${product.stock === 0 ? 'opacity-50' : ''}`} style={{background: theme.accent}}>{product.stock === 0 ? t.outOfStock : t.addToCart}</button>
+                <button onClick={() => { setPageTransition(true); setTimeout(() => { setSelectedProduct(product); setPageTransition(false); }, 150); }} disabled={product.stock === 0} className={`w-full mt-3 text-stone-900 py-2.5 rounded-xl text-sm font-medium transform hover:scale-[1.02] transition-all duration-200 ${product.stock === 0 ? 'opacity-50' : 'hover:shadow-lg'}`} style={{background: theme.accent}}>{product.stock === 0 ? t.outOfStock : t.addToCart}</button>
               </div>
             ))}
           </div>
@@ -378,22 +493,29 @@ export default function WallArtShop() {
         </div>
       </footer>
 
+      {/* Page Transition Overlay */}
+      {pageTransition && (
+        <div className="fixed inset-0 z-[60] bg-stone-900/50 backdrop-blur-sm flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
+
       {/* Product Page - Full Screen */}
       {selectedProduct && (
-        <div className={`fixed inset-0 z-50 ${theme.bg} overflow-y-auto`}>
+        <div className={`fixed inset-0 z-50 ${theme.bg} overflow-y-auto animate-fade-in`}>
           {/* Product Page Header */}
           <div className={`sticky top-0 ${theme.bgTertiary} border-b ${theme.border} z-10`}>
             <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-              <button onClick={() => setSelectedProduct(null)} className={`flex items-center gap-2 ${theme.textSecondary} hover:${theme.text}`}>
+              <button onClick={() => { setPageTransition(true); setTimeout(() => { setSelectedProduct(null); setPageTransition(false); }, 150); }} className={`flex items-center gap-2 ${theme.textSecondary} hover:${theme.text} transition`}>
                 <ChevronLeft size={20} />
                 <span className="text-sm">Geri</span>
               </button>
-              <button onClick={() => setSelectedProduct(null)} className="text-xl tracking-wider hover:opacity-80 transition" style={{fontFamily: "'TAN ST CANARD', serif", letterSpacing: '0.15em', color: theme.accent}}>LUUZ</button>
+              <button onClick={() => { setPageTransition(true); setTimeout(() => { setSelectedProduct(null); setPageTransition(false); }, 150); }} className="text-xl tracking-wider hover:opacity-80 transition" style={{fontFamily: "'TAN ST CANARD', serif", letterSpacing: '0.15em', color: theme.accent}}>LUUZ</button>
               <div className="flex items-center gap-2">
-                <button onClick={() => toggleFavorite(selectedProduct.id)} className={`p-2 rounded-full ${theme.card}`}>
+                <button onClick={() => toggleFavorite(selectedProduct.id)} className={`p-2 rounded-full ${theme.card} hover:scale-110 transition-transform`}>
                   <Heart size={20} fill={favorites.includes(selectedProduct.id) ? theme.accent : 'none'} color={theme.accent} />
                 </button>
-                <button onClick={() => setShowCart(true)} className={`relative p-2 ${theme.textSecondary}`}>
+                <button onClick={() => setShowCart(true)} className={`relative p-2 ${theme.textSecondary} hover:scale-110 transition-transform`}>
                   <ShoppingCart size={20} />
                   {totalItems > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{totalItems}</span>}
                 </button>
@@ -404,27 +526,49 @@ export default function WallArtShop() {
           {/* Product Content */}
           <div className="max-w-6xl mx-auto px-4 py-8">
             <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-              {/* Product Images */}
-              <div>
-                <div className="relative rounded-2xl overflow-hidden mb-4">
-                  <img src={selectedProduct.images[activeImageIndex]} alt="" className="w-full aspect-square object-cover" />
-                  {selectedProduct.images.length > 1 && (
+              {/* Product Images with Zoom */}
+              <div className="animate-slide-in">
+                <div 
+                  className="relative rounded-2xl overflow-hidden mb-4 cursor-zoom-in group"
+                  onMouseEnter={() => setShowZoom(true)}
+                  onMouseLeave={() => setShowZoom(false)}
+                  onMouseMove={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / rect.width) * 100;
+                    const y = ((e.clientY - rect.top) / rect.height) * 100;
+                    setZoomPosition({ x, y });
+                  }}
+                  onClick={() => setShowZoom(!showZoom)}
+                >
+                  <img 
+                    src={selectedProduct.images[activeImageIndex]} 
+                    alt="" 
+                    className="w-full aspect-square object-cover transition-transform duration-300"
+                    style={showZoom ? { transform: 'scale(2)', transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%` } : {}}
+                  />
+                  
+                  {/* Zoom indicator */}
+                  <div className={`absolute bottom-4 right-4 ${theme.bgTertiary} rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity`}>
+                    <ZoomIn size={20} className={theme.textSecondary} />
+                  </div>
+                  
+                  {selectedProduct.images.length > 1 && !showZoom && (
                     <>
-                      <button onClick={() => setActiveImageIndex(prev => prev > 0 ? prev - 1 : selectedProduct.images.length - 1)} className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 p-3 rounded-full transition">
+                      <button onClick={(e) => { e.stopPropagation(); setActiveImageIndex(prev => prev > 0 ? prev - 1 : selectedProduct.images.length - 1); }} className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 p-3 rounded-full transition hover:scale-110">
                         <ChevronLeft size={24} className="text-white" />
                       </button>
-                      <button onClick={() => setActiveImageIndex(prev => prev < selectedProduct.images.length - 1 ? prev + 1 : 0)} className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 p-3 rounded-full transition">
+                      <button onClick={(e) => { e.stopPropagation(); setActiveImageIndex(prev => prev < selectedProduct.images.length - 1 ? prev + 1 : 0); }} className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 p-3 rounded-full transition hover:scale-110">
                         <ChevronRight size={24} className="text-white" />
                       </button>
                     </>
                   )}
-                  {selectedProduct.discount > 0 && <div className="absolute top-4 left-4 bg-red-500 text-white px-4 py-2 rounded-full text-sm font-medium">-{selectedProduct.discount}%</div>}
-                  {selectedProduct.isNew && <div className="absolute top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-medium">YENİ</div>}
+                  {selectedProduct.discount > 0 && !showZoom && <div className="absolute top-4 left-4 bg-red-500 text-white px-4 py-2 rounded-full text-sm font-medium">-{selectedProduct.discount}%</div>}
+                  {selectedProduct.isNew && !showZoom && <div className="absolute top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-medium">YENİ</div>}
                 </div>
                 {selectedProduct.images.length > 1 && (
                   <div className="flex gap-3">
                     {selectedProduct.images.map((img, idx) => (
-                      <button key={idx} onClick={() => setActiveImageIndex(idx)} className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition ${activeImageIndex === idx ? 'border-amber-500' : 'border-transparent hover:border-stone-500'}`}>
+                      <button key={idx} onClick={() => setActiveImageIndex(idx)} className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all duration-200 hover:scale-105 ${activeImageIndex === idx ? 'border-amber-500 ring-2 ring-amber-500/30' : 'border-transparent hover:border-stone-500'}`}>
                         <img src={img} alt="" className="w-full h-full object-cover" />
                       </button>
                     ))}
