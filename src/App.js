@@ -698,26 +698,31 @@ export default function WallArtShop() {
                   </button>
 
                   {/* WhatsApp Order Button */}
-                  <a 
-                    href={`https://wa.me/905060342409?text=${encodeURIComponent(
-                      `Merhaba! LUUZ'dan sipariş vermek istiyorum:\n\n` +
-                      `Urun: ${selectedProduct.name}\n` +
-                      `Boyut: ${selectedProduct.selectedSize || 'Seçilmedi'}\n` +
-                      `Cerceve: ${selectedProduct.selectedFrame === true ? 'Cerceveli' : selectedProduct.selectedFrame === false ? 'Cercevesiz' : 'Secilmedi'}\n` +
-                      `Fiyat: ${(() => {
-                        const sizeMultiplier = selectedProduct.selectedSize === '30x40' ? 0.7 : 1;
-                        const basePrice = selectedProduct.selectedFrame ? selectedProduct.priceFramed : selectedProduct.priceUnframed;
-                        return Math.round(basePrice * sizeMultiplier);
-                      })()}TL\n\n` +
-                      `Siparis vermek istiyorum.`
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button 
+                    onClick={() => {
+                      if (selectedProduct.selectedSize === undefined) {
+                        alert('Lütfen boyut seçin');
+                      } else if (selectedProduct.selectedFrame === undefined) {
+                        alert('Lütfen çerçeve seçeneği seçin');
+                      } else {
+                        const message = `Merhaba! LUUZ'dan sipariş vermek istiyorum:\n\n` +
+                          `Urun: ${selectedProduct.name}\n` +
+                          `Boyut: ${selectedProduct.selectedSize}\n` +
+                          `Cerceve: ${selectedProduct.selectedFrame ? 'Cerceveli' : 'Cercevesiz'}\n` +
+                          `Fiyat: ${(() => {
+                            const sizeMultiplier = selectedProduct.selectedSize === '30x40' ? 0.7 : 1;
+                            const basePrice = selectedProduct.selectedFrame ? selectedProduct.priceFramed : selectedProduct.priceUnframed;
+                            return Math.round(basePrice * sizeMultiplier);
+                          })()}TL\n\n` +
+                          `Siparis vermek istiyorum.`;
+                        window.open(`https://wa.me/905060342409?text=${encodeURIComponent(message)}`, '_blank');
+                      }
+                    }}
                     className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-semibold text-lg shadow-lg flex items-center justify-center gap-3 transition-all hover:shadow-xl"
                   >
                     <MessageCircle size={22} />
                     WhatsApp ile Sipariş Ver
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
