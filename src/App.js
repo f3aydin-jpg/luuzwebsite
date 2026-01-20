@@ -113,13 +113,14 @@ export default function WallArtShop() {
   return (
     <div className={`min-h-screen ${theme.bg} transition-colors duration-300`}>
       <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200;300;400;500&display=swap" rel="stylesheet" />
+      <link href="https://fonts.cdnfonts.com/css/tan-st-canard" rel="stylesheet" />
       
       {/* Header */}
       <header className={`${theme.bgTertiary} sticky top-0 z-40 border-b ${theme.border}`}>
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button onClick={() => setShowMobileMenu(!showMobileMenu)} className={`lg:hidden ${theme.textSecondary}`}><Menu size={24} /></button>
-            <h1 className="text-2xl tracking-widest font-light" style={{fontFamily: "'Raleway', sans-serif", letterSpacing: '0.3em', color: theme.accent}}>LUUZ</h1>
+            <h1 className="text-2xl tracking-wider" style={{fontFamily: "'TAN ST CANARD', serif", letterSpacing: '0.15em', color: theme.accent}}>LUUZ</h1>
           </div>
           <nav className={`hidden lg:flex items-center gap-6 text-sm ${theme.textSecondary}`}>
             <a href="#collection" className="hover:text-white transition">{t.collection}</a>
@@ -365,7 +366,7 @@ export default function WallArtShop() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div>
-              <h4 className="text-xl tracking-widest font-light mb-4" style={{fontFamily: "'Raleway', sans-serif", letterSpacing: '0.3em', color: theme.accent}}>LUUZ</h4>
+              <h4 className="text-xl tracking-wider mb-4" style={{fontFamily: "'TAN ST CANARD', serif", letterSpacing: '0.15em', color: theme.accent}}>LUUZ</h4>
               <p className={`${theme.textMuted} text-xs`}>Özgün duvar sanatı tasarımları.</p>
               <div className="flex gap-3 mt-4"><button className={theme.textMuted}><Instagram size={18} /></button><button className={theme.textMuted}><Twitter size={18} /></button><button className={theme.textMuted}><Facebook size={18} /></button></div>
             </div>
@@ -387,7 +388,7 @@ export default function WallArtShop() {
                 <ChevronLeft size={20} />
                 <span className="text-sm">Geri</span>
               </button>
-              <button onClick={() => setSelectedProduct(null)} className="text-xl tracking-widest font-light hover:opacity-80 transition" style={{fontFamily: "'Raleway', sans-serif", letterSpacing: '0.3em', color: theme.accent}}>LUUZ</button>
+              <button onClick={() => setSelectedProduct(null)} className="text-xl tracking-wider hover:opacity-80 transition" style={{fontFamily: "'TAN ST CANARD', serif", letterSpacing: '0.15em', color: theme.accent}}>LUUZ</button>
               <div className="flex items-center gap-2">
                 <button onClick={() => toggleFavorite(selectedProduct.id)} className={`p-2 rounded-full ${theme.card}`}>
                   <Heart size={20} fill={favorites.includes(selectedProduct.id) ? theme.accent : 'none'} color={theme.accent} />
@@ -442,18 +443,32 @@ export default function WallArtShop() {
                   <h1 className={`text-4xl font-bold ${theme.text} mb-4`}>{selectedProduct.name}</h1>
                   <p className={`${theme.textSecondary} text-lg leading-relaxed mb-6`}>{selectedProduct.description}</p>
                   
-                  {/* Price Display */}
-                  <div className="flex items-baseline gap-3 mb-4">
-                    {selectedProduct.discount > 0 ? (
-                      <>
-                        <span className={`text-2xl ${theme.textMuted} line-through`}>{selectedProduct.priceUnframed}₺</span>
-                        <span className="text-4xl font-bold text-green-400">{Math.round(selectedProduct.priceUnframed * (1 - selectedProduct.discount/100))}₺</span>
-                        <span className="text-sm text-green-400">%{selectedProduct.discount} indirim</span>
-                      </>
-                    ) : (
-                      <span className={`text-4xl font-bold ${theme.text}`}>{selectedProduct.priceUnframed}₺'den başlayan</span>
-                    )}
-                  </div>
+                  {/* Dynamic Price Display */}
+                  {(() => {
+                    const sizeMultiplier = selectedProduct.selectedSize === '30x40' ? 0.7 : 1;
+                    const basePrice = selectedProduct.selectedFrame ? selectedProduct.priceFramed : selectedProduct.priceUnframed;
+                    const calculatedPrice = Math.round(basePrice * sizeMultiplier);
+                    const originalPrice = Math.round((selectedProduct.selectedFrame ? selectedProduct.priceFramed : selectedProduct.priceUnframed) * sizeMultiplier);
+                    const discountedPrice = selectedProduct.discount > 0 ? Math.round(calculatedPrice * (1 - selectedProduct.discount / 100)) : calculatedPrice;
+                    
+                    return (
+                      <div className="flex items-baseline gap-3 mb-4">
+                        {selectedProduct.selectedSize || selectedProduct.selectedFrame !== undefined ? (
+                          selectedProduct.discount > 0 ? (
+                            <>
+                              <span className={`text-2xl ${theme.textMuted} line-through`}>{originalPrice}₺</span>
+                              <span className="text-4xl font-bold text-green-400">{discountedPrice}₺</span>
+                              <span className="text-sm text-green-400">%{selectedProduct.discount} indirim</span>
+                            </>
+                          ) : (
+                            <span className={`text-4xl font-bold`} style={{color: theme.accent}}>{calculatedPrice}₺</span>
+                          )
+                        ) : (
+                          <span className={`text-4xl font-bold ${theme.text}`}>{Math.round(selectedProduct.priceUnframed * 0.7)}₺'den başlayan</span>
+                        )}
+                      </div>
+                    );
+                  })()}
                   
                   {selectedProduct.stock > 0 ? (
                     <p className="text-sm text-green-400 flex items-center gap-2"><Check size={16} />Stokta mevcut</p>
@@ -514,7 +529,7 @@ export default function WallArtShop() {
                         className={`px-5 py-2.5 rounded-lg text-sm font-medium transition ${selectedProduct.selectedFrame === true ? 'text-stone-900' : `${theme.text} border ${theme.border} hover:border-amber-500`}`}
                         style={selectedProduct.selectedFrame === true ? {background: theme.accent} : {}}
                       >
-                        Çerçeveli (+{selectedProduct.priceFramed - selectedProduct.priceUnframed}₺)
+                        Çerçeveli
                       </button>
                     </div>
                   </div>
