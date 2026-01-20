@@ -25,7 +25,6 @@ export default function WallArtShop() {
   const [recentlyViewed, setRecentlyViewed] = useState([]);
   const [compareProducts, setCompareProducts] = useState([]);
   const [showCompare, setShowCompare] = useState(false);
-  const [showHowItWorks, setShowHowItWorks] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
   const [showFAQ, setShowFAQ] = useState(false);
   const [couponCode, setCouponCode] = useState('');
@@ -124,7 +123,6 @@ export default function WallArtShop() {
           </div>
           <nav className={`hidden lg:flex items-center gap-6 text-sm ${theme.textSecondary}`}>
             <a href="#collection" className="hover:text-white transition">{t.collection}</a>
-            <button onClick={() => setShowHowItWorks(true)} className="hover:text-white">{t.howItWorks}</button>
             <button onClick={() => setShowAbout(true)} className="hover:text-white">{t.about}</button>
             <button onClick={() => setShowFAQ(true)} className="hover:text-white">{t.faq}</button>
           </nav>
@@ -151,7 +149,6 @@ export default function WallArtShop() {
         {showMobileMenu && (
           <div className={`lg:hidden ${theme.bgSecondary} border-t ${theme.border} px-4 py-4 space-y-3`}>
             <a href="#collection" className={`block py-2 ${theme.textSecondary}`}>{t.collection}</a>
-            <button onClick={() => { setShowHowItWorks(true); setShowMobileMenu(false); }} className={`block py-2 ${theme.textSecondary} text-left w-full`}>{t.howItWorks}</button>
             <button onClick={() => { setShowAbout(true); setShowMobileMenu(false); }} className={`block py-2 ${theme.textSecondary} text-left w-full`}>{t.about}</button>
             <button onClick={() => { setShowFAQ(true); setShowMobileMenu(false); }} className={`block py-2 ${theme.textSecondary} text-left w-full`}>{t.faq}</button>
           </div>
@@ -380,84 +377,131 @@ export default function WallArtShop() {
         </div>
       </footer>
 
-      {/* Product Modal */}
+      {/* Product Page - Full Screen */}
       {selectedProduct && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className={`${theme.bgSecondary} rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl`}>
-            <div className={`sticky top-0 ${theme.bgSecondary} p-4 border-b ${theme.border} flex justify-between items-center z-10`}>
-              <h3 className={`text-lg font-bold ${theme.text}`}>{selectedProduct.name}</h3>
+        <div className={`fixed inset-0 z-50 ${theme.bg} overflow-y-auto`}>
+          {/* Product Page Header */}
+          <div className={`sticky top-0 ${theme.bgTertiary} border-b ${theme.border} z-10`}>
+            <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+              <button onClick={() => setSelectedProduct(null)} className={`flex items-center gap-2 ${theme.textSecondary} hover:${theme.text}`}>
+                <ChevronLeft size={20} />
+                <span className="text-sm">Geri</span>
+              </button>
+              <h1 className="text-xl tracking-widest font-light" style={{fontFamily: "'Raleway', sans-serif", letterSpacing: '0.3em', color: theme.accent}}>LUUZ</h1>
               <div className="flex items-center gap-2">
-                <button onClick={() => toggleFavorite(selectedProduct.id)} className={`p-2 rounded-full ${theme.card}`}><Heart size={18} fill={favorites.includes(selectedProduct.id) ? theme.accent : 'none'} color={theme.accent} /></button>
-                <button onClick={() => setSelectedProduct(null)} className={`p-2 rounded-full ${theme.card}`}><X size={18} /></button>
+                <button onClick={() => toggleFavorite(selectedProduct.id)} className={`p-2 rounded-full ${theme.card}`}>
+                  <Heart size={20} fill={favorites.includes(selectedProduct.id) ? theme.accent : 'none'} color={theme.accent} />
+                </button>
+                <button onClick={() => setShowCart(true)} className={`relative p-2 ${theme.textSecondary}`}>
+                  <ShoppingCart size={20} />
+                  {totalItems > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{totalItems}</span>}
+                </button>
               </div>
             </div>
-            <div className="grid md:grid-cols-2 gap-6 p-6">
+          </div>
+
+          {/* Product Content */}
+          <div className="max-w-6xl mx-auto px-4 py-8">
+            <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+              {/* Product Images */}
               <div>
-                <div className="relative rounded-xl overflow-hidden mb-3">
+                <div className="relative rounded-2xl overflow-hidden mb-4">
                   <img src={selectedProduct.images[activeImageIndex]} alt="" className="w-full aspect-square object-cover" />
-                  {selectedProduct.images.length > 1 && <><button onClick={() => setActiveImageIndex(prev => prev > 0 ? prev - 1 : selectedProduct.images.length - 1)} className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full"><ChevronLeft size={20} className="text-white" /></button><button onClick={() => setActiveImageIndex(prev => prev < selectedProduct.images.length - 1 ? prev + 1 : 0)} className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full"><ChevronRight size={20} className="text-white" /></button></>}
-                  {selectedProduct.discount > 0 && <div className="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-sm">-{selectedProduct.discount}%</div>}
+                  {selectedProduct.images.length > 1 && (
+                    <>
+                      <button onClick={() => setActiveImageIndex(prev => prev > 0 ? prev - 1 : selectedProduct.images.length - 1)} className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 p-3 rounded-full transition">
+                        <ChevronLeft size={24} className="text-white" />
+                      </button>
+                      <button onClick={() => setActiveImageIndex(prev => prev < selectedProduct.images.length - 1 ? prev + 1 : 0)} className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 p-3 rounded-full transition">
+                        <ChevronRight size={24} className="text-white" />
+                      </button>
+                    </>
+                  )}
+                  {selectedProduct.discount > 0 && <div className="absolute top-4 left-4 bg-red-500 text-white px-4 py-2 rounded-full text-sm font-medium">-{selectedProduct.discount}%</div>}
+                  {selectedProduct.isNew && <div className="absolute top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-medium">YENİ</div>}
                 </div>
-                {selectedProduct.images.length > 1 && <div className="flex gap-2">{selectedProduct.images.map((img, idx) => <button key={idx} onClick={() => setActiveImageIndex(idx)} className={`w-16 h-16 rounded-lg overflow-hidden border-2 ${activeImageIndex === idx ? 'border-amber-500' : 'border-transparent'}`}><img src={img} alt="" className="w-full h-full object-cover" /></button>)}</div>}
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className={`text-xs px-2 py-1 rounded-full ${theme.card} border ${theme.textSecondary}`}>{selectedProduct.category}</span>
-                    {selectedProduct.isNew && <span className="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400">YENİ</span>}
-                    {selectedProduct.stock > 0 && selectedProduct.stock < 5 && <span className="text-xs px-2 py-1 rounded-full bg-orange-500/20 text-orange-400">Son {selectedProduct.stock}</span>}
-                  </div>
-                  <p className={`${theme.textSecondary} text-sm`}>{selectedProduct.description}</p>
-                  <p className={`text-xs ${theme.textMuted} mt-2`}>{t.size}: {selectedProduct.size}</p>
-                  {selectedProduct.stock > 0 ? <p className="text-xs text-green-400 mt-1 flex items-center gap-1"><Check size={12} />{t.inStock} ({selectedProduct.stock})</p> : <p className="text-xs text-red-400 mt-1">{t.outOfStock}</p>}
-                </div>
-                {selectedProduct.reviews.length > 0 && (
-                  <div className={`p-3 rounded-xl ${theme.card} border`}>
-                    <h4 className={`text-sm font-medium ${theme.text} mb-2`}>Yorumlar ({selectedProduct.reviews.length})</h4>
-                    {selectedProduct.reviews.map((r, idx) => <div key={idx} className="py-2"><div className="flex gap-0.5 mb-1">{[...Array(r.rating)].map((_, i) => <Star key={i} size={10} fill={theme.accent} color={theme.accent} />)}</div><p className={`text-xs ${theme.textSecondary}`}>"{r.comment}" - {r.name}</p></div>)}
+                {selectedProduct.images.length > 1 && (
+                  <div className="flex gap-3">
+                    {selectedProduct.images.map((img, idx) => (
+                      <button key={idx} onClick={() => setActiveImageIndex(idx)} className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition ${activeImageIndex === idx ? 'border-amber-500' : 'border-transparent hover:border-stone-500'}`}>
+                        <img src={img} alt="" className="w-full h-full object-cover" />
+                      </button>
+                    ))}
                   </div>
                 )}
+              </div>
+
+              {/* Product Info */}
+              <div className="space-y-6">
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className={`text-sm px-3 py-1 rounded-full ${theme.card} border ${theme.textSecondary}`}>{selectedProduct.category}</span>
+                    {selectedProduct.stock > 0 && selectedProduct.stock < 5 && <span className="text-sm px-3 py-1 rounded-full bg-orange-500/20 text-orange-400">Son {selectedProduct.stock} adet</span>}
+                  </div>
+                  <h1 className={`text-3xl font-bold ${theme.text} mb-3`}>{selectedProduct.name}</h1>
+                  <p className={`${theme.textSecondary} text-base leading-relaxed`}>{selectedProduct.description}</p>
+                  <p className={`text-sm ${theme.textMuted} mt-3`}>Boyut: {selectedProduct.size}</p>
+                  {selectedProduct.stock > 0 ? (
+                    <p className="text-sm text-green-400 mt-2 flex items-center gap-2"><Check size={16} />Stokta ({selectedProduct.stock} adet)</p>
+                  ) : (
+                    <p className="text-sm text-red-400 mt-2">{t.outOfStock}</p>
+                  )}
+                </div>
+
+                {/* Reviews */}
+                {selectedProduct.reviews.length > 0 && (
+                  <div className={`p-4 rounded-xl ${theme.card} border`}>
+                    <h4 className={`text-base font-medium ${theme.text} mb-3`}>Müşteri Yorumları ({selectedProduct.reviews.length})</h4>
+                    {selectedProduct.reviews.map((r, idx) => (
+                      <div key={idx} className="py-2">
+                        <div className="flex gap-1 mb-1">{[...Array(r.rating)].map((_, i) => <Star key={i} size={14} fill={theme.accent} color={theme.accent} />)}</div>
+                        <p className={`text-sm ${theme.textSecondary}`}>"{r.comment}" - <span className={theme.text}>{r.name}</span></p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 {/* Frame Selection */}
-                <div className="space-y-2 pt-4">
-                  <p className={`text-sm font-medium ${theme.text} mb-2`}>Seçenek:</p>
+                <div className="space-y-3">
+                  <p className={`text-base font-medium ${theme.text}`}>Seçenek:</p>
                   <div 
                     onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: false})}
-                    className={`w-full border ${selectedProduct.selectedFrame === false ? 'border-amber-500 ring-2 ring-amber-500/30' : theme.border} hover:border-amber-500 py-3 rounded-xl transition flex justify-between items-center px-4 cursor-pointer ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`w-full border-2 ${selectedProduct.selectedFrame === false ? 'border-amber-500 ring-2 ring-amber-500/20' : theme.border} hover:border-amber-500 py-4 rounded-xl transition flex justify-between items-center px-5 cursor-pointer ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     <div className="text-left">
-                      <span className={`font-medium ${theme.text}`}>{t.unframed}</span>
-                      <p className={`text-xs ${theme.textMuted}`}>Premium baskı</p>
+                      <span className={`font-semibold text-lg ${theme.text}`}>{t.unframed}</span>
+                      <p className={`text-sm ${theme.textMuted}`}>Premium kalite baskı</p>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       {selectedProduct.discount > 0 ? (
                         <>
-                          <span className={`text-sm ${theme.textMuted} line-through`}>{selectedProduct.priceUnframed}₺</span>
-                          <span className="font-bold text-lg text-green-400">{Math.round(selectedProduct.priceUnframed * (1 - selectedProduct.discount/100))}₺</span>
+                          <span className={`text-base ${theme.textMuted} line-through`}>{selectedProduct.priceUnframed}₺</span>
+                          <span className="font-bold text-2xl text-green-400">{Math.round(selectedProduct.priceUnframed * (1 - selectedProduct.discount/100))}₺</span>
                         </>
                       ) : (
-                        <span className={`font-bold text-lg ${theme.text}`}>{selectedProduct.priceUnframed}₺</span>
+                        <span className={`font-bold text-2xl ${theme.text}`}>{selectedProduct.priceUnframed}₺</span>
                       )}
-                      {selectedProduct.selectedFrame === false && <Check size={18} className="text-amber-500 ml-2" />}
+                      {selectedProduct.selectedFrame === false && <Check size={24} className="text-amber-500" />}
                     </div>
                   </div>
                   <div 
                     onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: true})}
-                    className={`w-full border ${selectedProduct.selectedFrame === true ? 'border-amber-500 ring-2 ring-amber-500/30' : theme.border} hover:border-amber-500 py-3 rounded-xl transition flex justify-between items-center px-4 cursor-pointer ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`w-full border-2 ${selectedProduct.selectedFrame === true ? 'border-amber-500 ring-2 ring-amber-500/20' : theme.border} hover:border-amber-500 py-4 rounded-xl transition flex justify-between items-center px-5 cursor-pointer ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     <div className="text-left">
-                      <span className={`font-medium ${theme.text}`}>{t.framed}</span>
-                      <p className={`text-xs ${theme.textMuted}`}>Ahşap çerçeve</p>
+                      <span className={`font-semibold text-lg ${theme.text}`}>{t.framed}</span>
+                      <p className={`text-sm ${theme.textMuted}`}>El yapımı ahşap çerçeve</p>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       {selectedProduct.discount > 0 ? (
                         <>
-                          <span className={`text-sm ${theme.textMuted} line-through`}>{selectedProduct.priceFramed}₺</span>
-                          <span className="font-bold text-lg text-green-400">{Math.round(selectedProduct.priceFramed * (1 - selectedProduct.discount/100))}₺</span>
+                          <span className={`text-base ${theme.textMuted} line-through`}>{selectedProduct.priceFramed}₺</span>
+                          <span className="font-bold text-2xl text-green-400">{Math.round(selectedProduct.priceFramed * (1 - selectedProduct.discount/100))}₺</span>
                         </>
                       ) : (
-                        <span className={`font-bold text-lg ${theme.text}`}>{selectedProduct.priceFramed}₺</span>
+                        <span className={`font-bold text-2xl ${theme.text}`}>{selectedProduct.priceFramed}₺</span>
                       )}
-                      {selectedProduct.selectedFrame === true && <Check size={18} className="text-amber-500 ml-2" />}
+                      {selectedProduct.selectedFrame === true && <Check size={24} className="text-amber-500" />}
                     </div>
                   </div>
                   
@@ -471,23 +515,32 @@ export default function WallArtShop() {
                       }
                     }} 
                     disabled={selectedProduct.stock === 0}
-                    className={`w-full text-stone-900 py-4 rounded-xl font-semibold shadow-lg mt-4 flex items-center justify-center gap-2 ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'}`}
+                    className={`w-full text-stone-900 py-4 rounded-xl font-semibold text-lg shadow-lg mt-4 flex items-center justify-center gap-3 ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'}`}
                     style={{background: theme.accent}}
                   >
-                    <ShoppingCart size={20} />
+                    <ShoppingCart size={22} />
                     {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
                   </button>
                 </div>
-                <div className="pt-4">
-                  <h4 className={`text-sm font-medium ${theme.text} mb-3`}>{t.similarProducts}</h4>
-                  <div className="flex gap-2 overflow-x-auto">{products.filter(p => p.category === selectedProduct.category && p.id !== selectedProduct.id).slice(0, 4).map(p => <div key={p.id} className="flex-shrink-0 w-20 cursor-pointer" onClick={() => { setSelectedProduct(p); setActiveImageIndex(0); }}><img src={p.images[0]} alt="" className="w-full aspect-square object-cover rounded-lg" /><p className={`text-[10px] ${theme.textMuted} mt-1`}>{p.priceUnframed}₺</p></div>)}</div>
+
+                {/* Similar Products */}
+                <div className="pt-6">
+                  <h4 className={`text-base font-medium ${theme.text} mb-4`}>{t.similarProducts}</h4>
+                  <div className="flex gap-4 overflow-x-auto pb-2">
+                    {products.filter(p => p.category === selectedProduct.category && p.id !== selectedProduct.id).slice(0, 4).map(p => (
+                      <div key={p.id} className="flex-shrink-0 w-28 cursor-pointer" onClick={() => { setSelectedProduct(p); setActiveImageIndex(0); }}>
+                        <img src={p.images[0]} alt="" className="w-full aspect-square object-cover rounded-xl" />
+                        <p className={`text-sm ${theme.text} mt-2 truncate`}>{p.name}</p>
+                        <p className={`text-sm ${theme.textMuted}`}>{p.priceUnframed}₺</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       )}
-
       {/* Cart */}
       {showCart && (
         <div className="fixed inset-0 z-50"><div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowCart(false)} />
@@ -621,23 +674,6 @@ export default function WallArtShop() {
                   <tr className={`border-t ${theme.border}`}><td className="p-2 font-medium">Stok</td>{compareProducts.map(p => <td key={p.id} className="p-2 text-center">{p.stock > 0 ? <Check size={16} className="text-green-400 mx-auto" /> : <X size={16} className="text-red-400 mx-auto" />}</td>)}</tr>
                 </tbody>
               </table>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* How It Works */}
-      {showHowItWorks && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className={`${theme.bgSecondary} rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-2xl`}>
-            <div className={`sticky top-0 ${theme.bgSecondary} p-5 border-b ${theme.border} flex justify-between items-center`}><h2 className={`text-xl font-bold ${theme.text}`}>{t.howItWorks}</h2><button onClick={() => setShowHowItWorks(false)} className={theme.textSecondary}><X size={24} /></button></div>
-            <div className="p-6 space-y-6">
-              {[{ step: 1, title: 'Eserinizi Seçin', desc: 'Koleksiyonumuzdan size uygun eseri seçin', icon: '🎨' }, { step: 2, title: 'Çerçeve Seçeneği', desc: 'Çerçeveli veya çerçevesiz seçin', icon: '🖼️' }, { step: 3, title: 'Güvenli Ödeme', desc: '256-bit SSL ile güvenli ödeme', icon: '🔒' }, { step: 4, title: 'Hızlı Teslimat', desc: '2-4 iş günü içinde kapınıza', icon: '🚚' }].map((item, idx) => (
-                <div key={idx} className="flex gap-4">
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style={{background: `${theme.accent}20`}}>{item.icon}</div>
-                  <div><h3 className={`font-medium ${theme.text}`}>{item.title}</h3><p className={`text-sm ${theme.textMuted}`}>{item.desc}</p></div>
-                </div>
-              ))}
             </div>
           </div>
         </div>
