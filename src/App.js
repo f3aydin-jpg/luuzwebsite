@@ -696,6 +696,28 @@ export default function WallArtShop() {
                     <ShoppingCart size={22} />
                     {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
                   </button>
+
+                  {/* WhatsApp Order Button */}
+                  <a 
+                    href={`https://wa.me/905060342409?text=${encodeURIComponent(
+                      `Merhaba! LUUZ'dan sipariş vermek istiyorum:\n\n` +
+                      `📦 Ürün: ${selectedProduct.name}\n` +
+                      `📐 Boyut: ${selectedProduct.selectedSize || 'Seçilmedi'}\n` +
+                      `🖼️ Çerçeve: ${selectedProduct.selectedFrame === true ? 'Çerçeveli' : selectedProduct.selectedFrame === false ? 'Çerçevesiz' : 'Seçilmedi'}\n` +
+                      `💰 Fiyat: ${(() => {
+                        const sizeMultiplier = selectedProduct.selectedSize === '30x40' ? 0.7 : 1;
+                        const basePrice = selectedProduct.selectedFrame ? selectedProduct.priceFramed : selectedProduct.priceUnframed;
+                        return Math.round(basePrice * sizeMultiplier);
+                      })()}₺\n\n` +
+                      `Sipariş vermek istiyorum.`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-semibold text-lg shadow-lg flex items-center justify-center gap-3 transition-all hover:shadow-xl"
+                  >
+                    <MessageCircle size={22} />
+                    WhatsApp ile Sipariş Ver
+                  </a>
                 </div>
               </div>
             </div>
@@ -938,8 +960,15 @@ export default function WallArtShop() {
         </div>
       )}
 
-      {/* Chat FAB */}
-      <button onClick={() => setShowChat(!showChat)} className="fixed bottom-6 right-6 w-14 h-14 text-stone-900 rounded-full shadow-2xl hover:scale-110 transition-all z-40 flex items-center justify-center" style={{background: theme.accent}}>{showChat ? <X size={24} /> : <MessageCircle size={24} />}</button>
+      {/* WhatsApp Floating Button */}
+      <a 
+        href="https://wa.me/905060342409?text=Merhaba! LUUZ hakkında bilgi almak istiyorum."
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 w-14 h-14 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-2xl hover:scale-110 transition-all z-40 flex items-center justify-center"
+      >
+        <MessageCircle size={24} />
+      </a>
 
       {/* Scroll Top */}
       {showScrollTop && <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className={`fixed bottom-6 left-6 w-12 h-12 ${theme.bgSecondary} border ${theme.border} rounded-full shadow-lg hover:scale-110 transition z-40 flex items-center justify-center ${theme.textSecondary}`}><ArrowUp size={20} /></button>}
