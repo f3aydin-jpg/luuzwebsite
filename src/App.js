@@ -44,6 +44,8 @@ export default function WallArtShop() {
   const [showAdmin, setShowAdmin] = useState(false);
   const [products, setProducts] = useState([]);
   const [showCollection, setShowCollection] = useState(false);
+  const [bestSellerIndex, setBestSellerIndex] = useState(0);
+  const [newArrivalIndex, setNewArrivalIndex] = useState(0);
 
   const t = language === 'tr' ? { collection: 'Koleksiyon', about: 'Hakkımızda', howItWorks: 'Nasıl Çalışır', faq: 'SSS', search: 'Ürün ara...', cart: 'Sepetim', favorites: 'Favorilerim', addToCart: 'Sepete Ekle', checkout: 'Ödemeye Geç', total: 'Toplam', empty: 'Sepetiniz boş', filters: 'Filtreler', price: 'Fiyat', size: 'Boyut', bestSellers: 'Çok Satanlar', newArrivals: 'Yeni Gelenler', allCollection: 'Tüm Koleksiyon', framed: 'Çerçeveli', unframed: 'Çerçevesiz', inStock: 'Stokta', outOfStock: 'Tükendi', similarProducts: 'Benzer Ürünler', applyCoupon: 'Uygula', newsletter: 'Yeni Koleksiyonlardan Haberdar Olun', subscribe: 'Abone Ol', compare: 'Karşılaştır', recentlyViewed: 'Son Görüntülenenler', orderHistory: 'Sipariş Geçmişi' } : { collection: 'Collection', about: 'About', howItWorks: 'How It Works', faq: 'FAQ', search: 'Search...', cart: 'Cart', favorites: 'Favorites', addToCart: 'Add to Cart', checkout: 'Checkout', total: 'Total', empty: 'Cart is empty', filters: 'Filters', price: 'Price', size: 'Size', bestSellers: 'Best Sellers', newArrivals: 'New Arrivals', allCollection: 'All Collection', framed: 'Framed', unframed: 'Unframed', inStock: 'In Stock', outOfStock: 'Out of Stock', similarProducts: 'Similar', applyCoupon: 'Apply', newsletter: 'Stay Updated', subscribe: 'Subscribe', compare: 'Compare', recentlyViewed: 'Recently Viewed', orderHistory: 'Orders' };
 
@@ -140,7 +142,7 @@ export default function WallArtShop() {
             <button onClick={() => { setShowCollection(false); setSelectedProduct(null); }} className="text-2xl tracking-wider" style={{fontFamily: "'TAN ST CANARD', serif", letterSpacing: '0.15em', color: theme.accent}}>LUUZ</button>
           </div>
           <nav className={`hidden lg:flex items-center gap-6 text-sm ${theme.textSecondary}`}>
-            <button onClick={() => setShowCollection(true)} className="hover:text-white transition">{t.collection}</button>
+            <button onClick={() => setShowCollection(true)} className="hover:text-white transition">Tüm Koleksiyon</button>
             <button onClick={() => setShowAbout(true)} className="hover:text-white">{t.about}</button>
             <button onClick={() => setShowFAQ(true)} className="hover:text-white">{t.faq}</button>
           </nav>
@@ -166,7 +168,7 @@ export default function WallArtShop() {
         )}
         {showMobileMenu && (
           <div className={`lg:hidden ${theme.bgSecondary} border-t ${theme.border} px-4 py-4 space-y-3`}>
-            <button onClick={() => { setShowCollection(true); setShowMobileMenu(false); }} className={`block py-2 ${theme.textSecondary} text-left w-full`}>{t.collection}</button>
+            <button onClick={() => { setShowCollection(true); setShowMobileMenu(false); }} className={`block py-2 ${theme.textSecondary} text-left w-full`}>Tüm Koleksiyon</button>
             <button onClick={() => { setShowAbout(true); setShowMobileMenu(false); }} className={`block py-2 ${theme.textSecondary} text-left w-full`}>{t.about}</button>
             <button onClick={() => { setShowFAQ(true); setShowMobileMenu(false); }} className={`block py-2 ${theme.textSecondary} text-left w-full`}>{t.faq}</button>
           </div>
@@ -284,177 +286,186 @@ export default function WallArtShop() {
         </div>
       </section>
 
-      {/* Categories */}
-      <section className="max-w-7xl mx-auto px-4 py-6">
-        <div className="flex flex-wrap justify-center gap-2 pb-2">
-          {categories.map(cat => (
-            <button key={cat} onClick={() => setSelectedCategory(cat)} className={`px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all ${selectedCategory === cat ? 'text-stone-900 shadow-lg' : `${theme.card} ${theme.textSecondary} border hover:border-stone-500`}`} style={selectedCategory === cat ? {background: theme.accent} : {}}>{cat}</button>
-          ))}
-        </div>
-      </section>
-
-      {/* Best Sellers */}
-      <section className={`max-w-7xl mx-auto px-4 py-8 ${theme.card} rounded-2xl my-4 border`}>
-        <div className="flex items-center gap-2 mb-6"><TrendingUp size={18} style={{color: theme.accent}} /><h3 className={`text-xl font-bold ${theme.text}`}>{t.bestSellers}</h3></div>
-        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-          {products.filter(p => p.isBestSeller).map(product => (
-            <div key={product.id} className="flex-shrink-0 w-44 group">
-              <div className={`relative overflow-hidden ${theme.card} rounded-xl shadow-lg border`}>
-                <div className="absolute top-2 left-2 text-stone-900 px-2 py-0.5 rounded-full text-xs font-medium z-10" style={{background: theme.accent}}>BEST</div>
-                {product.discount > 0 && <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-0.5 rounded-full text-xs z-10">-{product.discount}%</div>}
-                <button onClick={() => toggleFavorite(product.id)} className={`absolute top-8 right-2 z-10 ${theme.bgTertiary} rounded-full p-1 opacity-0 group-hover:opacity-100 transition`}><Heart size={14} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={theme.accent} /></button>
-                <div className="cursor-pointer" onClick={() => { setSelectedProduct(product); addToRecentlyViewed(product); }}>
-                  <img src={product.images[0]} alt={product.name} className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-500" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition flex flex-col justify-end p-3">
-                    <h3 className="text-xs font-semibold text-white">{product.name}</h3>
-                    <p className="text-xs text-stone-300">{product.priceUnframed}₺</p>
-                  </div>
-                </div>
+      {/* Best Sellers & New Arrivals - Side by Side */}
+      <section className="max-w-7xl mx-auto px-4 py-10">
+        <div className="grid md:grid-cols-2 gap-6">
+          
+          {/* Best Sellers */}
+          <div className={`${theme.card} rounded-2xl border p-6`}>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <TrendingUp size={20} style={{color: theme.accent}} />
+                <h3 className={`text-xl font-bold ${theme.text}`}>Çok Satanlar</h3>
               </div>
-              <button onClick={() => setSelectedProduct(product)} className="w-full mt-2 text-stone-900 py-1.5 rounded-lg text-xs font-medium" style={{background: theme.accent}}>{t.addToCart}</button>
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => setBestSellerIndex(prev => prev > 0 ? prev - 1 : Math.max(0, products.filter(p => p.isBestSeller).length - 1))}
+                  className={`p-2 rounded-full ${theme.bgTertiary} hover:bg-amber-500 hover:text-stone-900 transition-all`}
+                >
+                  <ChevronUp size={18} />
+                </button>
+                <button 
+                  onClick={() => setBestSellerIndex(prev => prev < products.filter(p => p.isBestSeller).length - 1 ? prev + 1 : 0)}
+                  className={`p-2 rounded-full ${theme.bgTertiary} hover:bg-amber-500 hover:text-stone-900 transition-all`}
+                >
+                  <ChevronDown size={18} />
+                </button>
+              </div>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* New Arrivals */}
-      <section className={`max-w-7xl mx-auto px-4 py-8 ${theme.card} rounded-2xl my-4 border`}>
-        <div className="flex items-center gap-2 mb-6"><span className="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400">YENİ</span><h3 className={`text-xl font-bold ${theme.text}`}>{t.newArrivals}</h3></div>
-        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-          {products.filter(p => p.isNew).map(product => (
-            <div key={product.id} className="flex-shrink-0 w-44 group">
-              <div className={`relative overflow-hidden ${theme.card} rounded-xl shadow-lg border`}>
-                <div className="absolute top-2 left-2 bg-green-500 text-white px-2 py-0.5 rounded-full text-xs z-10">YENİ</div>
-                {product.discount > 0 && <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-0.5 rounded-full text-xs z-10">-{product.discount}%</div>}
-                <div className="cursor-pointer" onClick={() => { setSelectedProduct(product); addToRecentlyViewed(product); }}>
-                  <img src={product.images[0]} alt={product.name} className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-500" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition flex flex-col justify-end p-3">
-                    <h3 className="text-xs font-semibold text-white">{product.name}</h3>
-                    <p className="text-xs text-stone-300">{product.priceUnframed}₺</p>
-                  </div>
-                </div>
-              </div>
-              <button onClick={() => setSelectedProduct(product)} className="w-full mt-2 text-stone-900 py-1.5 rounded-lg text-xs font-medium" style={{background: theme.accent}}>{t.addToCart}</button>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Filters & Collection */}
-      <section id="collection" className="max-w-7xl mx-auto px-4 py-6">
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-          <h3 className={`text-xl font-bold ${theme.text}`}>{t.allCollection} <span className={`text-sm font-normal ${theme.textMuted}`}>({filteredProducts.length})</span></h3>
-          <div className="flex items-center gap-3">
-            <button onClick={() => setShowFilters(!showFilters)} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs ${theme.card} border ${theme.textSecondary}`}><Filter size={14} />{t.filters}</button>
-            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className={`px-4 py-2 rounded-lg text-xs ${theme.input} border`}>
-              <option value="popular">Popüler</option><option value="newest">En Yeni</option><option value="priceLow">Fiyat ↑</option><option value="priceHigh">Fiyat ↓</option>
-            </select>
-            <div className={`hidden md:flex items-center gap-1 ${theme.card} border rounded-lg p-1`}>
-              <button onClick={() => setViewMode('grid')} className={`p-1.5 rounded ${viewMode === 'grid' ? 'bg-stone-600' : ''}`}><Grid size={14} className={viewMode === 'grid' ? 'text-white' : theme.textMuted} /></button>
-              <button onClick={() => setViewMode('list')} className={`p-1.5 rounded ${viewMode === 'list' ? 'bg-stone-600' : ''}`}><List size={14} className={viewMode === 'list' ? 'text-white' : theme.textMuted} /></button>
-            </div>
-          </div>
-        </div>
-
-        {showFilters && (
-          <div className={`${theme.card} border rounded-xl p-4 mb-6`}>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <label className={`text-xs font-medium ${theme.text} mb-2 block`}>{t.price}</label>
-                <div className="flex items-center gap-2">
-                  <input type="number" value={priceRange[0]} onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])} className={`w-20 px-2 py-1 rounded text-xs ${theme.input} border`} />
-                  <span className={theme.textMuted}>-</span>
-                  <input type="number" value={priceRange[1]} onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])} className={`w-20 px-2 py-1 rounded text-xs ${theme.input} border`} />
-                  <span className={`text-xs ${theme.textMuted}`}>₺</span>
-                </div>
-              </div>
-              <div>
-                <label className={`text-xs font-medium ${theme.text} mb-2 block`}>{t.size}</label>
-                <div className="flex flex-wrap gap-2">
-                  {sizes.map(size => <button key={size} onClick={() => selectedSizes.includes(size) ? setSelectedSizes(selectedSizes.filter(s => s !== size)) : setSelectedSizes([...selectedSizes, size])} className={`px-2 py-1 rounded text-xs ${selectedSizes.includes(size) ? 'text-stone-900' : `${theme.card} border ${theme.textSecondary}`}`} style={selectedSizes.includes(size) ? {background: theme.accent} : {}}>{size}</button>)}
-                </div>
-              </div>
-              <div className="flex items-end"><button onClick={() => { setPriceRange([0, 1500]); setSelectedSizes([]); setSelectedCategory('Tümü'); }} className={`text-xs ${theme.textSecondary} underline`}>Temizle</button></div>
-            </div>
-          </div>
-        )}
-
-        {/* Products Grid */}
-        {isLoading ? (
-          /* Skeleton Loading */
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {[...Array(8)].map((_, idx) => (
-              <div key={idx} className="animate-pulse">
-                <div className={`${theme.card} rounded-2xl overflow-hidden border`}>
-                  <div className="skeleton aspect-square"></div>
-                </div>
-                <div className="skeleton h-10 rounded-xl mt-3"></div>
-              </div>
-            ))}
-          </div>
-        ) : filteredProducts.length === 0 ? (
-          <div className="text-center py-16"><p className={theme.textMuted}>Ürün bulunamadı</p></div>
-        ) : viewMode === 'grid' ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {filteredProducts.map((product, idx) => (
-              <div 
-                key={product.id} 
-                className="group animate-fade-in"
-                style={{ animationDelay: `${idx * 0.05}s` }}
-              >
-                <div className={`relative overflow-hidden ${theme.card} rounded-2xl shadow-lg border transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300`}>
-                  {product.isNew && <div className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs z-10">YENİ</div>}
-                  {product.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs z-10">-{product.discount}%</div>}
-                  {product.stock === 0 && <div className="absolute inset-0 bg-black/60 z-10 flex items-center justify-center"><span className="text-white text-sm font-medium">{t.outOfStock}</span></div>}
-                  <button onClick={() => toggleFavorite(product.id)} className={`absolute ${product.isNew ? 'left-16' : 'left-3'} top-3 z-20 ${theme.bgTertiary} rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110`}><Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={theme.accent} /></button>
-                  <button onClick={() => toggleCompare(product)} className={`absolute ${product.isNew ? 'left-16' : 'left-3'} top-12 z-20 ${theme.bgTertiary} rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110`}><Copy size={16} className={compareProducts.find(p => p.id === product.id) ? 'text-green-400' : ''} /></button>
-                  <div className="cursor-pointer" onClick={() => { setPageTransition(true); setTimeout(() => { setSelectedProduct(product); addToRecentlyViewed(product); setPageTransition(false); }, 150); }}>
-                    {/* Image with loading state */}
-                    <div className="relative">
-                      {!imagesLoaded[product.id] && <div className="skeleton absolute inset-0"></div>}
-                      <img 
-                        src={product.images[0]} 
-                        alt={product.name} 
-                        className={`w-full aspect-square object-cover group-hover:scale-110 transition-transform duration-700 ${imagesLoaded[product.id] ? 'opacity-100' : 'opacity-0'}`}
-                        onLoad={() => setImagesLoaded(prev => ({...prev, [product.id]: true}))}
-                      />
-                    </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
-                      <h3 className="text-sm font-semibold text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">{product.name}</h3>
-                      <div className="flex items-center gap-2 mt-1 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 delay-75">
-                        {product.discount > 0 ? <><p className="text-sm text-stone-400 line-through">{product.priceUnframed}₺</p><p className="text-sm text-green-400 font-bold">{Math.round(product.priceUnframed * (1 - product.discount/100))}₺</p></> : <p className="text-sm text-stone-300">{product.priceUnframed}₺</p>}
+            
+            <div className="relative h-[320px] overflow-hidden">
+              {products.filter(p => p.isBestSeller).length > 0 ? (
+                products.filter(p => p.isBestSeller).map((product, idx) => (
+                  <div 
+                    key={product.id}
+                    className={`absolute inset-0 transition-all duration-500 ease-out ${
+                      idx === bestSellerIndex 
+                        ? 'opacity-100 translate-y-0' 
+                        : idx < bestSellerIndex 
+                          ? 'opacity-0 -translate-y-full' 
+                          : 'opacity-0 translate-y-full'
+                    }`}
+                  >
+                    <div className="flex gap-4 h-full">
+                      <div className="relative w-1/2 rounded-xl overflow-hidden group cursor-pointer" onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
+                        <img src={product.images?.[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                        <div className="absolute top-3 left-3 text-stone-900 px-3 py-1 rounded-full text-xs font-bold" style={{background: theme.accent}}>BEST</div>
+                        {product.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs">-{product.discount}%</div>}
+                      </div>
+                      <div className="flex-1 flex flex-col justify-center">
+                        <h4 className={`text-lg font-bold ${theme.text} mb-2`}>{product.name}</h4>
+                        <p className={`text-sm ${theme.textSecondary} mb-4 line-clamp-2`}>{product.description}</p>
+                        <div className="flex items-center gap-2 mb-4">
+                          {product.discount > 0 ? (
+                            <>
+                              <span className={`text-lg ${theme.textMuted} line-through`}>{product.priceUnframed}₺</span>
+                              <span className="text-2xl font-bold text-green-400">{Math.round(product.priceUnframed * (1 - product.discount/100))}₺</span>
+                            </>
+                          ) : (
+                            <span className="text-2xl font-bold" style={{color: theme.accent}}>{product.priceUnframed}₺</span>
+                          )}
+                        </div>
+                        <button 
+                          onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }}
+                          className="text-stone-900 px-6 py-3 rounded-xl font-medium text-sm hover:opacity-90 transition w-fit"
+                          style={{background: theme.accent}}
+                        >
+                          Ürünü İncele
+                        </button>
                       </div>
                     </div>
                   </div>
+                ))
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <p className={theme.textMuted}>Henüz çok satan ürün yok</p>
                 </div>
-                <button onClick={() => { setPageTransition(true); setTimeout(() => { setSelectedProduct(product); setPageTransition(false); }, 150); }} disabled={product.stock === 0} className={`w-full mt-3 text-stone-900 py-2.5 rounded-xl text-sm font-medium transform hover:scale-[1.02] transition-all duration-200 ${product.stock === 0 ? 'opacity-50' : 'hover:shadow-lg'}`} style={{background: theme.accent}}>{product.stock === 0 ? t.outOfStock : t.addToCart}</button>
+              )}
+            </div>
+            
+            {/* Dots Indicator */}
+            {products.filter(p => p.isBestSeller).length > 1 && (
+              <div className="flex justify-center gap-2 mt-4">
+                {products.filter(p => p.isBestSeller).map((_, idx) => (
+                  <button 
+                    key={idx}
+                    onClick={() => setBestSellerIndex(idx)}
+                    className={`w-2 h-2 rounded-full transition-all ${idx === bestSellerIndex ? 'w-6' : ''}`}
+                    style={{background: idx === bestSellerIndex ? theme.accent : theme.border}}
+                  />
+                ))}
               </div>
-            ))}
+            )}
           </div>
-        ) : (
-          <div className="space-y-3">
-            {filteredProducts.map(product => (
-              <div key={product.id} className={`flex gap-4 ${theme.card} border rounded-xl p-3`}>
-                <img src={product.images[0]} alt={product.name} className="w-24 h-24 object-cover rounded-lg cursor-pointer" onClick={() => setSelectedProduct(product)} />
-                <div className="flex-1">
-                  <div className="flex items-start justify-between">
-                    <div><h3 className={`font-medium ${theme.text}`}>{product.name}</h3><p className={`text-xs ${theme.textMuted}`}>{product.category} • {product.size}</p></div>
-                    <div className="flex gap-2">
-                      <button onClick={() => toggleFavorite(product.id)}><Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={theme.accent} /></button>
-                      <button onClick={() => toggleCompare(product)}><Copy size={16} className={compareProducts.find(p => p.id === product.id) ? 'text-green-400' : theme.textMuted} /></button>
+
+          {/* New Arrivals */}
+          <div className={`${theme.card} rounded-2xl border p-6`}>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <span className="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400 font-medium">YENİ</span>
+                <h3 className={`text-xl font-bold ${theme.text}`}>Yeni Ürünler</h3>
+              </div>
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => setNewArrivalIndex(prev => prev > 0 ? prev - 1 : Math.max(0, products.filter(p => p.isNew).length - 1))}
+                  className={`p-2 rounded-full ${theme.bgTertiary} hover:bg-green-500 hover:text-white transition-all`}
+                >
+                  <ChevronUp size={18} />
+                </button>
+                <button 
+                  onClick={() => setNewArrivalIndex(prev => prev < products.filter(p => p.isNew).length - 1 ? prev + 1 : 0)}
+                  className={`p-2 rounded-full ${theme.bgTertiary} hover:bg-green-500 hover:text-white transition-all`}
+                >
+                  <ChevronDown size={18} />
+                </button>
+              </div>
+            </div>
+            
+            <div className="relative h-[320px] overflow-hidden">
+              {products.filter(p => p.isNew).length > 0 ? (
+                products.filter(p => p.isNew).map((product, idx) => (
+                  <div 
+                    key={product.id}
+                    className={`absolute inset-0 transition-all duration-500 ease-out ${
+                      idx === newArrivalIndex 
+                        ? 'opacity-100 translate-y-0' 
+                        : idx < newArrivalIndex 
+                          ? 'opacity-0 -translate-y-full' 
+                          : 'opacity-0 translate-y-full'
+                    }`}
+                  >
+                    <div className="flex gap-4 h-full">
+                      <div className="relative w-1/2 rounded-xl overflow-hidden group cursor-pointer" onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
+                        <img src={product.images?.[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                        <div className="absolute top-3 left-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">YENİ</div>
+                        {product.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs">-{product.discount}%</div>}
+                      </div>
+                      <div className="flex-1 flex flex-col justify-center">
+                        <h4 className={`text-lg font-bold ${theme.text} mb-2`}>{product.name}</h4>
+                        <p className={`text-sm ${theme.textSecondary} mb-4 line-clamp-2`}>{product.description}</p>
+                        <div className="flex items-center gap-2 mb-4">
+                          {product.discount > 0 ? (
+                            <>
+                              <span className={`text-lg ${theme.textMuted} line-through`}>{product.priceUnframed}₺</span>
+                              <span className="text-2xl font-bold text-green-400">{Math.round(product.priceUnframed * (1 - product.discount/100))}₺</span>
+                            </>
+                          ) : (
+                            <span className="text-2xl font-bold" style={{color: theme.accent}}>{product.priceUnframed}₺</span>
+                          )}
+                        </div>
+                        <button 
+                          onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }}
+                          className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl font-medium text-sm transition w-fit"
+                        >
+                          Ürünü İncele
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between mt-2">
-                    <div className="flex items-center gap-2">
-                      {product.discount > 0 ? <><span className={`text-sm ${theme.textMuted} line-through`}>{product.priceUnframed}₺</span><span className="text-sm text-green-400 font-bold">{Math.round(product.priceUnframed * (1 - product.discount/100))}₺</span></> : <span className={`text-sm font-bold ${theme.text}`}>{product.priceUnframed}₺</span>}
-                    </div>
-                    <button onClick={() => setSelectedProduct(product)} className="text-stone-900 px-4 py-1.5 rounded-lg text-xs font-medium" style={{background: theme.accent}}>{t.addToCart}</button>
-                  </div>
+                ))
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <p className={theme.textMuted}>Henüz yeni ürün yok</p>
                 </div>
+              )}
+            </div>
+            
+            {/* Dots Indicator */}
+            {products.filter(p => p.isNew).length > 1 && (
+              <div className="flex justify-center gap-2 mt-4">
+                {products.filter(p => p.isNew).map((_, idx) => (
+                  <button 
+                    key={idx}
+                    onClick={() => setNewArrivalIndex(idx)}
+                    className={`w-2 h-2 rounded-full transition-all ${idx === newArrivalIndex ? 'w-6 bg-green-500' : ''}`}
+                    style={{background: idx === newArrivalIndex ? undefined : theme.border}}
+                  />
+                ))}
               </div>
-            ))}
+            )}
           </div>
-        )}
+
+        </div>
       </section>
 
       {/* Recently Viewed */}
