@@ -461,9 +461,30 @@ export default function WallArtShop() {
                   </div>
                 )}
 
+                {/* Size Selection */}
+                <div className="space-y-3">
+                  <p className={`text-base font-medium ${theme.text}`}>Boyut:</p>
+                  <div className="flex gap-3">
+                    <button 
+                      onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedSize: '30x40'})}
+                      className={`flex-1 border-2 ${selectedProduct.selectedSize === '30x40' ? 'border-amber-500 ring-2 ring-amber-500/20' : theme.border} hover:border-amber-500 py-3 px-4 rounded-xl transition text-center ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                    >
+                      <span className={`font-semibold ${theme.text}`}>30x40 cm</span>
+                      <p className={`text-xs ${theme.textMuted} mt-1`}>Küçük</p>
+                    </button>
+                    <button 
+                      onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedSize: '50x70'})}
+                      className={`flex-1 border-2 ${selectedProduct.selectedSize === '50x70' ? 'border-amber-500 ring-2 ring-amber-500/20' : theme.border} hover:border-amber-500 py-3 px-4 rounded-xl transition text-center ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                    >
+                      <span className={`font-semibold ${theme.text}`}>50x70 cm</span>
+                      <p className={`text-xs ${theme.textMuted} mt-1`}>Orta</p>
+                    </button>
+                  </div>
+                </div>
+
                 {/* Frame Selection */}
                 <div className="space-y-3">
-                  <p className={`text-base font-medium ${theme.text}`}>Seçenek:</p>
+                  <p className={`text-base font-medium ${theme.text}`}>Çerçeve:</p>
                   <div 
                     onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: false})}
                     className={`w-full border-2 ${selectedProduct.selectedFrame === false ? 'border-amber-500 ring-2 ring-amber-500/20' : theme.border} hover:border-amber-500 py-4 rounded-xl transition flex justify-between items-center px-5 cursor-pointer ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
@@ -508,34 +529,66 @@ export default function WallArtShop() {
                   {/* Add to Cart Button */}
                   <button 
                     onClick={() => {
-                      if (selectedProduct.selectedFrame !== undefined) {
-                        addToCart(selectedProduct, selectedProduct.selectedFrame);
+                      if (selectedProduct.selectedFrame === undefined) {
+                        alert('Lütfen çerçeve seçeneği seçin');
+                      } else if (selectedProduct.selectedSize === undefined) {
+                        alert('Lütfen boyut seçin');
                       } else {
-                        alert('Lütfen bir seçenek seçin (Çerçeveli veya Çerçevesiz)');
+                        addToCart(selectedProduct, selectedProduct.selectedFrame);
                       }
                     }} 
                     disabled={selectedProduct.stock === 0}
-                    className={`w-full text-stone-900 py-4 rounded-xl font-semibold text-lg shadow-lg mt-4 flex items-center justify-center gap-3 ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'}`}
+                    className={`w-full text-stone-900 py-4 rounded-xl font-semibold text-lg shadow-lg mt-4 flex items-center justify-center gap-3 ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90 hover:shadow-xl transition-all'}`}
                     style={{background: theme.accent}}
                   >
                     <ShoppingCart size={22} />
                     {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
                   </button>
                 </div>
+              </div>
+            </div>
 
-                {/* Similar Products */}
-                <div className="pt-6">
-                  <h4 className={`text-base font-medium ${theme.text} mb-4`}>{t.similarProducts}</h4>
-                  <div className="flex gap-4 overflow-x-auto pb-2">
-                    {products.filter(p => p.category === selectedProduct.category && p.id !== selectedProduct.id).slice(0, 4).map(p => (
-                      <div key={p.id} className="flex-shrink-0 w-28 cursor-pointer" onClick={() => { setSelectedProduct(p); setActiveImageIndex(0); }}>
-                        <img src={p.images[0]} alt="" className="w-full aspect-square object-cover rounded-xl" />
-                        <p className={`text-sm ${theme.text} mt-2 truncate`}>{p.name}</p>
-                        <p className={`text-sm ${theme.textMuted}`}>{p.priceUnframed}₺</p>
+            {/* Similar Products - Enhanced Section */}
+            <div className={`mt-12 pt-8 border-t ${theme.border}`}>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className={`text-2xl font-bold ${theme.text}`}>Benzer Ürünler</h3>
+                <button 
+                  onClick={() => setSelectedProduct(null)} 
+                  className={`text-sm ${theme.textSecondary} hover:${theme.text} flex items-center gap-1`}
+                >
+                  Tümünü Gör <ChevronRight size={16} />
+                </button>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                {products.filter(p => p.category === selectedProduct.category && p.id !== selectedProduct.id).slice(0, 4).map(p => (
+                  <div 
+                    key={p.id} 
+                    className="group cursor-pointer" 
+                    onClick={() => { setSelectedProduct({...p, selectedSize: undefined, selectedFrame: undefined}); setActiveImageIndex(0); window.scrollTo(0, 0); }}
+                  >
+                    <div className={`relative overflow-hidden rounded-2xl ${theme.card} border shadow-lg transform group-hover:-translate-y-2 group-hover:shadow-xl transition-all duration-300`}>
+                      {p.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs z-10">-{p.discount}%</div>}
+                      {p.isNew && <div className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs z-10">YENİ</div>}
+                      <img src={p.images[0]} alt={p.name} className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                        <span className="text-white text-sm font-medium">Ürünü İncele</span>
                       </div>
-                    ))}
+                    </div>
+                    <div className="mt-3 px-1">
+                      <h4 className={`font-medium ${theme.text} truncate`}>{p.name}</h4>
+                      <div className="flex items-center gap-2 mt-1">
+                        {p.discount > 0 ? (
+                          <>
+                            <span className={`text-sm ${theme.textMuted} line-through`}>{p.priceUnframed}₺</span>
+                            <span className="text-lg font-bold text-green-400">{Math.round(p.priceUnframed * (1 - p.discount/100))}₺</span>
+                          </>
+                        ) : (
+                          <span className={`text-lg font-bold ${theme.text}`}>{p.priceUnframed}₺</span>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
