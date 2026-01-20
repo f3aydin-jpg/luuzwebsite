@@ -43,6 +43,7 @@ export default function WallArtShop() {
   const [imagesLoaded, setImagesLoaded] = useState({});
   const [showAdmin, setShowAdmin] = useState(false);
   const [products, setProducts] = useState([]);
+  const [showCollection, setShowCollection] = useState(false);
 
   const t = language === 'tr' ? { collection: 'Koleksiyon', about: 'Hakkımızda', howItWorks: 'Nasıl Çalışır', faq: 'SSS', search: 'Ürün ara...', cart: 'Sepetim', favorites: 'Favorilerim', addToCart: 'Sepete Ekle', checkout: 'Ödemeye Geç', total: 'Toplam', empty: 'Sepetiniz boş', filters: 'Filtreler', price: 'Fiyat', size: 'Boyut', bestSellers: 'Çok Satanlar', newArrivals: 'Yeni Gelenler', allCollection: 'Tüm Koleksiyon', framed: 'Çerçeveli', unframed: 'Çerçevesiz', inStock: 'Stokta', outOfStock: 'Tükendi', similarProducts: 'Benzer Ürünler', applyCoupon: 'Uygula', newsletter: 'Yeni Koleksiyonlardan Haberdar Olun', subscribe: 'Abone Ol', compare: 'Karşılaştır', recentlyViewed: 'Son Görüntülenenler', orderHistory: 'Sipariş Geçmişi' } : { collection: 'Collection', about: 'About', howItWorks: 'How It Works', faq: 'FAQ', search: 'Search...', cart: 'Cart', favorites: 'Favorites', addToCart: 'Add to Cart', checkout: 'Checkout', total: 'Total', empty: 'Cart is empty', filters: 'Filters', price: 'Price', size: 'Size', bestSellers: 'Best Sellers', newArrivals: 'New Arrivals', allCollection: 'All Collection', framed: 'Framed', unframed: 'Unframed', inStock: 'In Stock', outOfStock: 'Out of Stock', similarProducts: 'Similar', applyCoupon: 'Apply', newsletter: 'Stay Updated', subscribe: 'Subscribe', compare: 'Compare', recentlyViewed: 'Recently Viewed', orderHistory: 'Orders' };
 
@@ -136,10 +137,10 @@ export default function WallArtShop() {
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button onClick={() => setShowMobileMenu(!showMobileMenu)} className={`lg:hidden ${theme.textSecondary}`}><Menu size={24} /></button>
-            <h1 className="text-2xl tracking-wider" style={{fontFamily: "'TAN ST CANARD', serif", letterSpacing: '0.15em', color: theme.accent}}>LUUZ</h1>
+            <button onClick={() => { setShowCollection(false); setSelectedProduct(null); }} className="text-2xl tracking-wider" style={{fontFamily: "'TAN ST CANARD', serif", letterSpacing: '0.15em', color: theme.accent}}>LUUZ</button>
           </div>
           <nav className={`hidden lg:flex items-center gap-6 text-sm ${theme.textSecondary}`}>
-            <a href="#collection" className="hover:text-white transition">{t.collection}</a>
+            <button onClick={() => setShowCollection(true)} className="hover:text-white transition">{t.collection}</button>
             <button onClick={() => setShowAbout(true)} className="hover:text-white">{t.about}</button>
             <button onClick={() => setShowFAQ(true)} className="hover:text-white">{t.faq}</button>
           </nav>
@@ -165,7 +166,7 @@ export default function WallArtShop() {
         )}
         {showMobileMenu && (
           <div className={`lg:hidden ${theme.bgSecondary} border-t ${theme.border} px-4 py-4 space-y-3`}>
-            <a href="#collection" className={`block py-2 ${theme.textSecondary}`}>{t.collection}</a>
+            <button onClick={() => { setShowCollection(true); setShowMobileMenu(false); }} className={`block py-2 ${theme.textSecondary} text-left w-full`}>{t.collection}</button>
             <button onClick={() => { setShowAbout(true); setShowMobileMenu(false); }} className={`block py-2 ${theme.textSecondary} text-left w-full`}>{t.about}</button>
             <button onClick={() => { setShowFAQ(true); setShowMobileMenu(false); }} className={`block py-2 ${theme.textSecondary} text-left w-full`}>{t.faq}</button>
           </div>
@@ -206,7 +207,7 @@ export default function WallArtShop() {
             Özgün tasarımlarla mekanlarınıza karakter katın
           </p>
           <button 
-            onClick={() => document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' })} 
+            onClick={() => setShowCollection(true)} 
             className="text-stone-900 px-10 py-4 rounded-xl font-semibold text-lg shadow-2xl hover:shadow-xl hover:scale-105 transition-all duration-300 animate-fade-in-delay-2"
             style={{background: theme.accent}}
           >
@@ -510,6 +511,216 @@ export default function WallArtShop() {
 
       {/* Admin Panel */}
       {showAdmin && <AdminPanel onClose={() => setShowAdmin(false)} />}
+
+      {/* Collection Page - Full Screen */}
+      {showCollection && (
+        <div className={`fixed inset-0 z-50 ${theme.bg} overflow-y-auto animate-fade-in`}>
+          {/* Collection Header */}
+          <div className={`sticky top-0 ${theme.bgTertiary} border-b ${theme.border} z-10`}>
+            <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+              <button onClick={() => setShowCollection(false)} className={`flex items-center gap-2 ${theme.textSecondary} hover:text-white transition`}>
+                <ChevronLeft size={20} />
+                <span className="text-sm">Ana Sayfa</span>
+              </button>
+              <button onClick={() => setShowCollection(false)} className="text-xl tracking-wider hover:opacity-80 transition" style={{fontFamily: "'TAN ST CANARD', serif", letterSpacing: '0.15em', color: theme.accent}}>LUUZ</button>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setShowSearch(!showSearch)} className={`p-2 ${theme.textSecondary}`}><Search size={18} /></button>
+                <button onClick={() => setShowFavorites(true)} className={`relative p-2 ${theme.textSecondary}`}>
+                  <Heart size={18} fill={favorites.length > 0 ? theme.accent : 'none'} color={favorites.length > 0 ? theme.accent : 'currentColor'} />
+                  {favorites.length > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{favorites.length}</span>}
+                </button>
+                <button onClick={() => setShowCart(true)} className={`relative p-2 ${theme.textSecondary}`}>
+                  <ShoppingCart size={18} />
+                  {totalItems > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{totalItems}</span>}
+                </button>
+              </div>
+            </div>
+            {showSearch && (
+              <div className="px-4 pb-4">
+                <input type="text" placeholder={t.search} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className={`w-full px-4 py-3 rounded-xl ${theme.input} border focus:outline-none`} autoFocus />
+              </div>
+            )}
+          </div>
+
+          {/* Collection Content */}
+          <div className="max-w-7xl mx-auto px-4 py-8">
+            {/* Page Title */}
+            <div className="text-center mb-8">
+              <h1 className={`text-4xl font-bold ${theme.text} mb-2`}>Koleksiyon</h1>
+              <p className={`${theme.textSecondary}`}>Tüm posterlerimizi keşfedin</p>
+            </div>
+
+            {/* Categories */}
+            <div className="flex flex-wrap justify-center gap-2 mb-8">
+              {categories.map(cat => (
+                <button 
+                  key={cat} 
+                  onClick={() => setSelectedCategory(cat)} 
+                  className={`px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all ${selectedCategory === cat ? 'text-stone-900 shadow-lg' : `${theme.card} ${theme.textSecondary} border hover:border-stone-500`}`} 
+                  style={selectedCategory === cat ? {background: theme.accent} : {}}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            {/* Filters & Sort */}
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+              <p className={`${theme.textMuted} text-sm`}>{filteredProducts.length} ürün</p>
+              <div className="flex items-center gap-3">
+                <button onClick={() => setShowFilters(!showFilters)} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs ${theme.card} border ${theme.textSecondary}`}><Filter size={14} />{t.filters}</button>
+                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className={`px-4 py-2 rounded-lg text-xs ${theme.input} border`}>
+                  <option value="popular">Popüler</option>
+                  <option value="newest">En Yeni</option>
+                  <option value="priceLow">Fiyat ↑</option>
+                  <option value="priceHigh">Fiyat ↓</option>
+                </select>
+                <div className={`hidden md:flex items-center gap-1 ${theme.card} border rounded-lg p-1`}>
+                  <button onClick={() => setViewMode('grid')} className={`p-1.5 rounded ${viewMode === 'grid' ? 'bg-stone-600' : ''}`}><Grid size={14} className={viewMode === 'grid' ? 'text-white' : theme.textMuted} /></button>
+                  <button onClick={() => setViewMode('list')} className={`p-1.5 rounded ${viewMode === 'list' ? 'bg-stone-600' : ''}`}><List size={14} className={viewMode === 'list' ? 'text-white' : theme.textMuted} /></button>
+                </div>
+              </div>
+            </div>
+
+            {/* Filters Panel */}
+            {showFilters && (
+              <div className={`${theme.card} border rounded-xl p-4 mb-6`}>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <label className={`text-xs font-medium ${theme.text} mb-2 block`}>{t.price}</label>
+                    <div className="flex items-center gap-2">
+                      <input type="number" value={priceRange[0]} onChange={(e) => setPriceRange([+e.target.value, priceRange[1]])} className={`w-full px-3 py-2 rounded-lg text-xs ${theme.input} border`} placeholder="Min" />
+                      <span className={theme.textMuted}>-</span>
+                      <input type="number" value={priceRange[1]} onChange={(e) => setPriceRange([priceRange[0], +e.target.value])} className={`w-full px-3 py-2 rounded-lg text-xs ${theme.input} border`} placeholder="Max" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className={`text-xs font-medium ${theme.text} mb-2 block`}>{t.size}</label>
+                    <div className="flex flex-wrap gap-1">
+                      {sizes.map(s => (
+                        <button key={s} onClick={() => selectedSizes.includes(s) ? setSelectedSizes(selectedSizes.filter(x => x !== s)) : setSelectedSizes([...selectedSizes, s])} className={`px-2 py-1 rounded-lg text-xs ${selectedSizes.includes(s) ? 'bg-amber-500 text-stone-900' : `${theme.bgTertiary} ${theme.textMuted}`}`}>{s}</button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex items-end">
+                    <button onClick={() => { setPriceRange([0, 1500]); setSelectedSizes([]); setSelectedCategory('Tümü'); }} className={`text-xs ${theme.textMuted} underline`}>Filtreleri Temizle</button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Products Grid */}
+            {isLoading ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                {[...Array(8)].map((_, idx) => (
+                  <div key={idx} className="animate-pulse">
+                    <div className={`${theme.card} rounded-2xl overflow-hidden border`}>
+                      <div className="skeleton aspect-square"></div>
+                    </div>
+                    <div className="skeleton h-10 rounded-xl mt-3"></div>
+                  </div>
+                ))}
+              </div>
+            ) : filteredProducts.length === 0 ? (
+              <div className="text-center py-16">
+                <p className={theme.textMuted}>Ürün bulunamadı</p>
+              </div>
+            ) : viewMode === 'grid' ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                {filteredProducts.map((product, idx) => (
+                  <div 
+                    key={product.id} 
+                    className="group animate-fade-in"
+                    style={{ animationDelay: `${idx * 0.05}s` }}
+                  >
+                    <div className={`relative overflow-hidden ${theme.card} rounded-2xl shadow-lg border transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300`}>
+                      {product.isNew && <div className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs z-10">YENİ</div>}
+                      {product.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs z-10">-{product.discount}%</div>}
+                      {product.stock === 0 && <div className="absolute inset-0 bg-black/60 z-10 flex items-center justify-center"><span className="text-white text-sm font-medium">{t.outOfStock}</span></div>}
+                      <button onClick={() => toggleFavorite(product.id)} className={`absolute ${product.isNew ? 'left-16' : 'left-3'} top-3 z-20 ${theme.bgTertiary} rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110`}><Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={theme.accent} /></button>
+                      <div className="cursor-pointer" onClick={() => { setShowCollection(false); setPageTransition(true); setTimeout(() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); setPageTransition(false); }, 150); }}>
+                        <div className="relative">
+                          {!imagesLoaded[product.id] && <div className="skeleton absolute inset-0"></div>}
+                          <img 
+                            src={product.images?.[0]} 
+                            alt={product.name} 
+                            className={`w-full aspect-square object-cover group-hover:scale-110 transition-transform duration-700 ${imagesLoaded[product.id] ? 'opacity-100' : 'opacity-0'}`}
+                            onLoad={() => setImagesLoaded(prev => ({...prev, [product.id]: true}))}
+                          />
+                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
+                          <h3 className="text-sm font-semibold text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">{product.name}</h3>
+                          <div className="flex items-center gap-2 mt-1 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 delay-75">
+                            {product.discount > 0 ? (
+                              <>
+                                <p className="text-sm text-stone-400 line-through">{product.priceUnframed}₺</p>
+                                <p className="text-sm text-green-400 font-bold">{Math.round(product.priceUnframed * (1 - product.discount/100))}₺</p>
+                              </>
+                            ) : (
+                              <p className="text-sm text-stone-300">{product.priceUnframed}₺</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={() => { setShowCollection(false); setPageTransition(true); setTimeout(() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); setPageTransition(false); }, 150); }} 
+                      disabled={product.stock === 0} 
+                      className={`w-full mt-3 text-stone-900 py-2.5 rounded-xl text-sm font-medium transform hover:scale-[1.02] transition-all duration-200 ${product.stock === 0 ? 'opacity-50' : 'hover:shadow-lg'}`} 
+                      style={{background: theme.accent}}
+                    >
+                      {product.stock === 0 ? t.outOfStock : 'Ürünü İncele'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {filteredProducts.map(product => (
+                  <div key={product.id} className={`flex gap-4 ${theme.card} border rounded-xl p-3 hover:shadow-lg transition-all`}>
+                    <img 
+                      src={product.images?.[0]} 
+                      alt={product.name} 
+                      className="w-24 h-24 object-cover rounded-lg cursor-pointer" 
+                      onClick={() => { setShowCollection(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }} 
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className={`font-medium ${theme.text}`}>{product.name}</h3>
+                          <p className={`text-xs ${theme.textMuted}`}>{product.category}</p>
+                        </div>
+                        <button onClick={() => toggleFavorite(product.id)}>
+                          <Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={theme.accent} />
+                        </button>
+                      </div>
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center gap-2">
+                          {product.discount > 0 ? (
+                            <>
+                              <span className={`text-sm ${theme.textMuted} line-through`}>{product.priceUnframed}₺</span>
+                              <span className="text-sm text-green-400 font-bold">{Math.round(product.priceUnframed * (1 - product.discount/100))}₺</span>
+                            </>
+                          ) : (
+                            <span className={`text-sm font-bold ${theme.text}`}>{product.priceUnframed}₺</span>
+                          )}
+                        </div>
+                        <button 
+                          onClick={() => { setShowCollection(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }} 
+                          className="text-stone-900 px-4 py-1.5 rounded-lg text-xs font-medium" 
+                          style={{background: theme.accent}}
+                        >
+                          İncele
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Page Transition Overlay */}
       {pageTransition && (
