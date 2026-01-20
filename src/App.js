@@ -701,15 +701,15 @@ export default function WallArtShop() {
                   <a 
                     href={`https://wa.me/905060342409?text=${encodeURIComponent(
                       `Merhaba! LUUZ'dan sipariş vermek istiyorum:\n\n` +
-                      `📦 Ürün: ${selectedProduct.name}\n` +
-                      `📐 Boyut: ${selectedProduct.selectedSize || 'Seçilmedi'}\n` +
-                      `🖼️ Çerçeve: ${selectedProduct.selectedFrame === true ? 'Çerçeveli' : selectedProduct.selectedFrame === false ? 'Çerçevesiz' : 'Seçilmedi'}\n` +
-                      `💰 Fiyat: ${(() => {
+                      `Urun: ${selectedProduct.name}\n` +
+                      `Boyut: ${selectedProduct.selectedSize || 'Seçilmedi'}\n` +
+                      `Cerceve: ${selectedProduct.selectedFrame === true ? 'Cerceveli' : selectedProduct.selectedFrame === false ? 'Cercevesiz' : 'Secilmedi'}\n` +
+                      `Fiyat: ${(() => {
                         const sizeMultiplier = selectedProduct.selectedSize === '30x40' ? 0.7 : 1;
                         const basePrice = selectedProduct.selectedFrame ? selectedProduct.priceFramed : selectedProduct.priceUnframed;
                         return Math.round(basePrice * sizeMultiplier);
-                      })()}₺\n\n` +
-                      `Sipariş vermek istiyorum.`
+                      })()}TL\n\n` +
+                      `Siparis vermek istiyorum.`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
