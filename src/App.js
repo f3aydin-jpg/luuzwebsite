@@ -145,9 +145,9 @@ export default function WallArtShop() {
             </button>
           </div>
           <nav className={`hidden lg:flex items-center gap-6 text-sm ${theme.textSecondary}`}>
-            <button onClick={() => setShowCollection(true)} className="hover:text-white transition">Tüm Koleksiyon</button>
-            <button onClick={() => setShowAbout(true)} className="hover:text-white">{t.about}</button>
-            <button onClick={() => setShowFAQ(true)} className="hover:text-white">{t.faq}</button>
+            <button onClick={() => setShowCollection(true)} className={`transition ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'}`}>Tüm Koleksiyon</button>
+            <button onClick={() => setShowAbout(true)} className={`transition ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'}`}>{t.about}</button>
+            <button onClick={() => setShowFAQ(true)} className={`transition ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'}`}>{t.faq}</button>
           </nav>
           <div className="flex items-center gap-2">
             <button onClick={() => setLanguage(language === 'tr' ? 'en' : 'tr')} className={`p-2 ${theme.textSecondary}`}><Globe size={18} /></button>
