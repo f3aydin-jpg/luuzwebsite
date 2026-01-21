@@ -140,9 +140,7 @@ export default function WallArtShop() {
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button onClick={() => setShowMobileMenu(!showMobileMenu)} className={`lg:hidden ${theme.textSecondary}`}><Menu size={24} /></button>
-            <button onClick={() => { setShowCollection(false); setSelectedProduct(null); }} className="hover:opacity-80 transition">
-              <img src="/luuz-logo-white.png" alt="LUUZ" className="h-10" />
-            </button>
+            <button onClick={() => { setShowCollection(false); setSelectedProduct(null); }} className="text-2xl font-black tracking-tight hover:opacity-80 transition" style={{fontFamily: "'TAN ST CANARD', sans-serif", color: theme.text}}>luuz</button>
           </div>
           <nav className={`hidden lg:flex items-center gap-6 text-sm ${theme.textSecondary}`}>
             <button onClick={() => setShowCollection(true)} className="hover:text-white transition">Tüm Koleksiyon</button>
@@ -500,7 +498,7 @@ export default function WallArtShop() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div>
-              <img src="/luuz-logo-white.png" alt="LUUZ" className="h-8 mb-4" />
+              <h4 className="text-2xl font-black tracking-tight mb-4" style={{fontFamily: "'TAN ST CANARD', sans-serif"}}>luuz</h4>
               <p className={`${theme.textMuted} text-xs`}>Özgün duvar sanatı tasarımları.</p>
               <div className="flex gap-3 mt-4"><button className={theme.textMuted}><Instagram size={18} /></button><button className={theme.textMuted}><Twitter size={18} /></button><button className={theme.textMuted}><Facebook size={18} /></button></div>
             </div>
@@ -528,9 +526,7 @@ export default function WallArtShop() {
                 <ChevronLeft size={20} />
                 <span className="text-sm">Ana Sayfa</span>
               </button>
-              <button onClick={() => setShowCollection(false)} className="hover:opacity-80 transition">
-                <img src="/luuz-logo-white.png" alt="LUUZ" className="h-8" />
-              </button>
+              <button onClick={() => setShowCollection(false)} className="text-xl font-black tracking-tight hover:opacity-80 transition" style={{fontFamily: "'TAN ST CANARD', sans-serif", color: theme.text}}>luuz</button>
               <div className="flex items-center gap-2">
                 <button onClick={() => setShowSearch(!showSearch)} className={`p-2 ${theme.textSecondary}`}><Search size={18} /></button>
                 <button onClick={() => setShowFavorites(true)} className={`relative p-2 ${theme.textSecondary}`}>
@@ -747,9 +743,7 @@ export default function WallArtShop() {
                 <ChevronLeft size={20} />
                 <span className="text-sm">Geri</span>
               </button>
-              <button onClick={() => { setPageTransition(true); setTimeout(() => { setSelectedProduct(null); setPageTransition(false); }, 150); }} className="hover:opacity-80 transition">
-                <img src="/luuz-logo-white.png" alt="LUUZ" className="h-8" />
-              </button>
+              <button onClick={() => { setPageTransition(true); setTimeout(() => { setSelectedProduct(null); setPageTransition(false); }, 150); }} className="text-xl font-black tracking-tight hover:opacity-80 transition" style={{fontFamily: "'TAN ST CANARD', sans-serif", color: theme.text}}>luuz</button>
               <div className="flex items-center gap-2">
                 <button onClick={() => toggleFavorite(selectedProduct.id)} className={`p-2 rounded-full ${theme.card} hover:scale-110 transition-transform`}>
                   <Heart size={20} fill={favorites.includes(selectedProduct.id) ? theme.accent : 'none'} color={theme.accent} />
