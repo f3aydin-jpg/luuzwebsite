@@ -1329,19 +1329,31 @@ export default function WallArtShop() {
         </div>
       )}
 
-      {/* Chat */}
+      {/* Chat Window */}
       {showChat && (
-        <div className={`fixed bottom-24 right-6 w-80 ${theme.bgSecondary} rounded-2xl shadow-2xl z-40 overflow-hidden border ${theme.border}`}>
-          <div className="p-4 text-stone-900 flex justify-between items-center" style={{background: theme.accent}}>
-            <div className="flex items-center gap-3"><MessageCircle size={20} /><div><h3 className="font-semibold text-sm">Canlı Destek</h3><p className="text-xs opacity-80">Genellikle 2 dk içinde</p></div></div>
+        <div className={`fixed bottom-24 right-6 w-80 ${theme.bgSecondary} border ${theme.border} rounded-2xl shadow-2xl z-50 overflow-hidden`}>
+          <div className="p-4 bg-stone-900 text-white flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="font-medium text-sm">Müşteri Destek</span>
+            </div>
             <button onClick={() => setShowChat(false)}><X size={18} /></button>
           </div>
-          <div className={`p-4 h-64 ${theme.bgTertiary}`}><div className={`${theme.bgSecondary} p-3 rounded-xl shadow-sm`}><p className={`text-sm ${theme.text}`}>Merhaba! Nasıl yardımcı olabilirim? 😊</p></div></div>
+          <div className="p-4 h-64 overflow-y-auto space-y-4">
+            <div className={`p-3 ${theme.bg} rounded-xl shadow-sm`}>
+              <p className={`text-sm ${theme.text}`}>Merhaba! Nasıl yardımcı olabilirim? 😊</p>
+            </div>
+          </div>
           <div className={`p-3 border-t ${theme.border}`}>
-            <div className="flex gap-2"><input type="text" placeholder="Mesajınızı yazın..." className={`flex-1 ${theme.input} border rounded-xl px-4 py-2 text-sm`} /><button className="w-10 h-10 rounded-xl text-stone-900 flex items-center justify-center" style={{background: theme.accent}}><ChevronRight size={18} /></button></div>
+            <div className="flex gap-2">
+              <input type="text" placeholder="Mesajınızı yazın..." className={`flex-1 ${theme.input} border rounded-xl px-4 py-2 text-sm`} />
+              <button className="w-10 h-10 rounded-xl text-stone-900 flex items-center justify-center" style={{background: theme.accent}}>
+                <ChevronRight size={18} />
+              </button>
+            </div>
           </div>
         </div>
-      )}
+      )} {/* <--- BURADAKİ KAPANIŞ PARANTEZİ EKSİKTİ */}
 
       {/* WhatsApp Floating Button */}
       <a 
@@ -1359,3 +1371,5 @@ export default function WallArtShop() {
       <style>{`.scrollbar-hide::-webkit-scrollbar{display:none}.scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none}`}</style>
     </div>
   );
+}
+
