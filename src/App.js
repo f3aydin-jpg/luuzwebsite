@@ -144,7 +144,7 @@ export default function WallArtShop() {
               <img src={darkMode ? "/luuz-logo-white.png" : "/luuz-logo-black.png"} alt="LUUZ" className="h-8" />
             </button>
           </div>
-          <nav className={`hidden lg:flex items-center gap-6 text-sm ${theme.textSecondary}`}>
+          <nav className={`hidden lg:flex items-center gap-6 text-sm font-semibold ${theme.textSecondary}`}>
             <button onClick={() => setShowCollection(true)} className={`transition ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'}`}>Tüm Koleksiyon</button>
             <button onClick={() => setShowAbout(true)} className={`transition ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'}`}>{t.about}</button>
             <button onClick={() => setShowFAQ(true)} className={`transition ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'}`}>{t.faq}</button>
