@@ -141,7 +141,7 @@ export default function WallArtShop() {
           <div className="flex items-center gap-4">
             <button onClick={() => setShowMobileMenu(!showMobileMenu)} className={`lg:hidden ${theme.textSecondary}`}><Menu size={24} /></button>
             <button onClick={() => { setShowCollection(false); setSelectedProduct(null); }} className="hover:opacity-80 transition">
-              <img src="/luuz-logo-white.png" alt="LUUZ" className="h-8" />
+              <img src="/luuz-logo-white.png" alt="LUUZ" className="h-10" />
             </button>
           </div>
           <nav className={`hidden lg:flex items-center gap-6 text-sm ${theme.textSecondary}`}>
@@ -529,7 +529,7 @@ export default function WallArtShop() {
                 <span className="text-sm">Ana Sayfa</span>
               </button>
               <button onClick={() => setShowCollection(false)} className="hover:opacity-80 transition">
-                <img src="/luuz-logo-white.png" alt="LUUZ" className="h-6" />
+                <img src="/luuz-logo-white.png" alt="LUUZ" className="h-8" />
               </button>
               <div className="flex items-center gap-2">
                 <button onClick={() => setShowSearch(!showSearch)} className={`p-2 ${theme.textSecondary}`}><Search size={18} /></button>
@@ -748,7 +748,7 @@ export default function WallArtShop() {
                 <span className="text-sm">Geri</span>
               </button>
               <button onClick={() => { setPageTransition(true); setTimeout(() => { setSelectedProduct(null); setPageTransition(false); }, 150); }} className="hover:opacity-80 transition">
-                <img src="/luuz-logo-white.png" alt="LUUZ" className="h-6" />
+                <img src="/luuz-logo-white.png" alt="LUUZ" className="h-8" />
               </button>
               <div className="flex items-center gap-2">
                 <button onClick={() => toggleFavorite(selectedProduct.id)} className={`p-2 rounded-full ${theme.card} hover:scale-110 transition-transform`}>
