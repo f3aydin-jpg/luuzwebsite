@@ -21,430 +21,1226 @@ export default function WallArtShop() {
   const [showFilters, setShowFilters] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 1500]);
   const [selectedSizes, setSelectedSizes] = useState([]);
-  const [sortBy, setSortBy] = useState('featured');
+  const [sortBy, setSortBy] = useState('popular');
   const [viewMode, setViewMode] = useState('grid');
+  const [showFavorites, setShowFavorites] = useState(false);
+  const [showOrderHistory, setShowOrderHistory] = useState(false);
+  const [recentlyViewed, setRecentlyViewed] = useState([]);
+  const [compareProducts, setCompareProducts] = useState([]);
+  const [showCompare, setShowCompare] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
+  const [showFAQ, setShowFAQ] = useState(false);
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [openFAQ, setOpenFAQ] = useState(null);
+  const [orderHistory] = useState([{ id: 'LUUZ7X8K2M', date: '12.01.2025', total: 1850, status: 'Teslim Edildi', items: 2 }]);
+  const [checkoutData, setCheckoutData] = useState({ firstName: '', lastName: '', email: '', phone: '', address: '', city: '', postalCode: '', cardNumber: '', expiry: '', cvv: '' });
+  const [showZoom, setShowZoom] = useState(false);
+  const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
+  const [pageTransition, setPageTransition] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState({});
   const [showAdmin, setShowAdmin] = useState(false);
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [showCollection, setShowCollection] = useState(false);
-  const [activeTab, setActiveTab] = useState('new');
+  const [bestSellerIndex, setBestSellerIndex] = useState(0);
+  const [newArrivalIndex, setNewArrivalIndex] = useState(0);
+  const [showBestSellers, setShowBestSellers] = useState(false);
+  const [showNewArrivals, setShowNewArrivals] = useState(false);
 
+  const t = language === 'tr' ? { collection: 'Koleksiyon', about: 'Hakkımızda', howItWorks: 'Nasıl Çalışır', faq: 'SSS', search: 'Ürün ara...', cart: 'Sepetim', favorites: 'Favorilerim', addToCart: 'Sepete Ekle', checkout: 'Ödemeye Geç', total: 'Toplam', empty: 'Sepetiniz boş', filters: 'Filtreler', price: 'Fiyat', size: 'Boyut', bestSellers: 'Çok Satanlar', newArrivals: 'Yeni Gelenler', allCollection: 'Tüm Koleksiyon', framed: 'Çerçeveli', unframed: 'Çerçevesiz', inStock: 'Stokta', outOfStock: 'Tükendi', similarProducts: 'Benzer Ürünler', applyCoupon: 'Uygula', newsletter: 'Yeni Koleksiyonlardan Haberdar Olun', subscribe: 'Abone Ol', compare: 'Karşılaştır', recentlyViewed: 'Son Görüntülenenler', orderHistory: 'Sipariş Geçmişi' } : { collection: 'Collection', about: 'About', howItWorks: 'How It Works', faq: 'FAQ', search: 'Search...', cart: 'Cart', favorites: 'Favorites', addToCart: 'Add to Cart', checkout: 'Checkout', total: 'Total', empty: 'Cart is empty', filters: 'Filters', price: 'Price', size: 'Size', bestSellers: 'Best Sellers', newArrivals: 'New Arrivals', allCollection: 'All Collection', framed: 'Framed', unframed: 'Unframed', inStock: 'In Stock', outOfStock: 'Out of Stock', similarProducts: 'Similar', applyCoupon: 'Apply', newsletter: 'Stay Updated', subscribe: 'Subscribe', compare: 'Compare', recentlyViewed: 'Recently Viewed', orderHistory: 'Orders' };
+
+  // Firebase'den ürünleri çek
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, 'products'));
-        const productsData = querySnapshot.docs.map(doc => ({
+        const firebaseProducts = querySnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
         }));
-        setProducts(productsData);
-        setLoading(false);
+        setProducts(firebaseProducts);
       } catch (error) {
-        console.error("Error fetching products:", error);
-        setLoading(false);
+        console.error('Firebase hatası:', error);
+        setProducts([]);
       }
+      setIsLoading(false);
     };
-    fetchProducts();
-  }, []);
 
-  useEffect(() => {
+    fetchProducts();
+    
     const handleScroll = () => setShowScrollTop(window.scrollY > 400);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const categories = ['Tümü', 'Minimalist', 'Soyut', 'Doğa', 'Geometrik', 'Modern'];
+  const categories = ['Tümü', 'Minimal', 'Soyut', 'Doğa', 'Geometrik', 'Tipografi', 'Modern', 'Klasik', 'Portre', 'Manzara'];
+  const sizes = ['40x60 cm', '50x70 cm', '60x80 cm', '70x100 cm'];
+  const coupons = { 'HOSGELDIN15': { discount: 15, type: 'percent' }, 'YAZ50': { discount: 50, type: 'fixed' } };
+  const faqData = [{ q: 'Kargo ne kadar sürede gelir?', a: '2-4 iş günü içinde teslim edilir.' }, { q: 'İade koşulları nelerdir?', a: '14 gün içinde koşulsuz iade hakkınız var.' }, { q: 'Çerçeve malzemesi nedir?', a: '%100 doğal ahşaptan el işçiliği ile üretilir.' }];
 
-  const filteredProducts = products
-    .filter(p => {
-      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = selectedCategory === 'Tümü' || p.category === selectedCategory;
-      const matchesPrice = p.price >= priceRange[0] && p.price <= priceRange[1];
-      return matchesSearch && matchesCategory && matchesPrice;
-    })
-    .sort((a, b) => {
-      if (sortBy === 'price-low') return a.price - b.price;
-      if (sortBy === 'price-high') return b.price - a.price;
-      if (sortBy === 'popular') return b.rating - a.rating;
-      if (sortBy === 'newest') return 1;
-      return 0;
-    });
+  const filteredProducts = products.filter(p => {
+    const matchesCategory = selectedCategory === 'Tümü' || p.category === selectedCategory;
+    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesPrice = p.priceUnframed >= priceRange[0] && p.priceUnframed <= priceRange[1];
+    const matchesSize = selectedSizes.length === 0 || selectedSizes.includes(p.size);
+    return matchesCategory && matchesSearch && matchesPrice && matchesSize;
+  }).sort((a, b) => sortBy === 'priceLow' ? a.priceUnframed - b.priceUnframed : sortBy === 'priceHigh' ? b.priceUnframed - a.priceUnframed : sortBy === 'newest' ? b.isNew - a.isNew : b.isBestSeller - a.isBestSeller);
 
-  const addToCart = (product) => {
-    setCart(prev => {
-      const existing = prev.find(item => item.id === product.id);
-      if (existing) {
-        return prev.map(item => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item);
-      }
-      return [...prev, { ...product, quantity: 1 }];
-    });
-    setShowCart(true);
+  const toggleFavorite = (id) => favorites.includes(id) ? setFavorites(favorites.filter(f => f !== id)) : setFavorites([...favorites, id]);
+  const addToRecentlyViewed = (p) => setRecentlyViewed(prev => [p, ...prev.filter(x => x.id !== p.id)].slice(0, 6));
+  // eslint-disable-next-line no-unused-vars
+  const toggleCompare = (p) => compareProducts.find(x => x.id === p.id) ? setCompareProducts(compareProducts.filter(x => x.id !== p.id)) : compareProducts.length < 4 && setCompareProducts([...compareProducts, p]);
+
+  const addToCart = (product, isFramed) => {
+    const price = isFramed ? product.priceFramed : product.priceUnframed;
+    const discountedPrice = product.discount > 0 ? Math.round(price * (1 - product.discount / 100)) : price;
+    const cartItem = { ...product, isFramed, price: discountedPrice, cartId: `${product.id}-${isFramed}` };
+    const existing = cart.find(item => item.cartId === cartItem.cartId);
+    existing ? setCart(cart.map(item => item.cartId === cartItem.cartId ? { ...item, quantity: item.quantity + 1 } : item)) : setCart([...cart, { ...cartItem, quantity: 1 }]);
+    setSelectedProduct(null);
   };
 
-  const removeFromCart = (productId) => {
-    setCart(prev => prev.filter(item => item.id !== productId));
-  };
+  const updateQuantity = (cartId, change) => setCart(cart.map(item => item.cartId === cartId ? { ...item, quantity: Math.max(0, item.quantity + change) } : item).filter(item => item.quantity > 0));
+  const applyCoupon = () => { const c = coupons[couponCode.toUpperCase()]; c ? setAppliedCoupon({ code: couponCode.toUpperCase(), ...c }) : alert('Geçersiz kupon!'); };
 
-  const updateQuantity = (productId, delta) => {
-    setCart(prev => prev.map(item => {
-      if (item.id === productId) {
-        const newQty = Math.max(1, item.quantity + delta);
-        return { ...item, quantity: newQty };
-      }
-      return item;
-    }));
-  };
+  const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const couponDiscount = appliedCoupon ? (appliedCoupon.type === 'percent' ? subtotal * appliedCoupon.discount / 100 : appliedCoupon.discount) : 0;
+  const totalPrice = subtotal - couponDiscount;
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  const toggleFavorite = (productId) => {
-    setFavorites(prev => prev.includes(productId) ? prev.filter(id => id !== productId) : [...prev, productId]);
+  const handleCheckout = () => {
+    if (!checkoutData.firstName || !checkoutData.email || !checkoutData.cardNumber) { alert('Lütfen zorunlu alanları doldurun'); return; }
+    alert(`Siparişiniz alındı! Takip: LUUZ${Math.random().toString(36).substr(2, 9).toUpperCase()}`);
+    setCart([]); setAppliedCoupon(null); setShowCheckout(false); setShowCart(false);
   };
 
   const theme = {
-    bg: darkMode ? 'bg-stone-950' : 'bg-white',
-    bgSecondary: darkMode ? 'bg-stone-900' : 'bg-stone-50',
-    text: darkMode ? 'text-stone-100' : 'text-stone-900',
-    textSecondary: darkMode ? 'text-stone-400' : 'text-stone-500',
-    border: darkMode ? 'border-stone-800' : 'border-stone-200',
-    accent: '#d4af37',
-    input: darkMode ? 'bg-stone-900 border-stone-800 text-white' : 'bg-white border-stone-200 text-stone-900'
+    bg: darkMode ? 'bg-stone-900' : 'bg-stone-50', bgSecondary: darkMode ? 'bg-stone-800' : 'bg-white', bgTertiary: darkMode ? 'bg-stone-950' : 'bg-stone-100',
+    text: darkMode ? 'text-white' : 'text-stone-900', textSecondary: darkMode ? 'text-stone-400' : 'text-stone-600', textMuted: darkMode ? 'text-stone-500' : 'text-stone-400',
+    border: darkMode ? 'border-stone-700' : 'border-stone-200', card: darkMode ? 'bg-stone-800/50 border-stone-700/50' : 'bg-white border-stone-200',
+    input: darkMode ? 'bg-stone-800 border-stone-700 text-white placeholder-stone-500' : 'bg-white border-stone-300 text-stone-900', accent: '#e8dcc4',
   };
 
-  if (showAdmin) return <AdminPanel onBack={() => setShowAdmin(false)} darkMode={darkMode} />;
+  if (isLoading) return (
+    <div className={`min-h-screen ${theme.bg} flex items-center justify-center`}>
+      <div className="text-center">
+        <h1 className="text-4xl tracking-widest font-light mb-8" style={{fontFamily: "'Raleway', sans-serif", letterSpacing: '0.3em', color: theme.accent}}>LUUZ</h1>
+        <div className="flex gap-2 justify-center">{[0,1,2].map(i => <div key={i} className="w-3 h-3 rounded-full animate-bounce" style={{background: theme.accent, animationDelay: `${i*0.15}s`}}/>)}</div>
+      </div>
+    </div>
+  );
 
   return (
-    <div className={`min-h-screen ${theme.bg} ${theme.text} selection:bg-stone-700 selection:text-white transition-colors duration-300 font-sans`}>
-      {/* Navigation */}
-      <nav className={`fixed top-0 w-full z-50 ${theme.bgSecondary} border-b ${theme.border} backdrop-blur-md bg-opacity-80`}>
-        <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            <button onClick={() => setShowMobileMenu(true)} className="lg:hidden hover:scale-110 transition">
-              <Menu size={24} />
+    <div className={`min-h-screen ${theme.bg} transition-colors duration-300`}>
+      <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200;300;400;500&display=swap" rel="stylesheet" />
+      <link href="https://fonts.cdnfonts.com/css/tan-st-canard" rel="stylesheet" />
+      
+      {/* Header */}
+      <header className={`${theme.bgTertiary} sticky top-0 z-40 border-b ${theme.border}`}>
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button onClick={() => setShowMobileMenu(!showMobileMenu)} className={`lg:hidden ${theme.textSecondary}`}><Menu size={24} /></button>
+            <button onClick={() => { setShowCollection(false); setSelectedProduct(null); }} className="hover:opacity-80 transition">
+              <img src={darkMode ? "/luuz-logo-white.png" : "/luuz-logo-black.png"} alt="LUUZ" className="h-8" />
             </button>
-            <div className="flex flex-col items-center cursor-pointer" onClick={() => setShowCollection(false)}>
-              <span className="text-3xl font-light tracking-[0.2em] text-white">LUUZ</span>
-              <span className="text-[10px] tracking-[0.4em] uppercase opacity-60">Digital Art</span>
-            </div>
-            <div className="hidden lg:flex items-center gap-8">
-              {['Koleksiyon', 'Yeni Gelenler', 'En Çok Satanlar'].map((item) => (
-                <button 
-                  key={item} 
-                  onClick={() => {
-                    if(item === 'En Çok Satanlar') {
-                       setSelectedCategory('Tümü');
-                       setSortBy('popular');
-                       setShowCollection(true);
-                    } else if(item === 'Yeni Gelenler') {
-                       setSelectedCategory('Tümü');
-                       setSortBy('newest');
-                       setShowCollection(true);
-                    } else {
-                       setShowCollection(true);
-                    }
-                  }}
-                  className="text-sm font-medium tracking-widest uppercase hover:text-stone-400 transition"
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
           </div>
-
-          <div className="flex items-center gap-6">
-            <button onClick={() => setShowSearch(true)} className="hover:scale-110 transition"><Search size={20} /></button>
-            <button onClick={() => setDarkMode(!darkMode)} className="hover:scale-110 transition">
-              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+          <nav className={`hidden lg:flex items-center gap-6 text-sm font-semibold ${theme.textSecondary}`}>
+            <button onClick={() => setShowCollection(true)} className={`transition ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'}`}>Tüm Koleksiyon</button>
+            <button onClick={() => setShowAbout(true)} className={`transition ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'}`}>{t.about}</button>
+            <button onClick={() => setShowFAQ(true)} className={`transition ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'}`}>{t.faq}</button>
+          </nav>
+          <div className="flex items-center gap-2">
+            <button onClick={() => setLanguage(language === 'tr' ? 'en' : 'tr')} className={`p-2 ${theme.textSecondary}`}><Globe size={18} /></button>
+            <button onClick={() => setDarkMode(!darkMode)} className={`p-2 ${theme.textSecondary}`}>{darkMode ? <Sun size={18} /> : <Moon size={18} />}</button>
+            <button onClick={() => setShowSearch(!showSearch)} className={`p-2 ${theme.textSecondary}`}><Search size={18} /></button>
+            <button onClick={() => setShowFavorites(true)} className={`relative p-2 ${theme.textSecondary}`}>
+              <Heart size={18} fill={favorites.length > 0 ? theme.accent : 'none'} color={favorites.length > 0 ? theme.accent : 'currentColor'} />
+              {favorites.length > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{favorites.length}</span>}
             </button>
-            <button onClick={() => setShowCart(true)} className="relative group hover:scale-110 transition">
-              <ShoppingCart size={20} />
-              {cart.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-stone-100 text-stone-950 text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                  {cart.reduce((a, b) => a + b.quantity, 0)}
-                </span>
-              )}
-            </button>
-            <button onClick={() => setShowAdmin(true)} className="hover:scale-110 transition opacity-20 hover:opacity-100">
-              <Settings size={20} />
+            <button onClick={() => setShowOrderHistory(true)} className={`hidden md:block p-2 ${theme.textSecondary}`}><Clock size={18} /></button>
+            <button onClick={() => setShowCart(true)} className={`relative p-2 ${theme.textSecondary}`}>
+              <ShoppingCart size={18} />
+              {totalItems > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{totalItems}</span>}
             </button>
           </div>
         </div>
-      </nav>
+        {showSearch && (
+          <div className="px-4 pb-4">
+            <input type="text" placeholder={t.search} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className={`w-full px-4 py-3 rounded-xl ${theme.input} border focus:outline-none`} autoFocus />
+          </div>
+        )}
+        {showMobileMenu && (
+          <div className={`lg:hidden ${theme.bgSecondary} border-t ${theme.border} px-4 py-4 space-y-3`}>
+            <button onClick={() => { setShowCollection(true); setShowMobileMenu(false); }} className={`block py-2 ${theme.textSecondary} text-left w-full`}>Tüm Koleksiyon</button>
+            <button onClick={() => { setShowAbout(true); setShowMobileMenu(false); }} className={`block py-2 ${theme.textSecondary} text-left w-full`}>{t.about}</button>
+            <button onClick={() => { setShowFAQ(true); setShowMobileMenu(false); }} className={`block py-2 ${theme.textSecondary} text-left w-full`}>{t.faq}</button>
+          </div>
+        )}
+      </header>
 
-      {!showCollection ? (
-        <main className="pt-20">
-          {/* Hero Section */}
-          <section className="relative h-[90vh] overflow-hidden">
-            <div className="absolute inset-0">
-              <img 
-                src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=2000" 
-                className="w-full h-full object-cover scale-105"
-                alt="Hero"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-stone-950/90 via-stone-950/40 to-transparent" />
-            </div>
-            <div className="relative max-w-7xl mx-auto px-4 h-full flex flex-col justify-center items-start">
-              <div className="space-y-6 max-w-2xl">
-                <span className="inline-block text-xs tracking-[0.5em] uppercase opacity-60">Sınırlı Sayıda Koleksiyon</span>
-                <h1 className="text-6xl md:text-8xl font-light leading-tight tracking-tight">
-                  Modern Sanatın <br />
-                  <span className="italic font-serif">Dijital Hali</span>
-                </h1>
-                <p className="text-lg text-stone-400 font-light max-w-md">
-                  Yaşam alanınıza ruh katacak, özenle seçilmiş dijital sanat eserlerini keşfedin.
-                </p>
-                <div className="flex gap-4 pt-4">
+      {/* Promo */}
+      <div className={`${theme.bgTertiary} ${theme.textSecondary} py-2.5 text-center border-b ${theme.border}`}>
+        <p className="text-xs">🎉 Yeni Müşterilere %15 İndirim - Kod: <span className="text-white font-semibold">HOSGELDIN15</span></p>
+      </div>
+
+      {/* Hero with Video Background */}
+      <section className="relative h-[45vh] min-h-[350px] overflow-hidden">
+        {/* Video Background */}
+        <div className="absolute inset-0">
+          <video 
+            autoPlay 
+            muted 
+            loop 
+            playsInline
+            className="w-full h-full object-cover"
+            poster="https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=1920&q=80"
+          >
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-white-sand-beach-and-palm-trees-1564-large.mp4" type="video/mp4" />
+          </video>
+          {/* Dark Overlay */}
+          <div className="absolute inset-0 bg-black/50"></div>
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-stone-900 via-transparent to-transparent"></div>
+        </div>
+        
+        {/* Content */}
+        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4">
+          <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white animate-fade-in">
+            Duvarlarınıza <span style={{color: theme.accent}}>Sanat</span> Katın
+          </h2>
+          <p className="text-base md:text-lg text-stone-300 max-w-xl mx-auto mb-6 animate-fade-in-delay">
+            Özgün tasarımlarla mekanlarınıza karakter katın
+          </p>
+          <button 
+            onClick={() => setShowCollection(true)} 
+            className="text-stone-900 px-8 py-3 rounded-xl font-semibold text-sm shadow-2xl hover:shadow-xl hover:scale-105 transition-all duration-300 animate-fade-in-delay-2"
+            style={{background: theme.accent}}
+          >
+            Koleksiyonu Keşfet
+          </button>
+        </div>
+      </section>
+
+      {/* CSS Animations */}
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideIn {
+          from { opacity: 0; transform: translateX(-20px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes scaleIn {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+        .animate-fade-in {
+          animation: fadeIn 0.8s ease-out forwards;
+        }
+        .animate-fade-in-delay {
+          animation: fadeIn 0.8s ease-out 0.2s forwards;
+          opacity: 0;
+        }
+        .animate-fade-in-delay-2 {
+          animation: fadeIn 0.8s ease-out 0.4s forwards;
+          opacity: 0;
+        }
+        .animate-slide-in {
+          animation: slideIn 0.5s ease-out forwards;
+        }
+        .animate-scale-in {
+          animation: scaleIn 0.3s ease-out forwards;
+        }
+        .skeleton {
+          background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+          background-size: 200% 100%;
+          animation: shimmer 1.5s infinite;
+        }
+        .page-transition-enter {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        .page-transition-enter-active {
+          opacity: 1;
+          transform: translateY(0);
+          transition: all 0.3s ease-out;
+        }
+      `}</style>
+
+      {/* Best Sellers & New Arrivals - Side by Side */}
+      <section className="max-w-7xl mx-auto px-4 py-10">
+        <div className="grid md:grid-cols-2 gap-6">
+          
+          {/* Best Sellers */}
+          <div className={`${theme.card} rounded-2xl border p-6`}>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <TrendingUp size={20} style={{color: theme.accent}} />
+                <h3 className={`text-xl font-bold ${theme.text}`}>Çok Satanlar</h3>
+              </div>
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => setShowBestSellers(true)}
+                  className={`text-xs font-medium px-3 py-1.5 rounded-full border ${theme.border} ${theme.textSecondary} hover:border-amber-500 hover:text-amber-500 transition-all`}
+                >
+                  Tümünü Gör
+                </button>
+                <div className="flex items-center gap-1">
                   <button 
-                    onClick={() => setShowCollection(true)}
-                    className="px-10 py-5 bg-white text-stone-950 font-medium tracking-widest uppercase hover:bg-stone-200 transition-all rounded-sm flex items-center gap-3 group"
+                    onClick={() => setBestSellerIndex(prev => prev > 0 ? prev - 1 : Math.max(0, products.filter(p => p.isBestSeller).length - 1))}
+                    className={`p-2 rounded-full ${theme.bgTertiary} ${theme.text} hover:bg-amber-500 hover:text-stone-900 transition-all`}
                   >
-                    Koleksiyonu Keşfet
-                    <ChevronRight size={18} className="group-hover:translate-x-1 transition" />
+                    <ChevronUp size={18} />
+                  </button>
+                  <button 
+                    onClick={() => setBestSellerIndex(prev => prev < products.filter(p => p.isBestSeller).length - 1 ? prev + 1 : 0)}
+                    className={`p-2 rounded-full ${theme.bgTertiary} ${theme.text} hover:bg-amber-500 hover:text-stone-900 transition-all`}
+                  >
+                    <ChevronDown size={18} />
                   </button>
                 </div>
               </div>
             </div>
-          </section>
-
-          {/* Quick Categories */}
-          <section className="py-24 max-w-7xl mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Değiştirilen Buton 1: Çok Satanlar */}
-              <div className="group relative h-[500px] overflow-hidden cursor-pointer" 
-                   onClick={() => { setSelectedCategory('Tümü'); setSortBy('popular'); setShowCollection(true); }}>
-                <img src="https://images.unsplash.com/photo-1515405299443-f71bb768a69e?w=800" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
-                <div className="absolute inset-0 bg-stone-950/40 group-hover:bg-stone-950/20 transition-all" />
-                <div className="absolute bottom-10 left-10 space-y-4">
-                  <h3 className="text-3xl font-light tracking-wider">Çok Satanlar</h3>
-                  <button className="text-sm font-medium tracking-[0.3em] uppercase border-b border-white pb-2 hover:opacity-70 transition">Tümünü Gör</button>
+            
+            <div className="relative h-[320px] overflow-hidden">
+              {products.filter(p => p.isBestSeller).length > 0 ? (
+                products.filter(p => p.isBestSeller).map((product, idx) => (
+                  <div 
+                    key={product.id}
+                    className={`absolute inset-0 transition-all duration-500 ease-out ${
+                      idx === bestSellerIndex 
+                        ? 'opacity-100 translate-y-0' 
+                        : idx < bestSellerIndex 
+                          ? 'opacity-0 -translate-y-full' 
+                          : 'opacity-0 translate-y-full'
+                    }`}
+                  >
+                    <div className="flex gap-4 h-full">
+                      <div className="relative w-1/2 rounded-xl overflow-hidden group cursor-pointer" onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
+                        <img src={product.images?.[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                        <div className="absolute top-3 left-3 text-stone-900 px-3 py-1 rounded-full text-xs font-bold" style={{background: theme.accent}}>BEST</div>
+                        {product.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs">-{product.discount}%</div>}
+                      </div>
+                      <div className="flex-1 flex flex-col justify-start pt-4">
+                        <h4 className={`text-xl font-bold ${theme.text} mb-3`}>{product.name}</h4>
+                        <p className={`text-sm ${theme.textSecondary} mb-6 line-clamp-2`}>{product.description}</p>
+                        <div className="mb-6">
+                          <span className="text-2xl font-bold" style={{color: theme.accent}}>
+                            ₺{product.discount > 0 ? Math.round(product.priceUnframed * (1 - product.discount/100)) : product.priceUnframed}
+                          </span>
+                          <span className={`text-sm ${theme.textSecondary} ml-1`}>'den başlayan fiyatlarla</span>
+                        </div>
+                        <button 
+                          onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }}
+                          className="text-stone-900 px-6 py-3 rounded-xl font-medium text-sm hover:opacity-90 transition w-fit"
+                          style={{background: theme.accent}}
+                        >
+                          Ürünü İncele
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <p className={theme.textMuted}>Henüz çok satan ürün yok</p>
                 </div>
+              )}
+            </div>
+            
+            {/* Dots Indicator */}
+            {products.filter(p => p.isBestSeller).length > 1 && (
+              <div className="flex justify-center gap-2 mt-4">
+                {products.filter(p => p.isBestSeller).map((_, idx) => (
+                  <button 
+                    key={idx}
+                    onClick={() => setBestSellerIndex(idx)}
+                    className={`w-2 h-2 rounded-full transition-all ${idx === bestSellerIndex ? 'w-6' : ''}`}
+                    style={{background: idx === bestSellerIndex ? theme.accent : theme.border}}
+                  />
+                ))}
               </div>
+            )}
+          </div>
 
-              {/* Değiştirilen Buton 2: Yeni Ürünler */}
-              <div className="group relative h-[500px] overflow-hidden cursor-pointer md:mt-12"
-                   onClick={() => { setSelectedCategory('Tümü'); setSortBy('newest'); setShowCollection(true); }}>
-                <img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
-                <div className="absolute inset-0 bg-stone-950/40 group-hover:bg-stone-950/20 transition-all" />
-                <div className="absolute bottom-10 left-10 space-y-4">
-                  <h3 className="text-3xl font-light tracking-wider">Yeni Ürünler</h3>
-                  <button className="text-sm font-medium tracking-[0.3em] uppercase border-b border-white pb-2 hover:opacity-70 transition">Tümünü Gör</button>
-                </div>
+          {/* New Arrivals */}
+          <div className={`${theme.card} rounded-2xl border p-6`}>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <span className="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400 font-medium">YENİ</span>
+                <h3 className={`text-xl font-bold ${theme.text}`}>Yeni Ürünler</h3>
               </div>
-
-              <div className="group relative h-[500px] overflow-hidden cursor-pointer"
-                   onClick={() => { setSelectedCategory('Soyut'); setShowCollection(true); }}>
-                <img src="https://images.unsplash.com/photo-1549490349-8643362247b5?w=800" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
-                <div className="absolute inset-0 bg-stone-950/40 group-hover:bg-stone-950/20 transition-all" />
-                <div className="absolute bottom-10 left-10 space-y-4">
-                  <h3 className="text-3xl font-light tracking-wider">Soyut Seri</h3>
-                  <button className="text-sm font-medium tracking-[0.3em] uppercase border-b border-white pb-2 hover:opacity-70 transition">Tümünü Gör</button>
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => setShowNewArrivals(true)}
+                  className={`text-xs font-medium px-3 py-1.5 rounded-full border ${theme.border} ${theme.textSecondary} hover:border-green-500 hover:text-green-500 transition-all`}
+                >
+                  Tümünü Gör
+                </button>
+                <div className="flex items-center gap-1">
+                  <button 
+                    onClick={() => setNewArrivalIndex(prev => prev > 0 ? prev - 1 : Math.max(0, products.filter(p => p.isNew).length - 1))}
+                    className={`p-2 rounded-full ${theme.bgTertiary} ${theme.text} hover:bg-green-500 hover:text-white transition-all`}
+                  >
+                    <ChevronUp size={18} />
+                  </button>
+                  <button 
+                    onClick={() => setNewArrivalIndex(prev => prev < products.filter(p => p.isNew).length - 1 ? prev + 1 : 0)}
+                    className={`p-2 rounded-full ${theme.bgTertiary} ${theme.text} hover:bg-green-500 hover:text-white transition-all`}
+                  >
+                    <ChevronDown size={18} />
+                  </button>
                 </div>
               </div>
             </div>
-          </section>
-        </main>
-      ) : (
-        /* Collection Page - Bu alan diğer kategoriler tıklandığında açılan ana sayfa */
-        <main className="pt-32 pb-24 max-w-7xl mx-auto px-4">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
-            <div className="space-y-4">
-              <h2 className="text-5xl font-light tracking-tight italic font-serif">Koleksiyon</h2>
-              <div className="flex gap-4">
+            
+            <div className="relative h-[320px] overflow-hidden">
+              {products.filter(p => p.isNew).length > 0 ? (
+                products.filter(p => p.isNew).map((product, idx) => (
+                  <div 
+                    key={product.id}
+                    className={`absolute inset-0 transition-all duration-500 ease-out ${
+                      idx === newArrivalIndex 
+                        ? 'opacity-100 translate-y-0' 
+                        : idx < newArrivalIndex 
+                          ? 'opacity-0 -translate-y-full' 
+                          : 'opacity-0 translate-y-full'
+                    }`}
+                  >
+                    <div className="flex gap-4 h-full">
+                      <div className="relative w-1/2 rounded-xl overflow-hidden group cursor-pointer" onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
+                        <img src={product.images?.[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                        <div className="absolute top-3 left-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">YENİ</div>
+                        {product.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs">-{product.discount}%</div>}
+                      </div>
+                      <div className="flex-1 flex flex-col justify-start pt-4">
+                        <h4 className={`text-xl font-bold ${theme.text} mb-3`}>{product.name}</h4>
+                        <p className={`text-sm ${theme.textSecondary} mb-6 line-clamp-2`}>{product.description}</p>
+                        <div className="mb-6">
+                          <span className="text-2xl font-bold text-green-400">
+                            ₺{product.discount > 0 ? Math.round(product.priceUnframed * (1 - product.discount/100)) : product.priceUnframed}
+                          </span>
+                          <span className={`text-sm ${theme.textSecondary} ml-1`}>'den başlayan fiyatlarla</span>
+                        </div>
+                        <button 
+                          onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }}
+                          className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl font-medium text-sm transition w-fit"
+                        >
+                          Ürünü İncele
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <p className={theme.textMuted}>Henüz yeni ürün yok</p>
+                </div>
+              )}
+            </div>
+            
+            {/* Dots Indicator */}
+            {products.filter(p => p.isNew).length > 1 && (
+              <div className="flex justify-center gap-2 mt-4">
+                {products.filter(p => p.isNew).map((_, idx) => (
+                  <button 
+                    key={idx}
+                    onClick={() => setNewArrivalIndex(idx)}
+                    className={`w-2 h-2 rounded-full transition-all ${idx === newArrivalIndex ? 'w-6 bg-green-500' : ''}`}
+                    style={{background: idx === newArrivalIndex ? undefined : theme.border}}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+        </div>
+      </section>
+
+      {/* Recently Viewed */}
+      {recentlyViewed.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 py-8">
+          <h3 className={`text-lg font-bold ${theme.text} mb-4 flex items-center gap-2`}><Eye size={18} style={{color: theme.accent}} />{t.recentlyViewed}</h3>
+          <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
+            {recentlyViewed.map(p => <div key={p.id} className="flex-shrink-0 w-32 cursor-pointer" onClick={() => setSelectedProduct(p)}><img src={p.images[0]} alt={p.name} className="w-full aspect-square object-cover rounded-lg" /><p className={`text-xs ${theme.text} mt-1 truncate`}>{p.name}</p><p className={`text-xs ${theme.textMuted}`}>{p.priceUnframed}₺</p></div>)}
+          </div>
+        </section>
+      )}
+
+      {/* Compare Bar */}
+      {compareProducts.length > 0 && (
+        <div className={`fixed bottom-20 left-1/2 transform -translate-x-1/2 ${theme.bgSecondary} rounded-full shadow-2xl border ${theme.border} px-4 py-2 flex items-center gap-3 z-30`}>
+          <span className={`text-xs ${theme.textSecondary}`}>{compareProducts.length} ürün</span>
+          <div className="flex -space-x-2">{compareProducts.map(p => <img key={p.id} src={p.images[0]} alt="" className="w-8 h-8 rounded-full border-2 border-stone-700 object-cover" />)}</div>
+          <button onClick={() => setShowCompare(true)} className="text-stone-900 px-3 py-1 rounded-full text-xs font-medium" style={{background: theme.accent}}>{t.compare}</button>
+          <button onClick={() => setCompareProducts([])} className={theme.textMuted}><X size={16} /></button>
+        </div>
+      )}
+
+      {/* Features - Compact */}
+      <section className={`py-4 ${theme.bgSecondary} border-y ${theme.border}`}>
+        <div className="max-w-5xl mx-auto px-4 flex flex-wrap justify-center gap-6 md:gap-10">
+          {[{icon: Truck, title: 'Ücretsiz Kargo'}, {icon: Shield, title: 'Güvenli Ödeme'}, {icon: RotateCcw, title: '14 Gün İade'}, {icon: Package, title: 'Özenli Paket'}].map((item, idx) => (
+            <div key={idx} className="flex items-center gap-2">
+              <item.icon size={16} style={{color: theme.accent}} />
+              <span className={`text-xs font-medium ${theme.textSecondary}`}>{item.title}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Newsletter - Compact */}
+      <section className={`py-8 ${darkMode ? 'bg-stone-800' : 'bg-stone-100'}`}>
+        <div className="max-w-2xl mx-auto px-4 text-center">
+          <h3 className={`text-lg font-bold ${theme.text} mb-2`}>{t.newsletter}</h3>
+          <p className={`${theme.textSecondary} mb-4 text-xs`}>İndirimlerden ilk siz haberdar olun</p>
+          <div className="flex gap-2 max-w-sm mx-auto">
+            <input type="email" placeholder="E-posta" className={`flex-1 px-3 py-2 rounded-lg text-sm ${theme.input} border`} />
+            <button className="text-stone-900 px-4 py-2 rounded-lg text-sm font-medium" style={{background: theme.accent}}>{t.subscribe}</button>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className={`${theme.bgTertiary} py-12 border-t ${theme.border}`}>
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div>
+              <img src={darkMode ? "/luuz-logo-white.png" : "/luuz-logo-black.png"} alt="LUUZ" className="h-8 mb-4" />
+              <p className={`${theme.textMuted} text-xs`}>Özgün duvar sanatı tasarımları.</p>
+              <div className="flex gap-3 mt-4"><button className={theme.textMuted}><Instagram size={18} /></button><button className={theme.textMuted}><Twitter size={18} /></button><button className={theme.textMuted}><Facebook size={18} /></button></div>
+            </div>
+            <div><h5 className={`font-medium mb-3 text-sm ${theme.text}`}>Linkler</h5><ul className={`space-y-2 ${theme.textMuted} text-xs`}><li><button onClick={() => document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' })}>{t.collection}</button></li><li><button onClick={() => setShowAbout(true)}>{t.about}</button></li><li><button onClick={() => setShowFAQ(true)}>{t.faq}</button></li></ul></div>
+            <div><h5 className={`font-medium mb-3 text-sm ${theme.text}`}>Yardım</h5><ul className={`space-y-2 ${theme.textMuted} text-xs`}><li>Kargo Bilgileri</li><li>İade & Değişim</li><li><button onClick={() => setShowOrderHistory(true)}>{t.orderHistory}</button></li></ul></div>
+            <div><h5 className={`font-medium mb-3 text-sm ${theme.text}`}>İletişim</h5><ul className={`space-y-2 ${theme.textMuted} text-xs`}><li>info@luuz.com.tr</li><li>+90 212 555 00 00</li><li>İstanbul, Türkiye</li></ul></div>
+          </div>
+          <div className={`border-t ${theme.border} mt-8 pt-8 flex justify-between items-center ${theme.textMuted} text-xs`}>
+            <span>© 2025 LUUZ. Tüm hakları saklıdır.</span>
+            <button onClick={() => setShowAdmin(true)} className="flex items-center gap-1 hover:text-amber-500 transition"><Settings size={14} /> Admin</button>
+          </div>
+        </div>
+      </footer>
+
+      {/* Admin Panel */}
+      {showAdmin && <AdminPanel onClose={() => setShowAdmin(false)} />}
+
+      {/* Best Sellers Page - Full Screen */}
+      {showBestSellers && (
+        <div className={`fixed inset-0 z-50 ${theme.bg} overflow-y-auto animate-fade-in`}>
+          <div className={`sticky top-0 ${theme.bgTertiary} border-b ${theme.border} z-10`}>
+            <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+              <button onClick={() => setShowBestSellers(false)} className={`flex items-center gap-2 ${theme.textSecondary} ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'} transition`}>
+                <ChevronLeft size={20} />
+                <span className="text-sm">Ana Sayfa</span>
+              </button>
+              <div className="flex items-center gap-2">
+                <TrendingUp size={20} style={{color: theme.accent}} />
+                <h1 className={`text-lg font-bold ${theme.text}`}>Çok Satanlar</h1>
+              </div>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setShowCart(true)} className={`relative p-2 ${theme.textSecondary}`}>
+                  <ShoppingCart size={18} />
+                  {totalItems > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{totalItems}</span>}
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="max-w-7xl mx-auto px-4 py-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+              {products.filter(p => p.isBestSeller).map((product, idx) => (
+                <div key={product.id} className="group animate-fade-in" style={{ animationDelay: `${idx * 0.05}s` }}>
+                  <div className={`relative overflow-hidden ${theme.card} rounded-2xl shadow-lg border transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300`}>
+                    <div className="absolute top-3 left-3 text-stone-900 px-2 py-1 rounded-full text-xs font-bold z-10" style={{background: theme.accent}}>BEST</div>
+                    {product.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs z-10">-{product.discount}%</div>}
+                    {product.stock === 0 && <div className="absolute inset-0 bg-black/60 z-10 flex items-center justify-center"><span className="text-white text-sm font-medium">{t.outOfStock}</span></div>}
+                    <div className="cursor-pointer" onClick={() => { setShowBestSellers(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
+                      <img src={product.images?.[0]} alt={product.name} className="w-full aspect-square object-cover group-hover:scale-110 transition-transform duration-700" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
+                        <h3 className="text-sm font-semibold text-white">{product.name}</h3>
+                        <p className="text-sm text-stone-300">{product.priceUnframed}₺</p>
+                      </div>
+                    </div>
+                  </div>
+                  <button onClick={() => { setShowBestSellers(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }} disabled={product.stock === 0} className={`w-full mt-3 text-stone-900 py-2.5 rounded-xl text-sm font-medium ${product.stock === 0 ? 'opacity-50' : 'hover:shadow-lg'}`} style={{background: theme.accent}}>
+                    {product.stock === 0 ? t.outOfStock : 'Ürünü İncele'}
+                  </button>
+                </div>
+              ))}
+            </div>
+            {products.filter(p => p.isBestSeller).length === 0 && (
+              <div className="text-center py-16">
+                <p className={theme.textMuted}>Henüz çok satan ürün yok</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* New Arrivals Page - Full Screen */}
+      {showNewArrivals && (
+        <div className={`fixed inset-0 z-50 ${theme.bg} overflow-y-auto animate-fade-in`}>
+          <div className={`sticky top-0 ${theme.bgTertiary} border-b ${theme.border} z-10`}>
+            <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+              <button onClick={() => setShowNewArrivals(false)} className={`flex items-center gap-2 ${theme.textSecondary} ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'} transition`}>
+                <ChevronLeft size={20} />
+                <span className="text-sm">Ana Sayfa</span>
+              </button>
+              <div className="flex items-center gap-2">
+                <span className="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400 font-medium">YENİ</span>
+                <h1 className={`text-lg font-bold ${theme.text}`}>Yeni Ürünler</h1>
+              </div>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setShowCart(true)} className={`relative p-2 ${theme.textSecondary}`}>
+                  <ShoppingCart size={18} />
+                  {totalItems > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{totalItems}</span>}
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="max-w-7xl mx-auto px-4 py-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+              {products.filter(p => p.isNew).map((product, idx) => (
+                <div key={product.id} className="group animate-fade-in" style={{ animationDelay: `${idx * 0.05}s` }}>
+                  <div className={`relative overflow-hidden ${theme.card} rounded-2xl shadow-lg border transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300`}>
+                    <div className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold z-10">YENİ</div>
+                    {product.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs z-10">-{product.discount}%</div>}
+                    {product.stock === 0 && <div className="absolute inset-0 bg-black/60 z-10 flex items-center justify-center"><span className="text-white text-sm font-medium">{t.outOfStock}</span></div>}
+                    <div className="cursor-pointer" onClick={() => { setShowNewArrivals(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
+                      <img src={product.images?.[0]} alt={product.name} className="w-full aspect-square object-cover group-hover:scale-110 transition-transform duration-700" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
+                        <h3 className="text-sm font-semibold text-white">{product.name}</h3>
+                        <p className="text-sm text-stone-300">{product.priceUnframed}₺</p>
+                      </div>
+                    </div>
+                  </div>
+                  <button onClick={() => { setShowNewArrivals(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }} disabled={product.stock === 0} className={`w-full mt-3 text-stone-900 py-2.5 rounded-xl text-sm font-medium ${product.stock === 0 ? 'opacity-50' : 'hover:shadow-lg'}`} style={{background: theme.accent}}>
+                    {product.stock === 0 ? t.outOfStock : 'Ürünü İncele'}
+                  </button>
+                </div>
+              ))}
+            </div>
+            {products.filter(p => p.isNew).length === 0 && (
+              <div className="text-center py-16">
+                <p className={theme.textMuted}>Henüz yeni ürün yok</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Collection Page - Full Screen */}
+      {showCollection && (
+        <div className={`fixed inset-0 z-50 ${theme.bg} overflow-y-auto animate-fade-in`}>
+          {/* Collection Header */}
+          <div className={`sticky top-0 ${theme.bgTertiary} border-b ${theme.border} z-10`}>
+            <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+              <button onClick={() => setShowCollection(false)} className={`flex items-center gap-2 ${theme.textSecondary} hover:text-white transition`}>
+                <ChevronLeft size={20} />
+                <span className="text-sm">Ana Sayfa</span>
+              </button>
+              <button onClick={() => setShowCollection(false)} className="hover:opacity-80 transition">
+                <img src={darkMode ? "/luuz-logo-white.png" : "/luuz-logo-black.png"} alt="LUUZ" className="h-6" />
+              </button>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setShowSearch(!showSearch)} className={`p-2 ${theme.textSecondary}`}><Search size={18} /></button>
+                <button onClick={() => setShowFavorites(true)} className={`relative p-2 ${theme.textSecondary}`}>
+                  <Heart size={18} fill={favorites.length > 0 ? theme.accent : 'none'} color={favorites.length > 0 ? theme.accent : 'currentColor'} />
+                  {favorites.length > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{favorites.length}</span>}
+                </button>
+                <button onClick={() => setShowCart(true)} className={`relative p-2 ${theme.textSecondary}`}>
+                  <ShoppingCart size={18} />
+                  {totalItems > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{totalItems}</span>}
+                </button>
+              </div>
+            </div>
+            {showSearch && (
+              <div className="px-4 pb-4">
+                <input type="text" placeholder={t.search} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className={`w-full px-4 py-3 rounded-xl ${theme.input} border focus:outline-none`} autoFocus />
+              </div>
+            )}
+          </div>
+
+          {/* Collection Content */}
+          <div className="max-w-7xl mx-auto px-4 py-8">
+            {/* Page Title */}
+            <div className="text-center mb-8">
+              <h1 className={`text-4xl font-bold ${theme.text} mb-2`}>Koleksiyon</h1>
+              <p className={`${theme.textSecondary}`}>Tüm posterlerimizi keşfedin</p>
+            </div>
+
+            {/* Categories */}
+            <div className="mb-8">
+              {/* Special Categories - Best Sellers & New Arrivals */}
+              <div className="flex gap-3 mb-4 overflow-x-auto pb-2 scrollbar-hide justify-center">
+                <button 
+                  onClick={() => { setSelectedCategory('Tümü'); setShowBestSellers(true); setShowCollection(false); }}
+                  className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold whitespace-nowrap transition-all bg-gradient-to-r from-amber-500 to-amber-600 text-stone-900 shadow-lg hover:shadow-xl hover:scale-105"
+                >
+                  <TrendingUp size={18} />
+                  <span>Çok Satanlar</span>
+                  <span className="bg-stone-900 text-amber-500 text-xs px-2 py-0.5 rounded-full">{products.filter(p => p.isBestSeller).length}</span>
+                </button>
+                <button 
+                  onClick={() => { setSelectedCategory('Tümü'); setShowNewArrivals(true); setShowCollection(false); }}
+                  className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold whitespace-nowrap transition-all bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg hover:shadow-xl hover:scale-105"
+                >
+                  <Star size={18} />
+                  <span>Yeni Ürünler</span>
+                  <span className="bg-white text-green-600 text-xs px-2 py-0.5 rounded-full">{products.filter(p => p.isNew).length}</span>
+                </button>
+              </div>
+
+              {/* Regular Categories */}
+              <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide justify-center flex-wrap">
                 {categories.map(cat => (
-                  <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`text-xs tracking-[0.2em] uppercase transition-all pb-1 border-b-2 
-                      ${selectedCategory === cat ? 'border-stone-100 text-stone-100' : 'border-transparent text-stone-500 hover:text-stone-300'}`}
+                  <button 
+                    key={cat} 
+                    onClick={() => setSelectedCategory(cat)} 
+                    className={`px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all ${selectedCategory === cat ? 'text-stone-900 shadow-lg' : `${theme.card} ${theme.textSecondary} border hover:border-stone-500`}`} 
+                    style={selectedCategory === cat ? {background: theme.accent} : {}}
                   >
                     {cat}
                   </button>
                 ))}
               </div>
             </div>
-            
-            <div className="flex items-center gap-6 border-b border-stone-800 pb-2">
-              <select 
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="bg-transparent text-xs tracking-widest uppercase focus:outline-none cursor-pointer"
-              >
-                <option value="featured">Öne Çıkanlar</option>
-                <option value="popular">En Çok Satanlar</option>
-                <option value="newest">En Yeniler</option>
-                <option value="price-low">Fiyat (Artan)</option>
-                <option value="price-high">Fiyat (Azalan)</option>
-              </select>
-              <div className="flex gap-4 items-center pl-6 border-l border-stone-800">
-                <button onClick={() => setViewMode('grid')} className={`${viewMode === 'grid' ? 'text-white' : 'text-stone-600'} hover:text-white transition`}>
-                  <Grid size={18} />
-                </button>
-                <button onClick={() => setViewMode('list')} className={`${viewMode === 'list' ? 'text-white' : 'text-stone-600'} hover:text-white transition`}>
-                  <List size={18} />
-                </button>
+
+            {/* Filters & Sort */}
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+              <p className={`${theme.textMuted} text-sm`}>{filteredProducts.length} ürün</p>
+              <div className="flex items-center gap-3">
+                <button onClick={() => setShowFilters(!showFilters)} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs ${theme.card} border ${theme.textSecondary}`}><Filter size={14} />{t.filters}</button>
+                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className={`px-4 py-2 rounded-lg text-xs ${theme.input} border`}>
+                  <option value="popular">Popüler</option>
+                  <option value="newest">En Yeni</option>
+                  <option value="priceLow">Fiyat ↑</option>
+                  <option value="priceHigh">Fiyat ↓</option>
+                </select>
+                <div className={`hidden md:flex items-center gap-1 ${theme.card} border rounded-lg p-1`}>
+                  <button onClick={() => setViewMode('grid')} className={`p-1.5 rounded ${viewMode === 'grid' ? 'bg-stone-600' : ''}`}><Grid size={14} className={viewMode === 'grid' ? 'text-white' : theme.textMuted} /></button>
+                  <button onClick={() => setViewMode('list')} className={`p-1.5 rounded ${viewMode === 'list' ? 'bg-stone-600' : ''}`}><List size={14} className={viewMode === 'list' ? 'text-white' : theme.textMuted} /></button>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className={viewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16" : "space-y-8"}>
-            {filteredProducts.map((product) => (
-              <div key={product.id} className="group relative space-y-4">
-                <div className="relative aspect-[4/5] overflow-hidden bg-stone-900 cursor-pointer" onClick={() => setSelectedProduct(product)}>
-                  <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                  <div className="absolute inset-0 bg-stone-950/0 group-hover:bg-stone-950/20 transition-all duration-500" />
-                  <div className="absolute top-4 left-4 flex flex-col gap-2">
-                    {product.new && <span className="bg-white text-stone-950 text-[10px] tracking-widest uppercase px-3 py-1 font-bold">Yeni</span>}
-                    {product.rating > 4.8 && <span className="bg-stone-100 text-stone-950 text-[10px] tracking-widest uppercase px-3 py-1 font-bold">En Çok Satan</span>}
+            {/* Filters Panel */}
+            {showFilters && (
+              <div className={`${theme.card} border rounded-xl p-4 mb-6`}>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <label className={`text-xs font-medium ${theme.text} mb-2 block`}>{t.price}</label>
+                    <div className="flex items-center gap-2">
+                      <input type="number" value={priceRange[0]} onChange={(e) => setPriceRange([+e.target.value, priceRange[1]])} className={`w-full px-3 py-2 rounded-lg text-xs ${theme.input} border`} placeholder="Min" />
+                      <span className={theme.textMuted}>-</span>
+                      <input type="number" value={priceRange[1]} onChange={(e) => setPriceRange([priceRange[0], +e.target.value])} className={`w-full px-3 py-2 rounded-lg text-xs ${theme.input} border`} placeholder="Max" />
+                    </div>
                   </div>
-                  <button onClick={(e) => { e.stopPropagation(); toggleFavorite(product.id); }} className="absolute top-4 right-4 w-10 h-10 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:text-stone-950">
-                    <Heart size={18} fill={favorites.includes(product.id) ? "currentColor" : "none"} />
-                  </button>
-                  <button onClick={(e) => { e.stopPropagation(); addToCart(product); }} className="absolute bottom-0 left-0 right-0 py-5 bg-white text-stone-950 text-xs tracking-[0.3em] uppercase font-bold translate-y-full group-hover:translate-y-0 transition-transform duration-500">
-                    Sepete Ekle
-                  </button>
-                </div>
-                <div className="flex justify-between items-start px-2">
-                  <div className="space-y-1">
-                    <p className="text-[10px] tracking-[0.2em] uppercase text-stone-500">{product.category}</p>
-                    <h3 className="text-sm tracking-widest uppercase font-medium">{product.name}</h3>
+                  <div>
+                    <label className={`text-xs font-medium ${theme.text} mb-2 block`}>{t.size}</label>
+                    <div className="flex flex-wrap gap-1">
+                      {sizes.map(s => (
+                        <button key={s} onClick={() => selectedSizes.includes(s) ? setSelectedSizes(selectedSizes.filter(x => x !== s)) : setSelectedSizes([...selectedSizes, s])} className={`px-2 py-1 rounded-lg text-xs ${selectedSizes.includes(s) ? 'bg-amber-500 text-stone-900' : `${theme.bgTertiary} ${theme.textMuted}`}`}>{s}</button>
+                      ))}
+                    </div>
                   </div>
-                  <p className="text-sm font-light text-stone-400">{product.price} TL</p>
+                  <div className="flex items-end">
+                    <button onClick={() => { setPriceRange([0, 1500]); setSelectedSizes([]); setSelectedCategory('Tümü'); }} className={`text-xs ${theme.textMuted} underline`}>Filtreleri Temizle</button>
+                  </div>
                 </div>
               </div>
-            ))}
+            )}
+
+            {/* Products Grid */}
+            {isLoading ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                {[...Array(8)].map((_, idx) => (
+                  <div key={idx} className="animate-pulse">
+                    <div className={`${theme.card} rounded-2xl overflow-hidden border`}>
+                      <div className="skeleton aspect-square"></div>
+                    </div>
+                    <div className="skeleton h-10 rounded-xl mt-3"></div>
+                  </div>
+                ))}
+              </div>
+            ) : filteredProducts.length === 0 ? (
+              <div className="text-center py-16">
+                <p className={theme.textMuted}>Ürün bulunamadı</p>
+              </div>
+            ) : viewMode === 'grid' ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                {filteredProducts.map((product, idx) => (
+                  <div 
+                    key={product.id} 
+                    className="group animate-fade-in"
+                    style={{ animationDelay: `${idx * 0.05}s` }}
+                  >
+                    <div className={`relative overflow-hidden ${theme.card} rounded-2xl shadow-lg border transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300`}>
+                      {product.isNew && <div className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs z-10">YENİ</div>}
+                      {product.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs z-10">-{product.discount}%</div>}
+                      {product.stock === 0 && <div className="absolute inset-0 bg-black/60 z-10 flex items-center justify-center"><span className="text-white text-sm font-medium">{t.outOfStock}</span></div>}
+                      <button onClick={() => toggleFavorite(product.id)} className={`absolute ${product.isNew ? 'left-16' : 'left-3'} top-3 z-20 ${theme.bgTertiary} rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110`}><Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={theme.accent} /></button>
+                      <div className="cursor-pointer" onClick={() => { setShowCollection(false); setPageTransition(true); setTimeout(() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); setPageTransition(false); }, 150); }}>
+                        <div className="relative">
+                          {!imagesLoaded[product.id] && <div className="skeleton absolute inset-0"></div>}
+                          <img 
+                            src={product.images?.[0]} 
+                            alt={product.name} 
+                            className={`w-full aspect-square object-cover group-hover:scale-110 transition-transform duration-700 ${imagesLoaded[product.id] ? 'opacity-100' : 'opacity-0'}`}
+                            onLoad={() => setImagesLoaded(prev => ({...prev, [product.id]: true}))}
+                          />
+                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
+                          <h3 className="text-sm font-semibold text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">{product.name}</h3>
+                          <div className="flex items-center gap-2 mt-1 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 delay-75">
+                            {product.discount > 0 ? (
+                              <>
+                                <p className="text-sm text-stone-400 line-through">{product.priceUnframed}₺</p>
+                                <p className="text-sm text-green-400 font-bold">{Math.round(product.priceUnframed * (1 - product.discount/100))}₺</p>
+                              </>
+                            ) : (
+                              <p className="text-sm text-stone-300">{product.priceUnframed}₺</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={() => { setShowCollection(false); setPageTransition(true); setTimeout(() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); setPageTransition(false); }, 150); }} 
+                      disabled={product.stock === 0} 
+                      className={`w-full mt-3 text-stone-900 py-2.5 rounded-xl text-sm font-medium transform hover:scale-[1.02] transition-all duration-200 ${product.stock === 0 ? 'opacity-50' : 'hover:shadow-lg'}`} 
+                      style={{background: theme.accent}}
+                    >
+                      {product.stock === 0 ? t.outOfStock : 'Ürünü İncele'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {filteredProducts.map(product => (
+                  <div key={product.id} className={`flex gap-4 ${theme.card} border rounded-xl p-3 hover:shadow-lg transition-all`}>
+                    <img 
+                      src={product.images?.[0]} 
+                      alt={product.name} 
+                      className="w-24 h-24 object-cover rounded-lg cursor-pointer" 
+                      onClick={() => { setShowCollection(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }} 
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className={`font-medium ${theme.text}`}>{product.name}</h3>
+                          <p className={`text-xs ${theme.textMuted}`}>{product.category}</p>
+                        </div>
+                        <button onClick={() => toggleFavorite(product.id)}>
+                          <Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={theme.accent} />
+                        </button>
+                      </div>
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center gap-2">
+                          {product.discount > 0 ? (
+                            <>
+                              <span className={`text-sm ${theme.textMuted} line-through`}>{product.priceUnframed}₺</span>
+                              <span className="text-sm text-green-400 font-bold">{Math.round(product.priceUnframed * (1 - product.discount/100))}₺</span>
+                            </>
+                          ) : (
+                            <span className={`text-sm font-bold ${theme.text}`}>{product.priceUnframed}₺</span>
+                          )}
+                        </div>
+                        <button 
+                          onClick={() => { setShowCollection(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }} 
+                          className="text-stone-900 px-4 py-1.5 rounded-lg text-xs font-medium" 
+                          style={{background: theme.accent}}
+                        >
+                          İncele
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        </main>
+        </div>
       )}
 
-      {/* Product Detail Modal */}
+      {/* Page Transition Overlay */}
+      {pageTransition && (
+        <div className="fixed inset-0 z-[60] bg-stone-900/50 backdrop-blur-sm flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
+
+      {/* Product Page - Full Screen */}
       {selectedProduct && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center px-4">
-          <div className="absolute inset-0 bg-stone-950/95 backdrop-blur-xl" onClick={() => setSelectedProduct(null)} />
-          <div className={`relative w-full max-w-6xl ${theme.bgSecondary} overflow-hidden rounded-sm flex flex-col md:flex-row h-[90vh] md:h-auto max-h-[90vh]`}>
-            <button onClick={() => setSelectedProduct(null)} className="absolute top-6 right-6 z-10 p-2 hover:bg-white/10 rounded-full transition"><X size={24} /></button>
-            <div className="w-full md:w-1/2 h-2/3 md:h-auto relative bg-stone-900 group">
-              <img src={selectedProduct.image} className="w-full h-full object-cover" alt={selectedProduct.name} />
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all cursor-zoom-in bg-stone-950/20">
-                <ZoomIn className="text-white" size={32} />
+        <div className={`fixed inset-0 z-50 ${theme.bg} overflow-y-auto animate-fade-in`}>
+          {/* Product Page Header */}
+          <div className={`sticky top-0 ${theme.bgTertiary} border-b ${theme.border} z-10`}>
+            <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+              <button onClick={() => { setPageTransition(true); setTimeout(() => { setSelectedProduct(null); setPageTransition(false); }, 150); }} className={`flex items-center gap-2 ${theme.textSecondary} hover:${theme.text} transition`}>
+                <ChevronLeft size={20} />
+                <span className="text-sm">Geri</span>
+              </button>
+              <button onClick={() => { setPageTransition(true); setTimeout(() => { setSelectedProduct(null); setPageTransition(false); }, 150); }} className="hover:opacity-80 transition">
+                <img src={darkMode ? "/luuz-logo-white.png" : "/luuz-logo-black.png"} alt="LUUZ" className="h-6" />
+              </button>
+              <div className="flex items-center gap-2">
+                <button onClick={() => toggleFavorite(selectedProduct.id)} className={`p-2 rounded-full ${theme.card} hover:scale-110 transition-transform`}>
+                  <Heart size={20} fill={favorites.includes(selectedProduct.id) ? theme.accent : 'none'} color={theme.accent} />
+                </button>
+                <button onClick={() => setShowCart(true)} className={`relative p-2 ${theme.textSecondary} hover:scale-110 transition-transform`}>
+                  <ShoppingCart size={20} />
+                  {totalItems > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{totalItems}</span>}
+                </button>
               </div>
             </div>
-            <div className="w-full md:w-1/2 p-10 md:p-16 overflow-y-auto">
-              <div className="space-y-10">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-stone-500 text-[10px] tracking-[0.3em] uppercase">
-                    <span>{selectedProduct.category}</span>
-                    <span>•</span>
-                    <div className="flex items-center gap-1 text-yellow-500">
-                      <Star size={10} fill="currentColor" />
-                      <span className="text-stone-300">{selectedProduct.rating}</span>
-                    </div>
+          </div>
+
+          {/* Product Content */}
+          <div className="max-w-6xl mx-auto px-4 py-8">
+            <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+              {/* Product Images with Zoom */}
+              <div className="animate-slide-in">
+                <div 
+                  className="relative rounded-2xl overflow-hidden mb-4 cursor-zoom-in group"
+                  onMouseEnter={() => setShowZoom(true)}
+                  onMouseLeave={() => setShowZoom(false)}
+                  onMouseMove={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / rect.width) * 100;
+                    const y = ((e.clientY - rect.top) / rect.height) * 100;
+                    setZoomPosition({ x, y });
+                  }}
+                  onClick={() => setShowZoom(!showZoom)}
+                >
+                  <img 
+                    src={selectedProduct.images[activeImageIndex]} 
+                    alt="" 
+                    className="w-full aspect-square object-cover transition-transform duration-300"
+                    style={showZoom ? { transform: 'scale(2)', transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%` } : {}}
+                  />
+                  
+                  {/* Zoom indicator */}
+                  <div className={`absolute bottom-4 right-4 ${theme.bgTertiary} rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity`}>
+                    <ZoomIn size={20} className={theme.textSecondary} />
                   </div>
-                  <h2 className="text-4xl font-light tracking-tight">{selectedProduct.name}</h2>
-                  <p className="text-2xl font-light text-stone-300">{selectedProduct.price} TL</p>
+                  
+                  {selectedProduct.images.length > 1 && !showZoom && (
+                    <>
+                      <button onClick={(e) => { e.stopPropagation(); setActiveImageIndex(prev => prev > 0 ? prev - 1 : selectedProduct.images.length - 1); }} className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 p-3 rounded-full transition hover:scale-110">
+                        <ChevronLeft size={24} className="text-white" />
+                      </button>
+                      <button onClick={(e) => { e.stopPropagation(); setActiveImageIndex(prev => prev < selectedProduct.images.length - 1 ? prev + 1 : 0); }} className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 p-3 rounded-full transition hover:scale-110">
+                        <ChevronRight size={24} className="text-white" />
+                      </button>
+                    </>
+                  )}
+                  {selectedProduct.discount > 0 && !showZoom && <div className="absolute top-4 left-4 bg-red-500 text-white px-4 py-2 rounded-full text-sm font-medium">-{selectedProduct.discount}%</div>}
+                  {selectedProduct.isNew && !showZoom && <div className="absolute top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-medium">YENİ</div>}
                 </div>
-                <p className="text-stone-400 leading-relaxed font-light">{selectedProduct.description || "Bu eşsiz parça, modern yaşam alanlarınıza derinlik ve estetik katmak için özel olarak tasarlandı. En yüksek kalitede dijital baskı standartlarına uygun olarak hazırlandı."}</p>
-                <div className="space-y-4">
-                  <p className="text-[10px] tracking-[0.2em] uppercase font-bold">Ölçü Seçenekleri</p>
-                  <div className="flex flex-wrap gap-3">
-                    {['30x40cm', '50x70cm', '70x100cm'].map(size => (
-                      <button key={size} className="px-6 py-3 border border-stone-800 text-xs tracking-widest hover:border-white transition rounded-sm">{size}</button>
+                {selectedProduct.images.length > 1 && (
+                  <div className="flex gap-3">
+                    {selectedProduct.images.map((img, idx) => (
+                      <button key={idx} onClick={() => setActiveImageIndex(idx)} className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all duration-200 hover:scale-105 ${activeImageIndex === idx ? 'border-amber-500 ring-2 ring-amber-500/30' : 'border-transparent hover:border-stone-500'}`}>
+                        <img src={img} alt="" className="w-full h-full object-cover" />
+                      </button>
                     ))}
                   </div>
+                )}
+              </div>
+
+              {/* Product Info */}
+              <div className="space-y-8">
+                {/* Main Info - More Prominent */}
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className={`text-sm px-3 py-1 rounded-full ${theme.card} border ${theme.textSecondary}`}>{selectedProduct.category}</span>
+                    {selectedProduct.stock > 0 && selectedProduct.stock < 5 && <span className="text-sm px-3 py-1 rounded-full bg-orange-500/20 text-orange-400">Son {selectedProduct.stock} adet</span>}
+                  </div>
+                  <h1 className={`text-4xl font-bold ${theme.text} mb-4`}>{selectedProduct.name}</h1>
+                  <p className={`${theme.textSecondary} text-lg leading-relaxed mb-6`}>{selectedProduct.description}</p>
+                  
+                  {/* Dynamic Price Display */}
+                  {(() => {
+                    const sizeMultiplier = selectedProduct.selectedSize === '30x40' ? 0.7 : 1;
+                    const basePrice = selectedProduct.selectedFrame ? selectedProduct.priceFramed : selectedProduct.priceUnframed;
+                    const calculatedPrice = Math.round(basePrice * sizeMultiplier);
+                    const originalPrice = Math.round((selectedProduct.selectedFrame ? selectedProduct.priceFramed : selectedProduct.priceUnframed) * sizeMultiplier);
+                    const discountedPrice = selectedProduct.discount > 0 ? Math.round(calculatedPrice * (1 - selectedProduct.discount / 100)) : calculatedPrice;
+                    
+                    return (
+                      <div className="flex items-baseline gap-3 mb-4">
+                        {selectedProduct.selectedSize || selectedProduct.selectedFrame !== undefined ? (
+                          selectedProduct.discount > 0 ? (
+                            <>
+                              <span className={`text-2xl ${theme.textMuted} line-through`}>{originalPrice}₺</span>
+                              <span className="text-4xl font-bold text-green-400">{discountedPrice}₺</span>
+                              <span className="text-sm text-green-400">%{selectedProduct.discount} indirim</span>
+                            </>
+                          ) : (
+                            <span className={`text-4xl font-bold`} style={{color: theme.accent}}>{calculatedPrice}₺</span>
+                          )
+                        ) : (
+                          <span className={`text-4xl font-bold ${theme.text}`}>{Math.round(selectedProduct.priceUnframed * 0.7)}₺'den başlayan</span>
+                        )}
+                      </div>
+                    );
+                  })()}
+                  
+                  {selectedProduct.stock > 0 ? (
+                    <p className="text-sm text-green-400 flex items-center gap-2"><Check size={16} />Stokta mevcut</p>
+                  ) : (
+                    <p className="text-sm text-red-400">{t.outOfStock}</p>
+                  )}
                 </div>
-                <div className="pt-6 flex gap-4">
-                  <button onClick={() => addToCart(selectedProduct)} className="flex-1 py-5 bg-white text-stone-950 text-xs tracking-[0.3em] uppercase font-bold hover:bg-stone-200 transition rounded-sm">Sepete Ekle</button>
-                  <button onClick={() => toggleFavorite(selectedProduct.id)} className={`w-16 flex items-center justify-center border ${favorites.includes(selectedProduct.id) ? 'border-red-500 text-red-500' : 'border-stone-800 text-white'} hover:border-white transition rounded-sm`}>
-                    <Heart size={20} fill={favorites.includes(selectedProduct.id) ? "currentColor" : "none"} />
+
+                {/* Reviews */}
+                {selectedProduct.reviews.length > 0 && (
+                  <div className={`p-4 rounded-xl ${theme.card} border`}>
+                    <h4 className={`text-base font-medium ${theme.text} mb-3`}>Müşteri Yorumları ({selectedProduct.reviews.length})</h4>
+                    {selectedProduct.reviews.map((r, idx) => (
+                      <div key={idx} className="py-2">
+                        <div className="flex gap-1 mb-1">{[...Array(r.rating)].map((_, i) => <Star key={i} size={14} fill={theme.accent} color={theme.accent} />)}</div>
+                        <p className={`text-sm ${theme.textSecondary}`}>"{r.comment}" - <span className={theme.text}>{r.name}</span></p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Options Section - Minimal Design */}
+                <div className={`p-5 rounded-2xl ${theme.card} border space-y-5`}>
+                  {/* Size Selection - Minimal */}
+                  <div>
+                    <p className={`text-sm font-medium ${theme.textSecondary} mb-3`}>Boyut</p>
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedSize: '30x40'})}
+                        className={`px-5 py-2.5 rounded-lg text-sm font-medium transition ${selectedProduct.selectedSize === '30x40' ? 'text-stone-900' : `${theme.text} border ${theme.border} hover:border-amber-500`}`}
+                        style={selectedProduct.selectedSize === '30x40' ? {background: theme.accent} : {}}
+                      >
+                        30x40 cm
+                      </button>
+                      <button 
+                        onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedSize: '50x70'})}
+                        className={`px-5 py-2.5 rounded-lg text-sm font-medium transition ${selectedProduct.selectedSize === '50x70' ? 'text-stone-900' : `${theme.text} border ${theme.border} hover:border-amber-500`}`}
+                        style={selectedProduct.selectedSize === '50x70' ? {background: theme.accent} : {}}
+                      >
+                        50x70 cm
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Frame Selection - Minimal */}
+                  <div>
+                    <p className={`text-sm font-medium ${theme.textSecondary} mb-3`}>Çerçeve</p>
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: false})}
+                        className={`px-5 py-2.5 rounded-lg text-sm font-medium transition ${selectedProduct.selectedFrame === false ? 'text-stone-900' : `${theme.text} border ${theme.border} hover:border-amber-500`}`}
+                        style={selectedProduct.selectedFrame === false ? {background: theme.accent} : {}}
+                      >
+                        Çerçevesiz
+                      </button>
+                      <button 
+                        onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: true})}
+                        className={`px-5 py-2.5 rounded-lg text-sm font-medium transition ${selectedProduct.selectedFrame === true ? 'text-stone-900' : `${theme.text} border ${theme.border} hover:border-amber-500`}`}
+                        style={selectedProduct.selectedFrame === true ? {background: theme.accent} : {}}
+                      >
+                        Çerçeveli
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {/* Add to Cart Button */}
+                  <button 
+                    onClick={() => {
+                      if (selectedProduct.selectedFrame === undefined) {
+                        alert('Lütfen çerçeve seçeneği seçin');
+                      } else if (selectedProduct.selectedSize === undefined) {
+                        alert('Lütfen boyut seçin');
+                      } else {
+                        addToCart(selectedProduct, selectedProduct.selectedFrame);
+                      }
+                    }} 
+                    disabled={selectedProduct.stock === 0}
+                    className={`w-full text-stone-900 py-4 rounded-xl font-semibold text-lg shadow-lg flex items-center justify-center gap-3 ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90 hover:shadow-xl transition-all'}`}
+                    style={{background: theme.accent}}
+                  >
+                    <ShoppingCart size={22} />
+                    {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
+                  </button>
+
+                  {/* WhatsApp Order Button */}
+                  <button 
+                    onClick={() => {
+                      if (selectedProduct.selectedSize === undefined) {
+                        alert('Lütfen boyut seçin');
+                      } else if (selectedProduct.selectedFrame === undefined) {
+                        alert('Lütfen çerçeve seçeneği seçin');
+                      } else {
+                        const message = `Merhaba! LUUZ'dan sipariş vermek istiyorum:\n\n` +
+                          `Urun: ${selectedProduct.name}\n` +
+                          `Boyut: ${selectedProduct.selectedSize}\n` +
+                          `Cerceve: ${selectedProduct.selectedFrame ? 'Cerceveli' : 'Cercevesiz'}\n` +
+                          `Fiyat: ${(() => {
+                            const sizeMultiplier = selectedProduct.selectedSize === '30x40' ? 0.7 : 1;
+                            const basePrice = selectedProduct.selectedFrame ? selectedProduct.priceFramed : selectedProduct.priceUnframed;
+                            return Math.round(basePrice * sizeMultiplier);
+                          })()}TL\n\n` +
+                          `Siparis vermek istiyorum.`;
+                        window.open(`https://wa.me/905060342409?text=${encodeURIComponent(message)}`, '_blank');
+                      }
+                    }}
+                    className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-semibold text-lg shadow-lg flex items-center justify-center gap-3 transition-all hover:shadow-xl"
+                  >
+                    <MessageCircle size={22} />
+                    WhatsApp ile Sipariş Ver
                   </button>
                 </div>
-                <div className="pt-10 grid grid-cols-2 gap-8 border-t border-stone-800">
-                  <div className="flex items-center gap-4 group">
-                    <div className="w-12 h-12 rounded-full bg-stone-800 flex items-center justify-center group-hover:bg-white group-hover:text-stone-950 transition-all"><Truck size={20} /></div>
-                    <div className="space-y-1">
-                      <p className="text-[10px] font-bold tracking-widest uppercase">Ücretsiz Kargo</p>
-                      <p className="text-[10px] text-stone-500">2-4 iş günü</p>
+              </div>
+            </div>
+
+            {/* Similar Products - Enhanced Section */}
+            <div className={`mt-12 pt-8 border-t ${theme.border}`}>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className={`text-2xl font-bold ${theme.text}`}>Benzer Ürünler</h3>
+                <button 
+                  onClick={() => setSelectedProduct(null)} 
+                  className={`text-sm ${theme.textSecondary} hover:${theme.text} flex items-center gap-1`}
+                >
+                  Tümünü Gör <ChevronRight size={16} />
+                </button>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                {products.filter(p => p.category === selectedProduct.category && p.id !== selectedProduct.id).slice(0, 4).map(p => (
+                  <div 
+                    key={p.id} 
+                    className="group cursor-pointer" 
+                    onClick={() => { setSelectedProduct({...p, selectedSize: undefined, selectedFrame: undefined}); setActiveImageIndex(0); window.scrollTo(0, 0); }}
+                  >
+                    <div className={`relative overflow-hidden rounded-2xl ${theme.card} border shadow-lg transform group-hover:-translate-y-2 group-hover:shadow-xl transition-all duration-300`}>
+                      {p.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs z-10">-{p.discount}%</div>}
+                      {p.isNew && <div className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs z-10">YENİ</div>}
+                      <img src={p.images[0]} alt={p.name} className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                        <span className="text-white text-sm font-medium">Ürünü İncele</span>
+                      </div>
+                    </div>
+                    <div className="mt-3 px-1">
+                      <h4 className={`font-medium ${theme.text} truncate`}>{p.name}</h4>
+                      <div className="flex items-center gap-2 mt-1">
+                        {p.discount > 0 ? (
+                          <>
+                            <span className={`text-sm ${theme.textMuted} line-through`}>{p.priceUnframed}₺</span>
+                            <span className="text-lg font-bold text-green-400">{Math.round(p.priceUnframed * (1 - p.discount/100))}₺</span>
+                          </>
+                        ) : (
+                          <span className={`text-lg font-bold ${theme.text}`}>{p.priceUnframed}₺</span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 group">
-                    <div className="w-12 h-12 rounded-full bg-stone-800 flex items-center justify-center group-hover:bg-white group-hover:text-stone-950 transition-all"><Shield size={20} /></div>
-                    <div className="space-y-1">
-                      <p className="text-[10px] font-bold tracking-widest uppercase">Güvenli Ödeme</p>
-                      <p className="text-[10px] text-stone-500">256-bit SSL</p>
-                    </div>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
       )}
-
-      {/* Cart Drawer */}
+      {/* Cart */}
       {showCart && (
-        <div className="fixed inset-0 z-[100] overflow-hidden">
-          <div className="absolute inset-0 bg-stone-950/60 backdrop-blur-sm" onClick={() => setShowCart(false)} />
-          <div className={`absolute right-0 top-0 h-full w-full max-w-md ${theme.bgSecondary} shadow-2xl transition-transform duration-500 ease-in-out border-l ${theme.border}`}>
-            <div className="flex flex-col h-full">
-              <div className="p-8 flex items-center justify-between border-b border-stone-800">
-                <div className="flex items-center gap-4">
-                  <h2 className="text-xl font-light tracking-widest uppercase">Sepetim</h2>
-                  <span className="text-[10px] px-2 py-1 bg-stone-800 text-stone-400 rounded-full">{cart.length} Ürün</span>
-                </div>
-                <button onClick={() => setShowCart(false)} className="hover:rotate-90 transition-transform duration-300"><X size={24} /></button>
-              </div>
-
-              <div className="flex-1 overflow-y-auto p-8 space-y-8">
-                {cart.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center space-y-6 text-center">
-                    <div className="w-20 h-20 bg-stone-800 rounded-full flex items-center justify-center opacity-50"><ShoppingCart size={32} /></div>
-                    <div className="space-y-2">
-                      <p className="text-sm tracking-widest uppercase opacity-50">Sepetiniz Boş</p>
-                      <p className="text-xs text-stone-500 max-w-[200px]">Sanat koleksiyonunuza başlamak için ürünleri keşfedin.</p>
-                    </div>
-                    <button onClick={() => {setShowCart(false); setShowCollection(true);}} className="text-xs tracking-[0.2em] uppercase border-b border-white pb-2 hover:text-stone-400 transition">Alışverişe Başla</button>
-                  </div>
-                ) : (
-                  cart.map((item) => (
-                    <div key={item.id} className="flex gap-6 group">
-                      <div className="w-24 h-32 bg-stone-900 overflow-hidden rounded-sm">
-                        <img src={item.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt={item.name} />
-                      </div>
-                      <div className="flex-1 space-y-3">
-                        <div className="flex justify-between">
-                          <h4 className="text-xs tracking-widest uppercase font-medium">{item.name}</h4>
-                          <button onClick={() => removeFromCart(item.id)} className="text-stone-600 hover:text-white transition"><X size={14} /></button>
-                        </div>
-                        <p className="text-xs text-stone-500 uppercase tracking-widest">Digital Download</p>
-                        <div className="flex items-center justify-between pt-2">
-                          <div className="flex items-center border border-stone-800 rounded-sm">
-                            <button onClick={() => updateQuantity(item.id, -1)} className="p-2 hover:bg-white/5 transition"><Minus size={12} /></button>
-                            <span className="w-8 text-center text-xs">{item.quantity}</span>
-                            <button onClick={() => updateQuantity(item.id, 1)} className="p-2 hover:bg-white/5 transition"><Plus size={12} /></button>
-                          </div>
-                          <p className="text-sm font-light">{item.price * item.quantity} TL</p>
-                        </div>
+        <div className="fixed inset-0 z-50"><div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowCart(false)} />
+          <div className={`absolute right-0 top-0 h-full w-full max-w-md ${theme.bgSecondary} shadow-2xl flex flex-col`}>
+            <div className={`p-5 border-b ${theme.border} flex justify-between items-center`}><h2 className={`text-xl font-bold ${theme.text}`}>{t.cart} ({totalItems})</h2><button onClick={() => setShowCart(false)} className={theme.textSecondary}><X size={24} /></button></div>
+            <div className="flex-1 overflow-y-auto p-5">
+              {cart.length === 0 ? <div className="text-center py-16"><ShoppingCart size={48} className={`mx-auto mb-4 ${theme.textMuted}`} /><p className={theme.textMuted}>{t.empty}</p></div> : (
+                <div className="space-y-4">{cart.map(item => (
+                  <div key={item.cartId} className={`flex gap-4 ${theme.card} border rounded-xl p-3`}>
+                    <img src={item.images[0]} alt="" className="w-20 h-20 object-cover rounded-lg" />
+                    <div className="flex-1">
+                      <h3 className={`font-medium text-sm ${theme.text}`}>{item.name}</h3>
+                      <p className={`text-xs ${theme.textMuted}`}>{item.isFramed ? t.framed : t.unframed}</p>
+                      {item.discount > 0 && <p className="text-xs text-green-400">-{item.discount}%</p>}
+                      <p className="font-bold mt-1" style={{color: theme.accent}}>{item.price}₺</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <button onClick={() => updateQuantity(item.cartId, -1)} className={`w-7 h-7 ${theme.card} border rounded flex items-center justify-center`}><Minus size={12} /></button>
+                        <span className={`w-6 text-center text-sm ${theme.text}`}>{item.quantity}</span>
+                        <button onClick={() => updateQuantity(item.cartId, 1)} className={`w-7 h-7 ${theme.card} border rounded flex items-center justify-center`}><Plus size={12} /></button>
+                        <button onClick={() => setCart(cart.filter(c => c.cartId !== item.cartId))} className="ml-auto text-red-400 text-xs">Kaldır</button>
                       </div>
                     </div>
-                  ))
-                )}
-              </div>
-
-              {cart.length > 0 && (
-                <div className="p-8 border-t border-stone-800 space-y-6">
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-xs tracking-widest uppercase text-stone-500">
-                      <span>Ara Toplam</span>
-                      <span>{cart.reduce((a, b) => a + (b.price * b.quantity), 0)} TL</span>
-                    </div>
-                    <div className="flex justify-between text-xs tracking-widest uppercase text-stone-500">
-                      <span>Kargo</span>
-                      <span className="text-green-500">Ücretsiz</span>
-                    </div>
-                    <div className="flex justify-between text-lg tracking-widest uppercase pt-4">
-                      <span>Toplam</span>
-                      <span>{cart.reduce((a, b) => a + (b.price * b.quantity), 0)} TL</span>
-                    </div>
                   </div>
-                  <button className="w-full py-5 bg-white text-stone-950 text-xs tracking-[0.3em] uppercase font-bold hover:bg-stone-200 transition rounded-sm shadow-xl">Ödemeye Geç</button>
-                  <p className="text-[10px] text-center text-stone-500 tracking-widest">Tüm ödemeleriniz 256-bit SSL ile korunmaktadır.</p>
+                ))}</div>
+              )}
+            </div>
+            {cart.length > 0 && (
+              <div className={`p-5 border-t ${theme.border} ${theme.bgTertiary}`}>
+                <div className="flex gap-2 mb-4"><input type="text" placeholder="Kupon" value={couponCode} onChange={(e) => setCouponCode(e.target.value)} className={`flex-1 px-3 py-2 rounded-lg text-sm ${theme.input} border`} /><button onClick={applyCoupon} className="px-4 py-2 rounded-lg text-xs font-medium text-stone-900" style={{background: theme.accent}}>{t.applyCoupon}</button></div>
+                {appliedCoupon && <div className="flex items-center justify-between mb-2 text-green-400 text-sm"><span className="flex items-center gap-1"><Tag size={14} />{appliedCoupon.code}</span><span>-{appliedCoupon.type === 'percent' ? `${appliedCoupon.discount}%` : `${appliedCoupon.discount}₺`}</span></div>}
+                <div className={`flex justify-between mb-2 text-sm ${theme.textSecondary}`}><span>Ara Toplam</span><span>{subtotal}₺</span></div>
+                {couponDiscount > 0 && <div className="flex justify-between mb-2 text-sm text-green-400"><span>İndirim</span><span>-{Math.round(couponDiscount)}₺</span></div>}
+                <div className={`flex justify-between mb-2 text-sm ${theme.textSecondary}`}><span>Kargo</span><span>{totalPrice >= 500 ? 'Ücretsiz' : '49₺'}</span></div>
+                <div className={`flex justify-between mb-4 text-lg font-bold ${theme.text}`}><span>{t.total}</span><span style={{color: theme.accent}}>{totalPrice >= 500 ? Math.round(totalPrice) : Math.round(totalPrice) + 49}₺</span></div>
+                <button onClick={() => { setShowCart(false); setShowCheckout(true); }} className="w-full text-stone-900 py-4 rounded-xl font-semibold shadow-lg" style={{background: theme.accent}}>{t.checkout}</button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Checkout */}
+      {showCheckout && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className={`${theme.bgSecondary} rounded-2xl max-w-lg w-full my-8 shadow-2xl`}>
+            <div className={`p-5 border-b ${theme.border} flex justify-between items-center`}><h2 className={`text-xl font-bold ${theme.text}`}>{t.checkout}</h2><button onClick={() => setShowCheckout(false)} className={theme.textSecondary}><X size={24} /></button></div>
+            <div className="p-5 space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <input type="text" placeholder="Ad *" value={checkoutData.firstName} onChange={(e) => setCheckoutData({...checkoutData, firstName: e.target.value})} className={`${theme.input} border rounded-xl px-4 py-3 text-sm`} />
+                <input type="text" placeholder="Soyad" value={checkoutData.lastName} onChange={(e) => setCheckoutData({...checkoutData, lastName: e.target.value})} className={`${theme.input} border rounded-xl px-4 py-3 text-sm`} />
+              </div>
+              <input type="email" placeholder="E-posta *" value={checkoutData.email} onChange={(e) => setCheckoutData({...checkoutData, email: e.target.value})} className={`w-full ${theme.input} border rounded-xl px-4 py-3 text-sm`} />
+              <input type="tel" placeholder="Telefon" value={checkoutData.phone} onChange={(e) => setCheckoutData({...checkoutData, phone: e.target.value})} className={`w-full ${theme.input} border rounded-xl px-4 py-3 text-sm`} />
+              <input type="text" placeholder="Adres" value={checkoutData.address} onChange={(e) => setCheckoutData({...checkoutData, address: e.target.value})} className={`w-full ${theme.input} border rounded-xl px-4 py-3 text-sm`} />
+              <div className="grid grid-cols-2 gap-3">
+                <input type="text" placeholder="Şehir" value={checkoutData.city} onChange={(e) => setCheckoutData({...checkoutData, city: e.target.value})} className={`${theme.input} border rounded-xl px-4 py-3 text-sm`} />
+                <input type="text" placeholder="Posta Kodu" value={checkoutData.postalCode} onChange={(e) => setCheckoutData({...checkoutData, postalCode: e.target.value})} className={`${theme.input} border rounded-xl px-4 py-3 text-sm`} />
+              </div>
+              <hr className={theme.border} />
+              <input type="text" placeholder="Kart No *" value={checkoutData.cardNumber} onChange={(e) => setCheckoutData({...checkoutData, cardNumber: e.target.value})} className={`w-full ${theme.input} border rounded-xl px-4 py-3 text-sm font-mono`} />
+              <div className="grid grid-cols-2 gap-3">
+                <input type="text" placeholder="AA/YY" value={checkoutData.expiry} onChange={(e) => setCheckoutData({...checkoutData, expiry: e.target.value})} className={`${theme.input} border rounded-xl px-4 py-3 text-sm`} />
+                <input type="text" placeholder="CVV" value={checkoutData.cvv} onChange={(e) => setCheckoutData({...checkoutData, cvv: e.target.value})} className={`${theme.input} border rounded-xl px-4 py-3 text-sm`} />
+              </div>
+              <div className={`${theme.card} border rounded-xl p-4 flex justify-between text-lg font-bold ${theme.text}`}><span>{t.total}</span><span style={{color: theme.accent}}>{totalPrice >= 500 ? Math.round(totalPrice) : Math.round(totalPrice) + 49}₺</span></div>
+              <button onClick={handleCheckout} className="w-full text-stone-900 py-4 rounded-xl font-semibold shadow-lg" style={{background: theme.accent}}>Siparişi Tamamla</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Favorites */}
+      {showFavorites && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className={`${theme.bgSecondary} rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-2xl`}>
+            <div className={`sticky top-0 ${theme.bgSecondary} p-5 border-b ${theme.border} flex justify-between items-center`}><h2 className={`text-xl font-bold ${theme.text}`}>{t.favorites} ({favorites.length})</h2><button onClick={() => setShowFavorites(false)} className={theme.textSecondary}><X size={24} /></button></div>
+            <div className="p-5">
+              {favorites.length === 0 ? <div className="text-center py-12"><Heart size={48} className={`mx-auto mb-4 ${theme.textMuted}`} /><p className={theme.textMuted}>Henüz favori yok</p></div> : (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {products.filter(p => favorites.includes(p.id)).map(product => (
+                    <div key={product.id}>
+                      <div className={`relative overflow-hidden ${theme.card} rounded-xl border`}>
+                        <button onClick={() => toggleFavorite(product.id)} className="absolute top-2 right-2 z-10 bg-red-500/80 rounded-full p-1.5"><X size={12} className="text-white" /></button>
+                        <img src={product.images[0]} alt={product.name} className="w-full aspect-square object-cover cursor-pointer" onClick={() => { setSelectedProduct(product); setShowFavorites(false); }} />
+                      </div>
+                      <p className={`text-sm ${theme.text} mt-2`}>{product.name}</p>
+                      <p className={`text-xs ${theme.textMuted}`}>{product.priceUnframed}₺</p>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
@@ -452,84 +1248,98 @@ export default function WallArtShop() {
         </div>
       )}
 
-      {/* Footer */}
-      <footer className={`${theme.bgSecondary} border-t ${theme.border} pt-24 pb-12`}>
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-16">
-          <div className="space-y-8 col-span-1 md:col-span-1">
-            <div className="flex flex-col">
-              <span className="text-3xl font-light tracking-[0.2em]">LUUZ</span>
-              <span className="text-[10px] tracking-[0.4em] uppercase opacity-40">Digital Art Studio</span>
+      {/* Order History */}
+      {showOrderHistory && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className={`${theme.bgSecondary} rounded-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto shadow-2xl`}>
+            <div className={`sticky top-0 ${theme.bgSecondary} p-5 border-b ${theme.border} flex justify-between items-center`}><h2 className={`text-xl font-bold ${theme.text}`}>{t.orderHistory}</h2><button onClick={() => setShowOrderHistory(false)} className={theme.textSecondary}><X size={24} /></button></div>
+            <div className="p-5 space-y-3">
+              {orderHistory.length === 0 ? <div className="text-center py-12"><Package size={48} className={`mx-auto mb-4 ${theme.textMuted}`} /><p className={theme.textMuted}>Henüz sipariş yok</p></div> : (
+                orderHistory.map(order => (
+                  <div key={order.id} className={`${theme.card} border rounded-xl p-4`}>
+                    <div className="flex justify-between items-start mb-2">
+                      <div><p className={`font-mono text-sm ${theme.text}`}>{order.id}</p><p className={`text-xs ${theme.textMuted}`}>{order.date}</p></div>
+                      <span className={`text-xs px-2 py-1 rounded-full ${order.status === 'Teslim Edildi' ? 'bg-green-500/20 text-green-400' : 'bg-amber-500/20 text-amber-400'}`}>{order.status}</span>
+                    </div>
+                    <div className="flex justify-between items-center"><span className={`text-xs ${theme.textMuted}`}>{order.items} ürün</span><span className={`font-bold ${theme.text}`}>{order.total}₺</span></div>
+                  </div>
+                ))
+              )}
             </div>
-            <p className="text-stone-400 text-sm font-light leading-relaxed">Modern, minimalist ve dijital sanatın en seçkin örneklerini yaşam alanlarınıza taşıyoruz.</p>
-            <div className="flex gap-6">
-              {[Instagram, Twitter, Facebook].map((Icon, i) => (
-                <a key={i} href="#" className="text-stone-500 hover:text-white transition-colors hover:scale-110 transform duration-300"><Icon size={20} /></a>
+          </div>
+        </div>
+      )}
+
+      {/* Compare */}
+      {showCompare && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className={`${theme.bgSecondary} rounded-2xl max-w-4xl w-full max-h-[80vh] overflow-y-auto shadow-2xl`}>
+            <div className={`sticky top-0 ${theme.bgSecondary} p-5 border-b ${theme.border} flex justify-between items-center`}><h2 className={`text-xl font-bold ${theme.text}`}>{t.compare} ({compareProducts.length})</h2><button onClick={() => setShowCompare(false)} className={theme.textSecondary}><X size={24} /></button></div>
+            <div className="p-5 overflow-x-auto">
+              <table className="w-full">
+                <thead><tr><th className={`text-left p-2 ${theme.textMuted} text-xs`}></th>{compareProducts.map(p => <th key={p.id} className="p-2 min-w-[150px]"><img src={p.images[0]} alt={p.name} className="w-full aspect-square object-cover rounded-lg mb-2" /><p className={`text-sm ${theme.text}`}>{p.name}</p></th>)}</tr></thead>
+                <tbody className={`text-sm ${theme.textSecondary}`}>
+                  <tr className={`border-t ${theme.border}`}><td className="p-2 font-medium">{t.price}</td>{compareProducts.map(p => <td key={p.id} className="p-2 text-center">{p.priceUnframed}₺</td>)}</tr>
+                  <tr className={`border-t ${theme.border}`}><td className="p-2 font-medium">{t.size}</td>{compareProducts.map(p => <td key={p.id} className="p-2 text-center">{p.size}</td>)}</tr>
+                  <tr className={`border-t ${theme.border}`}><td className="p-2 font-medium">Kategori</td>{compareProducts.map(p => <td key={p.id} className="p-2 text-center">{p.category}</td>)}</tr>
+                  <tr className={`border-t ${theme.border}`}><td className="p-2 font-medium">Stok</td>{compareProducts.map(p => <td key={p.id} className="p-2 text-center">{p.stock > 0 ? <Check size={16} className="text-green-400 mx-auto" /> : <X size={16} className="text-red-400 mx-auto" />}</td>)}</tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* About */}
+      {showAbout && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className={`${theme.bgSecondary} rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-2xl`}>
+            <div className={`sticky top-0 ${theme.bgSecondary} p-5 border-b ${theme.border} flex justify-between items-center`}><h2 className={`text-xl font-bold ${theme.text}`}>{t.about}</h2><button onClick={() => setShowAbout(false)} className={theme.textSecondary}><X size={24} /></button></div>
+            <div className="p-6">
+              <div className="text-center mb-6">
+                <h3 className="text-3xl tracking-widest font-light mb-4" style={{fontFamily: "'Raleway', sans-serif", letterSpacing: '0.3em', color: theme.accent}}>LUUZ</h3>
+                <p className={theme.textSecondary}>LUUZ, 2020 yılında İstanbul'da kurulmuş bir duvar sanatı markasıdır. Misyonumuz, özgün ve kaliteli tasarımlarla yaşam alanlarınıza karakter katmaktır.</p>
+              </div>
+              <div className="grid grid-cols-3 gap-4 text-center">
+                <div className={`${theme.card} border rounded-xl p-4`}><p className="text-2xl font-bold" style={{color: theme.accent}}>5000+</p><p className={`text-xs ${theme.textMuted}`}>Mutlu Müşteri</p></div>
+                <div className={`${theme.card} border rounded-xl p-4`}><p className="text-2xl font-bold" style={{color: theme.accent}}>200+</p><p className={`text-xs ${theme.textMuted}`}>Özgün Tasarım</p></div>
+                <div className={`${theme.card} border rounded-xl p-4`}><p className="text-2xl font-bold" style={{color: theme.accent}}>4.9</p><p className={`text-xs ${theme.textMuted}`}>Ortalama Puan</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* FAQ */}
+      {showFAQ && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className={`${theme.bgSecondary} rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-2xl`}>
+            <div className={`sticky top-0 ${theme.bgSecondary} p-5 border-b ${theme.border} flex justify-between items-center`}><h2 className={`text-xl font-bold ${theme.text}`}>{t.faq}</h2><button onClick={() => setShowFAQ(false)} className={theme.textSecondary}><X size={24} /></button></div>
+            <div className="p-5 space-y-2">
+              {faqData.map((faq, idx) => (
+                <div key={idx} className={`${theme.card} border rounded-xl overflow-hidden`}>
+                  <button onClick={() => setOpenFAQ(openFAQ === idx ? null : idx)} className={`w-full p-4 flex justify-between items-center text-left ${theme.text}`}>
+                    <span className="font-medium text-sm">{faq.q}</span>
+                    {openFAQ === idx ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                  </button>
+                  {openFAQ === idx && <div className={`px-4 pb-4 ${theme.textSecondary} text-sm`}>{faq.a}</div>}
+                </div>
               ))}
             </div>
           </div>
-          <div className="space-y-8">
-            <h4 className="text-xs tracking-[0.3em] uppercase font-bold">Keşfet</h4>
-            <ul className="space-y-4 text-sm text-stone-400 font-light">
-              <li><button onClick={() => {setShowCollection(true); setSelectedCategory('Tümü');}} className="hover:text-white transition">Tüm Ürünler</button></li>
-              <li><button onClick={() => {setShowCollection(true); setSortBy('popular');}} className="hover:text-white transition">En Çok Satanlar</button></li>
-              <li><button onClick={() => {setShowCollection(true); setSortBy('newest');}} className="hover:text-white transition">Yeni Gelenler</button></li>
-              <li><a href="#" className="hover:text-white transition">Sanatçı Hikayemiz</a></li>
-            </ul>
-          </div>
-          <div className="space-y-8">
-            <h4 className="text-xs tracking-[0.3em] uppercase font-bold">Destek</h4>
-            <ul className="space-y-4 text-sm text-stone-400 font-light">
-              <li><a href="#" className="hover:text-white transition">Sıkça Sorulan Sorular</a></li>
-              <li><a href="#" className="hover:text-white transition">Kargo ve İade</a></li>
-              <li><a href="#" className="hover:text-white transition">Kullanım Koşulları</a></li>
-              <li><a href="#" className="hover:text-white transition">Gizlilik Politikası</a></li>
-            </ul>
-          </div>
-          <div className="space-y-8">
-            <h4 className="text-xs tracking-[0.3em] uppercase font-bold">Bülten</h4>
-            <p className="text-stone-400 text-sm font-light">Yeni koleksiyonlar ve özel indirimlerden haberdar olun.</p>
-            <div className="flex gap-2">
-              <input type="email" placeholder="E-posta adresi" className={`flex-1 ${theme.bg} border ${theme.border} px-4 py-3 text-sm focus:outline-none focus:border-white transition rounded-sm`} />
-              <button className="px-6 py-3 bg-white text-stone-950 text-xs font-bold tracking-widest uppercase hover:bg-stone-200 transition rounded-sm">Katıl</button>
-            </div>
-          </div>
         </div>
-        <div className="max-w-7xl mx-auto px-4 mt-24 pt-8 border-t border-stone-800 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-[10px] tracking-[0.2em] uppercase text-stone-500">© 2024 LUUZ Digital Art. Tüm hakları saklıdır.</p>
-          <div className="flex gap-8 grayscale opacity-50">
-            <div className="flex items-center gap-2 border border-stone-800 px-3 py-1 rounded">
-              <Shield size={12} />
-              <span className="text-[10px] tracking-widest uppercase font-bold italic">VISA</span>
-            </div>
-            <div className="flex items-center gap-2 border border-stone-800 px-3 py-1 rounded">
-              <Shield size={12} />
-              <span className="text-[10px] tracking-widest uppercase font-bold italic">MasterCard</span>
-            </div>
-          </div>
-        </div>
-      </footer>
+      )}
 
-      {/* Floating Elements */}
+      {/* Chat */}
       {showChat && (
-        <div className="fixed bottom-24 right-6 w-80 bg-stone-900 border border-stone-800 rounded-2xl shadow-2xl z-50 overflow-hidden animate-in slide-in-from-bottom-4">
-          <div className="bg-stone-100 p-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-stone-950 flex items-center justify-center text-white"><MessageCircle size={16} /></div>
-              <div>
-                <p className="text-xs font-bold text-stone-950">Müşteri Destek</p>
-                <p className="text-[10px] text-green-600 font-bold uppercase tracking-tighter">Çevrimiçi</p>
-              </div>
-            </div>
-            <button onClick={() => setShowChat(false)} className="text-stone-950 hover:rotate-90 transition-transform"><X size={20} /></button>
+        <div className={`fixed bottom-24 right-6 w-80 ${theme.bgSecondary} rounded-2xl shadow-2xl z-40 overflow-hidden border ${theme.border}`}>
+          <div className="p-4 text-stone-900 flex justify-between items-center" style={{background: theme.accent}}>
+            <div className="flex items-center gap-3"><MessageCircle size={20} /><div><h3 className="font-semibold text-sm">Canlı Destek</h3><p className="text-xs opacity-80">Genellikle 2 dk içinde</p></div></div>
+            <button onClick={() => setShowChat(false)}><X size={18} /></button>
           </div>
-          <div className="h-64 p-4 space-y-4 overflow-y-auto">
-            <div className="bg-stone-800 p-3 rounded-xl rounded-tl-none max-w-[80%]"><p className="text-sm text-stone-100">Merhaba! Nasıl yardımcı olabilirim? 😊</p></div>
-          </div>
+          <div className={`p-4 h-64 ${theme.bgTertiary}`}><div className={`${theme.bgSecondary} p-3 rounded-xl shadow-sm`}><p className={`text-sm ${theme.text}`}>Merhaba! Nasıl yardımcı olabilirim? 😊</p></div></div>
           <div className={`p-3 border-t ${theme.border}`}>
-            <div className="flex gap-2">
-              <input type="text" placeholder="Mesajınızı yazın..." className={`flex-1 ${theme.input} border rounded-xl px-4 py-2 text-sm focus:outline-none`} />
-              <button className="w-10 h-10 rounded-xl flex items-center justify-center bg-white text-stone-950 hover:scale-105 transition"><ChevronRight size={18} /></button>
-            </div>
+            <div className="flex gap-2"><input type="text" placeholder="Mesajınızı yazın..." className={`flex-1 ${theme.input} border rounded-xl px-4 py-2 text-sm`} /><button className="w-10 h-10 rounded-xl text-stone-900 flex items-center justify-center" style={{background: theme.accent}}><ChevronRight size={18} /></button></div>
           </div>
         </div>
       )}
@@ -545,41 +1355,9 @@ export default function WallArtShop() {
       </a>
 
       {/* Scroll Top */}
-      {showScrollTop && (
-        <button 
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} 
-          className="fixed bottom-6 left-6 w-12 h-12 bg-stone-900 border border-stone-800 rounded-full shadow-lg hover:scale-110 transition z-40 flex items-center justify-center text-white"
-        >
-          <ArrowUp size={20} />
-        </button>
-      )}
+      {showScrollTop && <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className={`fixed bottom-6 left-6 w-12 h-12 ${theme.bgSecondary} border ${theme.border} rounded-full shadow-lg hover:scale-110 transition z-40 flex items-center justify-center ${theme.textSecondary}`}><ArrowUp size={20} /></button>}
 
-      {/* Search Overlay */}
-      {showSearch && (
-        <div className="fixed inset-0 z-[110] bg-stone-950/98 backdrop-blur-xl flex flex-col p-10 animate-in fade-in duration-300">
-          <div className="max-w-3xl mx-auto w-full space-y-12">
-            <div className="flex justify-between items-center border-b border-stone-800 pb-6">
-              <input 
-                autoFocus
-                type="text" 
-                placeholder="SANAT ESERİ ARA..." 
-                className="bg-transparent text-4xl font-light w-full focus:outline-none tracking-tight uppercase"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <button onClick={() => {setShowSearch(false); setSearchQuery('');}}><X size={40} className="hover:rotate-90 transition-all duration-300" /></button>
-            </div>
-            <div className="space-y-6">
-              <p className="text-[10px] tracking-[0.4em] uppercase text-stone-500 font-bold">Popüler Aramalar</p>
-              <div className="flex flex-wrap gap-4">
-                {['Minimalist', 'Soyut', 'Doğa', 'Siyah Beyaz'].map(tag => (
-                  <button key={tag} onClick={() => {setSearchQuery(tag); setShowCollection(true); setShowSearch(false);}} className="px-6 py-2 border border-stone-800 rounded-full text-xs tracking-widest hover:bg-white hover:text-stone-950 transition-all">{tag}</button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <style>{`.scrollbar-hide::-webkit-scrollbar{display:none}.scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none}`}</style>
     </div>
   );
 }
