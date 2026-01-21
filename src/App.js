@@ -186,7 +186,7 @@ export default function WallArtShop() {
       </div>
 
       {/* Hero with Video Background */}
-      <section className="relative h-[70vh] min-h-[500px] overflow-hidden">
+      <section className="relative h-[45vh] min-h-[350px] overflow-hidden">
         {/* Video Background */}
         <div className="absolute inset-0">
           <video 
@@ -207,24 +207,19 @@ export default function WallArtShop() {
         
         {/* Content */}
         <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4">
-          <h2 className="text-5xl md:text-7xl font-bold mb-6 text-white animate-fade-in">
+          <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white animate-fade-in">
             Duvarlarınıza <span style={{color: theme.accent}}>Sanat</span> Katın
           </h2>
-          <p className="text-xl md:text-2xl text-stone-300 max-w-2xl mx-auto mb-10 animate-fade-in-delay">
+          <p className="text-base md:text-lg text-stone-300 max-w-xl mx-auto mb-6 animate-fade-in-delay">
             Özgün tasarımlarla mekanlarınıza karakter katın
           </p>
           <button 
             onClick={() => setShowCollection(true)} 
-            className="text-stone-900 px-10 py-4 rounded-xl font-semibold text-lg shadow-2xl hover:shadow-xl hover:scale-105 transition-all duration-300 animate-fade-in-delay-2"
+            className="text-stone-900 px-8 py-3 rounded-xl font-semibold text-sm shadow-2xl hover:shadow-xl hover:scale-105 transition-all duration-300 animate-fade-in-delay-2"
             style={{background: theme.accent}}
           >
             Koleksiyonu Keşfet
           </button>
-        </div>
-
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-          <ChevronDown size={32} className="text-white/70" />
         </div>
       </section>
 
@@ -278,18 +273,6 @@ export default function WallArtShop() {
           transition: all 0.3s ease-out;
         }
       `}</style>
-
-      {/* Features */}
-      <section className={`py-8 ${theme.bgSecondary} border-b ${theme.border}`}>
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[{icon: Truck, title: 'Ücretsiz Kargo', desc: '500₺ üzeri'}, {icon: Shield, title: 'Güvenli Ödeme', desc: '256-bit SSL'}, {icon: RotateCcw, title: '14 Gün İade', desc: 'Koşulsuz'}, {icon: Package, title: 'Özenli Paket', desc: 'Hasar garantisi'}].map((item, idx) => (
-            <div key={idx} className="flex items-center gap-3 justify-center py-2">
-              <item.icon size={20} style={{color: theme.accent}} />
-              <div><p className={`text-xs font-medium ${theme.text}`}>{item.title}</p><p className={`text-xs ${theme.textMuted}`}>{item.desc}</p></div>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* Best Sellers & New Arrivals - Side by Side */}
       <section className="max-w-7xl mx-auto px-4 py-10">
@@ -501,14 +484,26 @@ export default function WallArtShop() {
         </div>
       )}
 
-      {/* Newsletter */}
-      <section className={`py-16 ${darkMode ? 'bg-gradient-to-r from-stone-800 to-stone-800' : 'bg-gradient-to-r from-stone-200 to-stone-100'} border-y ${theme.border}`}>
-        <div className="max-w-3xl mx-auto px-4 text-center">
-          <h3 className={`text-2xl font-bold ${theme.text} mb-3`}>{t.newsletter}</h3>
-          <p className={`${theme.textSecondary} mb-6 text-sm`}>İndirimlerden ilk siz haberdar olun</p>
-          <div className="flex gap-3 max-w-md mx-auto">
-            <input type="email" placeholder="E-posta" className={`flex-1 px-4 py-3 rounded-xl ${theme.input} border`} />
-            <button className="text-stone-900 px-6 py-3 rounded-xl font-medium" style={{background: theme.accent}}>{t.subscribe}</button>
+      {/* Features - Compact */}
+      <section className={`py-4 ${theme.bgSecondary} border-y ${theme.border}`}>
+        <div className="max-w-5xl mx-auto px-4 flex flex-wrap justify-center gap-6 md:gap-10">
+          {[{icon: Truck, title: 'Ücretsiz Kargo'}, {icon: Shield, title: 'Güvenli Ödeme'}, {icon: RotateCcw, title: '14 Gün İade'}, {icon: Package, title: 'Özenli Paket'}].map((item, idx) => (
+            <div key={idx} className="flex items-center gap-2">
+              <item.icon size={16} style={{color: theme.accent}} />
+              <span className={`text-xs font-medium ${theme.textSecondary}`}>{item.title}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Newsletter - Compact */}
+      <section className={`py-8 ${darkMode ? 'bg-stone-800' : 'bg-stone-100'}`}>
+        <div className="max-w-2xl mx-auto px-4 text-center">
+          <h3 className={`text-lg font-bold ${theme.text} mb-2`}>{t.newsletter}</h3>
+          <p className={`${theme.textSecondary} mb-4 text-xs`}>İndirimlerden ilk siz haberdar olun</p>
+          <div className="flex gap-2 max-w-sm mx-auto">
+            <input type="email" placeholder="E-posta" className={`flex-1 px-3 py-2 rounded-lg text-sm ${theme.input} border`} />
+            <button className="text-stone-900 px-4 py-2 rounded-lg text-sm font-medium" style={{background: theme.accent}}>{t.subscribe}</button>
           </div>
         </div>
       </section>
@@ -682,6 +677,28 @@ export default function WallArtShop() {
 
             {/* Categories */}
             <div className="flex flex-wrap justify-center gap-2 mb-8">
+            {/* Special Categories - Best Sellers & New Arrivals */}
+            <div className="flex gap-3 mb-4 overflow-x-auto pb-2 scrollbar-hide">
+              <button 
+                onClick={() => { setSelectedCategory('Tümü'); setShowBestSellers(true); setShowCollection(false); }}
+                className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold whitespace-nowrap transition-all bg-gradient-to-r from-amber-500 to-amber-600 text-stone-900 shadow-lg hover:shadow-xl hover:scale-105"
+              >
+                <TrendingUp size={18} />
+                <span>Çok Satanlar</span>
+                <span className="bg-stone-900 text-amber-500 text-xs px-2 py-0.5 rounded-full">{products.filter(p => p.isBestSeller).length}</span>
+              </button>
+              <button 
+                onClick={() => { setSelectedCategory('Tümü'); setShowNewArrivals(true); setShowCollection(false); }}
+                className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold whitespace-nowrap transition-all bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg hover:shadow-xl hover:scale-105"
+              >
+                <Star size={18} />
+                <span>Yeni Ürünler</span>
+                <span className="bg-white text-green-600 text-xs px-2 py-0.5 rounded-full">{products.filter(p => p.isNew).length}</span>
+              </button>
+            </div>
+
+            {/* Regular Categories */}
+            <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide">
               {categories.map(cat => (
                 <button 
                   key={cat} 
