@@ -333,18 +333,14 @@ export default function WallArtShop() {
                         <div className="absolute top-3 left-3 text-stone-900 px-3 py-1 rounded-full text-xs font-bold" style={{background: theme.accent}}>BEST</div>
                         {product.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs">-{product.discount}%</div>}
                       </div>
-                      <div className="flex-1 flex flex-col justify-center">
-                        <h4 className={`text-lg font-bold ${theme.text} mb-2`}>{product.name}</h4>
-                        <p className={`text-sm ${theme.textSecondary} mb-4 line-clamp-2`}>{product.description}</p>
-                        <div className="flex items-center gap-2 mb-4">
-                          {product.discount > 0 ? (
-                            <>
-                              <span className={`text-lg ${theme.textMuted} line-through`}>{product.priceUnframed}₺</span>
-                              <span className="text-2xl font-bold text-green-400">{Math.round(product.priceUnframed * (1 - product.discount/100))}₺</span>
-                            </>
-                          ) : (
-                            <span className="text-2xl font-bold" style={{color: theme.accent}}>{product.priceUnframed}₺</span>
-                          )}
+                      <div className="flex-1 flex flex-col justify-start pt-4">
+                        <h4 className={`text-xl font-bold ${theme.text} mb-3`}>{product.name}</h4>
+                        <p className={`text-sm ${theme.textSecondary} mb-6 line-clamp-2`}>{product.description}</p>
+                        <div className="mb-6">
+                          <span className="text-2xl font-bold" style={{color: theme.accent}}>
+                            ₺{product.discount > 0 ? Math.round(product.priceUnframed * (1 - product.discount/100)) : product.priceUnframed}
+                          </span>
+                          <span className={`text-sm ${theme.textSecondary} ml-1`}>'den başlayan fiyatlarla</span>
                         </div>
                         <button 
                           onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }}
@@ -421,18 +417,14 @@ export default function WallArtShop() {
                         <div className="absolute top-3 left-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">YENİ</div>
                         {product.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs">-{product.discount}%</div>}
                       </div>
-                      <div className="flex-1 flex flex-col justify-center">
-                        <h4 className={`text-lg font-bold ${theme.text} mb-2`}>{product.name}</h4>
-                        <p className={`text-sm ${theme.textSecondary} mb-4 line-clamp-2`}>{product.description}</p>
-                        <div className="flex items-center gap-2 mb-4">
-                          {product.discount > 0 ? (
-                            <>
-                              <span className={`text-lg ${theme.textMuted} line-through`}>{product.priceUnframed}₺</span>
-                              <span className="text-2xl font-bold text-green-400">{Math.round(product.priceUnframed * (1 - product.discount/100))}₺</span>
-                            </>
-                          ) : (
-                            <span className="text-2xl font-bold" style={{color: theme.accent}}>{product.priceUnframed}₺</span>
-                          )}
+                      <div className="flex-1 flex flex-col justify-start pt-4">
+                        <h4 className={`text-xl font-bold ${theme.text} mb-3`}>{product.name}</h4>
+                        <p className={`text-sm ${theme.textSecondary} mb-6 line-clamp-2`}>{product.description}</p>
+                        <div className="mb-6">
+                          <span className="text-2xl font-bold text-green-400">
+                            ₺{product.discount > 0 ? Math.round(product.priceUnframed * (1 - product.discount/100)) : product.priceUnframed}
+                          </span>
+                          <span className={`text-sm ${theme.textSecondary} ml-1`}>'den başlayan fiyatlarla</span>
                         </div>
                         <button 
                           onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }}
