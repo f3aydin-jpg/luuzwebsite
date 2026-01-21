@@ -303,13 +303,13 @@ export default function WallArtShop() {
               <div className="flex items-center gap-2">
                 <button 
                   onClick={() => setBestSellerIndex(prev => prev > 0 ? prev - 1 : Math.max(0, products.filter(p => p.isBestSeller).length - 1))}
-                  className={`p-2 rounded-full ${theme.bgTertiary} hover:bg-amber-500 hover:text-stone-900 transition-all`}
+                  className={`p-2 rounded-full ${theme.bgTertiary} ${theme.text} hover:bg-amber-500 hover:text-stone-900 transition-all`}
                 >
                   <ChevronUp size={18} />
                 </button>
                 <button 
                   onClick={() => setBestSellerIndex(prev => prev < products.filter(p => p.isBestSeller).length - 1 ? prev + 1 : 0)}
-                  className={`p-2 rounded-full ${theme.bgTertiary} hover:bg-amber-500 hover:text-stone-900 transition-all`}
+                  className={`p-2 rounded-full ${theme.bgTertiary} ${theme.text} hover:bg-amber-500 hover:text-stone-900 transition-all`}
                 >
                   <ChevronDown size={18} />
                 </button>
@@ -387,13 +387,13 @@ export default function WallArtShop() {
               <div className="flex items-center gap-2">
                 <button 
                   onClick={() => setNewArrivalIndex(prev => prev > 0 ? prev - 1 : Math.max(0, products.filter(p => p.isNew).length - 1))}
-                  className={`p-2 rounded-full ${theme.bgTertiary} hover:bg-green-500 hover:text-white transition-all`}
+                  className={`p-2 rounded-full ${theme.bgTertiary} ${theme.text} hover:bg-green-500 hover:text-white transition-all`}
                 >
                   <ChevronUp size={18} />
                 </button>
                 <button 
                   onClick={() => setNewArrivalIndex(prev => prev < products.filter(p => p.isNew).length - 1 ? prev + 1 : 0)}
-                  className={`p-2 rounded-full ${theme.bgTertiary} hover:bg-green-500 hover:text-white transition-all`}
+                  className={`p-2 rounded-full ${theme.bgTertiary} ${theme.text} hover:bg-green-500 hover:text-white transition-all`}
                 >
                   <ChevronDown size={18} />
                 </button>
