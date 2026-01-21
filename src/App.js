@@ -676,39 +676,40 @@ export default function WallArtShop() {
             </div>
 
             {/* Categories */}
-            <div className="flex flex-wrap justify-center gap-2 mb-8">
-            {/* Special Categories - Best Sellers & New Arrivals */}
-            <div className="flex gap-3 mb-4 overflow-x-auto pb-2 scrollbar-hide">
-              <button 
-                onClick={() => { setSelectedCategory('Tümü'); setShowBestSellers(true); setShowCollection(false); }}
-                className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold whitespace-nowrap transition-all bg-gradient-to-r from-amber-500 to-amber-600 text-stone-900 shadow-lg hover:shadow-xl hover:scale-105"
-              >
-                <TrendingUp size={18} />
-                <span>Çok Satanlar</span>
-                <span className="bg-stone-900 text-amber-500 text-xs px-2 py-0.5 rounded-full">{products.filter(p => p.isBestSeller).length}</span>
-              </button>
-              <button 
-                onClick={() => { setSelectedCategory('Tümü'); setShowNewArrivals(true); setShowCollection(false); }}
-                className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold whitespace-nowrap transition-all bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg hover:shadow-xl hover:scale-105"
-              >
-                <Star size={18} />
-                <span>Yeni Ürünler</span>
-                <span className="bg-white text-green-600 text-xs px-2 py-0.5 rounded-full">{products.filter(p => p.isNew).length}</span>
-              </button>
-            </div>
-
-            {/* Regular Categories */}
-            <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide">
-              {categories.map(cat => (
+            <div className="mb-8">
+              {/* Special Categories - Best Sellers & New Arrivals */}
+              <div className="flex gap-3 mb-4 overflow-x-auto pb-2 scrollbar-hide justify-center">
                 <button 
-                  key={cat} 
-                  onClick={() => setSelectedCategory(cat)} 
-                  className={`px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all ${selectedCategory === cat ? 'text-stone-900 shadow-lg' : `${theme.card} ${theme.textSecondary} border hover:border-stone-500`}`} 
-                  style={selectedCategory === cat ? {background: theme.accent} : {}}
+                  onClick={() => { setSelectedCategory('Tümü'); setShowBestSellers(true); setShowCollection(false); }}
+                  className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold whitespace-nowrap transition-all bg-gradient-to-r from-amber-500 to-amber-600 text-stone-900 shadow-lg hover:shadow-xl hover:scale-105"
                 >
-                  {cat}
+                  <TrendingUp size={18} />
+                  <span>Çok Satanlar</span>
+                  <span className="bg-stone-900 text-amber-500 text-xs px-2 py-0.5 rounded-full">{products.filter(p => p.isBestSeller).length}</span>
                 </button>
-              ))}
+                <button 
+                  onClick={() => { setSelectedCategory('Tümü'); setShowNewArrivals(true); setShowCollection(false); }}
+                  className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold whitespace-nowrap transition-all bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg hover:shadow-xl hover:scale-105"
+                >
+                  <Star size={18} />
+                  <span>Yeni Ürünler</span>
+                  <span className="bg-white text-green-600 text-xs px-2 py-0.5 rounded-full">{products.filter(p => p.isNew).length}</span>
+                </button>
+              </div>
+
+              {/* Regular Categories */}
+              <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide justify-center flex-wrap">
+                {categories.map(cat => (
+                  <button 
+                    key={cat} 
+                    onClick={() => setSelectedCategory(cat)} 
+                    className={`px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all ${selectedCategory === cat ? 'text-stone-900 shadow-lg' : `${theme.card} ${theme.textSecondary} border hover:border-stone-500`}`} 
+                    style={selectedCategory === cat ? {background: theme.accent} : {}}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Filters & Sort */}
