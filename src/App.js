@@ -48,6 +48,7 @@ export default function WallArtShop() {
   const [newArrivalIndex, setNewArrivalIndex] = useState(0);
   const [showBestSellers, setShowBestSellers] = useState(false);
   const [showNewArrivals, setShowNewArrivals] = useState(false);
+  const [specialFilter, setSpecialFilter] = useState(null); // 'bestSeller', 'newArrival', or null
 
   const t = language === 'tr' ? { collection: 'Koleksiyon', about: 'Hakkımızda', howItWorks: 'Nasıl Çalışır', faq: 'SSS', search: 'Ürün ara...', cart: 'Sepetim', favorites: 'Favorilerim', addToCart: 'Sepete Ekle', checkout: 'Ödemeye Geç', total: 'Toplam', empty: 'Sepetiniz boş', filters: 'Filtreler', price: 'Fiyat', size: 'Boyut', bestSellers: 'Çok Satanlar', newArrivals: 'Yeni Gelenler', allCollection: 'Tüm Koleksiyon', framed: 'Çerçeveli', unframed: 'Çerçevesiz', inStock: 'Stokta', outOfStock: 'Tükendi', similarProducts: 'Benzer Ürünler', applyCoupon: 'Uygula', newsletter: 'Yeni Koleksiyonlardan Haberdar Olun', subscribe: 'Abone Ol', compare: 'Karşılaştır', recentlyViewed: 'Son Görüntülenenler', orderHistory: 'Sipariş Geçmişi' } : { collection: 'Collection', about: 'About', howItWorks: 'How It Works', faq: 'FAQ', search: 'Search...', cart: 'Cart', favorites: 'Favorites', addToCart: 'Add to Cart', checkout: 'Checkout', total: 'Total', empty: 'Cart is empty', filters: 'Filters', price: 'Price', size: 'Size', bestSellers: 'Best Sellers', newArrivals: 'New Arrivals', allCollection: 'All Collection', framed: 'Framed', unframed: 'Unframed', inStock: 'In Stock', outOfStock: 'Out of Stock', similarProducts: 'Similar', applyCoupon: 'Apply', newsletter: 'Stay Updated', subscribe: 'Subscribe', compare: 'Compare', recentlyViewed: 'Recently Viewed', orderHistory: 'Orders' };
 
@@ -85,7 +86,8 @@ export default function WallArtShop() {
     const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesPrice = p.priceUnframed >= priceRange[0] && p.priceUnframed <= priceRange[1];
     const matchesSize = selectedSizes.length === 0 || selectedSizes.includes(p.size);
-    return matchesCategory && matchesSearch && matchesPrice && matchesSize;
+    const matchesSpecial = specialFilter === null || (specialFilter === 'bestSeller' && p.isBestSeller) || (specialFilter === 'newArrival' && p.isNew);
+    return matchesCategory && matchesSearch && matchesPrice && matchesSize && matchesSpecial;
   }).sort((a, b) => sortBy === 'priceLow' ? a.priceUnframed - b.priceUnframed : sortBy === 'priceHigh' ? b.priceUnframed - a.priceUnframed : sortBy === 'newest' ? b.isNew - a.isNew : b.isBestSeller - a.isBestSeller);
 
   const toggleFavorite = (id) => favorites.includes(id) ? setFavorites(favorites.filter(f => f !== id)) : setFavorites([...favorites, id]);
@@ -536,9 +538,9 @@ export default function WallArtShop() {
         <div className={`fixed inset-0 z-50 ${theme.bg} overflow-y-auto animate-fade-in`}>
           <div className={`sticky top-0 ${theme.bgTertiary} border-b ${theme.border} z-10`}>
             <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-              <button onClick={() => setShowBestSellers(false)} className={`flex items-center gap-2 ${theme.textSecondary} ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'} transition`}>
+              <button onClick={() => { setShowBestSellers(false); setShowCollection(true); }} className={`flex items-center gap-2 ${theme.textSecondary} ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'} transition`}>
                 <ChevronLeft size={20} />
-                <span className="text-sm">Ana Sayfa</span>
+                <span className="text-sm">Geri</span>
               </button>
               <div className="flex items-center gap-2">
                 <TrendingUp size={20} style={{color: theme.accent}} />
@@ -588,9 +590,9 @@ export default function WallArtShop() {
         <div className={`fixed inset-0 z-50 ${theme.bg} overflow-y-auto animate-fade-in`}>
           <div className={`sticky top-0 ${theme.bgTertiary} border-b ${theme.border} z-10`}>
             <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-              <button onClick={() => setShowNewArrivals(false)} className={`flex items-center gap-2 ${theme.textSecondary} ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'} transition`}>
+              <button onClick={() => { setShowNewArrivals(false); setShowCollection(true); }} className={`flex items-center gap-2 ${theme.textSecondary} ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'} transition`}>
                 <ChevronLeft size={20} />
-                <span className="text-sm">Ana Sayfa</span>
+                <span className="text-sm">Geri</span>
               </button>
               <div className="flex items-center gap-2">
                 <span className="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400 font-medium">YENİ</span>
@@ -641,11 +643,11 @@ export default function WallArtShop() {
           {/* Collection Header */}
           <div className={`sticky top-0 ${theme.bgTertiary} border-b ${theme.border} z-10`}>
             <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-              <button onClick={() => setShowCollection(false)} className={`flex items-center gap-2 ${theme.textSecondary} hover:text-white transition`}>
+              <button onClick={() => { setShowCollection(false); setSpecialFilter(null); }} className={`flex items-center gap-2 ${theme.textSecondary} ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'} transition`}>
                 <ChevronLeft size={20} />
-                <span className="text-sm">Ana Sayfa</span>
+                <span className="text-sm">Geri</span>
               </button>
-              <button onClick={() => setShowCollection(false)} className="hover:opacity-80 transition">
+              <button onClick={() => { setShowCollection(false); setSpecialFilter(null); }} className="hover:opacity-80 transition">
                 <img src={darkMode ? "/luuz-logo-white.png" : "/luuz-logo-black.png"} alt="LUUZ" className="h-6" />
               </button>
               <div className="flex items-center gap-2">
@@ -676,34 +678,32 @@ export default function WallArtShop() {
             </div>
 
             {/* Categories */}
-            <div className="mb-8">
-              {/* Special Categories - Best Sellers & New Arrivals */}
-              <div className="flex gap-3 mb-4 overflow-x-auto pb-2 scrollbar-hide justify-center">
+            <div className="mb-6">
+              {/* Special Filters - Best Sellers & New Arrivals */}
+              <div className="flex gap-2 mb-4 justify-center">
                 <button 
-                  onClick={() => { setSelectedCategory('Tümü'); setShowBestSellers(true); setShowCollection(false); }}
-                  className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold whitespace-nowrap transition-all bg-gradient-to-r from-amber-500 to-amber-600 text-stone-900 shadow-lg hover:shadow-xl hover:scale-105"
+                  onClick={() => setSpecialFilter(specialFilter === 'bestSeller' ? null : 'bestSeller')}
+                  className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all ${specialFilter === 'bestSeller' ? 'bg-amber-500 text-stone-900' : `${theme.card} ${theme.textSecondary} border hover:border-amber-500`}`}
                 >
-                  <TrendingUp size={18} />
+                  <TrendingUp size={14} />
                   <span>Çok Satanlar</span>
-                  <span className="bg-stone-900 text-amber-500 text-xs px-2 py-0.5 rounded-full">{products.filter(p => p.isBestSeller).length}</span>
                 </button>
                 <button 
-                  onClick={() => { setSelectedCategory('Tümü'); setShowNewArrivals(true); setShowCollection(false); }}
-                  className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold whitespace-nowrap transition-all bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg hover:shadow-xl hover:scale-105"
+                  onClick={() => setSpecialFilter(specialFilter === 'newArrival' ? null : 'newArrival')}
+                  className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all ${specialFilter === 'newArrival' ? 'bg-green-500 text-white' : `${theme.card} ${theme.textSecondary} border hover:border-green-500`}`}
                 >
-                  <Star size={18} />
+                  <Star size={14} />
                   <span>Yeni Ürünler</span>
-                  <span className="bg-white text-green-600 text-xs px-2 py-0.5 rounded-full">{products.filter(p => p.isNew).length}</span>
                 </button>
               </div>
 
               {/* Regular Categories */}
-              <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide justify-center flex-wrap">
+              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide justify-center flex-wrap">
                 {categories.map(cat => (
                   <button 
                     key={cat} 
                     onClick={() => setSelectedCategory(cat)} 
-                    className={`px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all ${selectedCategory === cat ? 'text-stone-900 shadow-lg' : `${theme.card} ${theme.textSecondary} border hover:border-stone-500`}`} 
+                    className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all ${selectedCategory === cat ? 'text-stone-900' : `${theme.textSecondary} hover:${theme.text}`}`} 
                     style={selectedCategory === cat ? {background: theme.accent} : {}}
                   >
                     {cat}
@@ -712,50 +712,22 @@ export default function WallArtShop() {
               </div>
             </div>
 
-            {/* Filters & Sort */}
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-              <p className={`${theme.textMuted} text-sm`}>{filteredProducts.length} ürün</p>
-              <div className="flex items-center gap-3">
-                <button onClick={() => setShowFilters(!showFilters)} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs ${theme.card} border ${theme.textSecondary}`}><Filter size={14} />{t.filters}</button>
-                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className={`px-4 py-2 rounded-lg text-xs ${theme.input} border`}>
+            {/* Filters & Sort - Minimalist */}
+            <div className="flex items-center justify-between gap-4 mb-6 pb-4 border-b" style={{borderColor: theme.border}}>
+              <span className={`text-xs ${theme.textMuted}`}>{filteredProducts.length} ürün</span>
+              <div className="flex items-center gap-2">
+                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className={`px-3 py-1.5 rounded-lg text-xs ${theme.bg} ${theme.text} border ${theme.border} focus:outline-none`}>
                   <option value="popular">Popüler</option>
                   <option value="newest">En Yeni</option>
                   <option value="priceLow">Fiyat ↑</option>
                   <option value="priceHigh">Fiyat ↓</option>
                 </select>
-                <div className={`hidden md:flex items-center gap-1 ${theme.card} border rounded-lg p-1`}>
-                  <button onClick={() => setViewMode('grid')} className={`p-1.5 rounded ${viewMode === 'grid' ? 'bg-stone-600' : ''}`}><Grid size={14} className={viewMode === 'grid' ? 'text-white' : theme.textMuted} /></button>
-                  <button onClick={() => setViewMode('list')} className={`p-1.5 rounded ${viewMode === 'list' ? 'bg-stone-600' : ''}`}><List size={14} className={viewMode === 'list' ? 'text-white' : theme.textMuted} /></button>
+                <div className={`flex items-center gap-1 p-1 rounded-lg border ${theme.border}`}>
+                  <button onClick={() => setViewMode('grid')} className={`p-1 rounded ${viewMode === 'grid' ? theme.bgSecondary : ''}`}><Grid size={14} className={theme.textMuted} /></button>
+                  <button onClick={() => setViewMode('list')} className={`p-1 rounded ${viewMode === 'list' ? theme.bgSecondary : ''}`}><List size={14} className={theme.textMuted} /></button>
                 </div>
               </div>
             </div>
-
-            {/* Filters Panel */}
-            {showFilters && (
-              <div className={`${theme.card} border rounded-xl p-4 mb-6`}>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div>
-                    <label className={`text-xs font-medium ${theme.text} mb-2 block`}>{t.price}</label>
-                    <div className="flex items-center gap-2">
-                      <input type="number" value={priceRange[0]} onChange={(e) => setPriceRange([+e.target.value, priceRange[1]])} className={`w-full px-3 py-2 rounded-lg text-xs ${theme.input} border`} placeholder="Min" />
-                      <span className={theme.textMuted}>-</span>
-                      <input type="number" value={priceRange[1]} onChange={(e) => setPriceRange([priceRange[0], +e.target.value])} className={`w-full px-3 py-2 rounded-lg text-xs ${theme.input} border`} placeholder="Max" />
-                    </div>
-                  </div>
-                  <div>
-                    <label className={`text-xs font-medium ${theme.text} mb-2 block`}>{t.size}</label>
-                    <div className="flex flex-wrap gap-1">
-                      {sizes.map(s => (
-                        <button key={s} onClick={() => selectedSizes.includes(s) ? setSelectedSizes(selectedSizes.filter(x => x !== s)) : setSelectedSizes([...selectedSizes, s])} className={`px-2 py-1 rounded-lg text-xs ${selectedSizes.includes(s) ? 'bg-amber-500 text-stone-900' : `${theme.bgTertiary} ${theme.textMuted}`}`}>{s}</button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="flex items-end">
-                    <button onClick={() => { setPriceRange([0, 1500]); setSelectedSizes([]); setSelectedCategory('Tümü'); }} className={`text-xs ${theme.textMuted} underline`}>Filtreleri Temizle</button>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* Products Grid */}
             {isLoading ? (
