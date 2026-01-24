@@ -47,7 +47,9 @@ export default function WallArtShop() {
   const [showAdmin, setShowAdmin] = useState(false);
   const [products, setProducts] = useState([]);
   const [showCollection, setShowCollection] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [bestSellerIndex, setBestSellerIndex] = useState(0);
+  // eslint-disable-next-line no-unused-vars
   const [newArrivalIndex, setNewArrivalIndex] = useState(0);
   const [showBestSellers, setShowBestSellers] = useState(false);
   const [showNewArrivals, setShowNewArrivals] = useState(false);
@@ -280,193 +282,83 @@ export default function WallArtShop() {
         }
       `}</style>
 
-      {/* Best Sellers & New Arrivals - Side by Side */}
-      <section className="max-w-7xl mx-auto px-4 py-10">
-        <div className="grid md:grid-cols-2 gap-6">
-          
-          {/* Best Sellers */}
-          <div className={`${theme.card} rounded-2xl border p-6`}>
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-2">
-                <TrendingUp size={20} style={{color: theme.accent}} />
-                <h3 className={`text-xl font-bold ${theme.text}`}>Çok Satanlar</h3>
-              </div>
-              <div className="flex items-center gap-3">
-                <button 
-                  onClick={() => setShowBestSellers(true)}
-                  className={`text-xs font-medium px-3 py-1.5 rounded-full border ${theme.border} ${theme.textSecondary} hover:border-amber-500 hover:text-amber-500 transition-all`}
-                >
-                  Tümünü Gör
-                </button>
-                <div className="flex items-center gap-1">
-                  <button 
-                    onClick={() => setBestSellerIndex(prev => prev > 0 ? prev - 1 : Math.max(0, products.filter(p => p.isBestSeller).length - 1))}
-                    className={`p-2 rounded-full ${theme.bgTertiary} ${theme.text} hover:bg-amber-500 hover:text-stone-900 transition-all`}
-                  >
-                    <ChevronUp size={18} />
-                  </button>
-                  <button 
-                    onClick={() => setBestSellerIndex(prev => prev < products.filter(p => p.isBestSeller).length - 1 ? prev + 1 : 0)}
-                    className={`p-2 rounded-full ${theme.bgTertiary} ${theme.text} hover:bg-amber-500 hover:text-stone-900 transition-all`}
-                  >
-                    <ChevronDown size={18} />
-                  </button>
-                </div>
-              </div>
-            </div>
-            
-            <div className="relative h-[320px] overflow-hidden">
-              {products.filter(p => p.isBestSeller).length > 0 ? (
-                products.filter(p => p.isBestSeller).map((product, idx) => (
-                  <div 
-                    key={product.id}
-                    className={`absolute inset-0 transition-all duration-500 ease-out ${
-                      idx === bestSellerIndex 
-                        ? 'opacity-100 translate-y-0' 
-                        : idx < bestSellerIndex 
-                          ? 'opacity-0 -translate-y-full' 
-                          : 'opacity-0 translate-y-full'
-                    }`}
-                  >
-                    <div className="flex gap-4 h-full">
-                      <div className="relative w-1/2 rounded-xl overflow-hidden group cursor-pointer" onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
-                        <img src={product.images?.[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                        <div className="absolute top-3 left-3 text-stone-900 px-3 py-1 rounded-full text-xs font-bold" style={{background: theme.accent}}>BEST</div>
-                        {product.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs">-{product.discount}%</div>}
-                      </div>
-                      <div className="flex-1 flex flex-col justify-start pt-4">
-                        <h4 className={`text-xl font-bold ${theme.text} mb-3`}>{product.name}</h4>
-                        <p className={`text-sm ${theme.textSecondary} mb-6 line-clamp-2`}>{product.description}</p>
-                        <div className="mb-6">
-                          <span className="text-2xl font-bold" style={{color: theme.accent}}>
-                            ₺{product.discount > 0 ? Math.round(product.priceUnframed * (1 - product.discount/100)) : product.priceUnframed}
-                          </span>
-                          <span className={`text-sm ${theme.textSecondary} ml-1`}>'den başlayan fiyatlarla</span>
-                        </div>
-                        <button 
-                          onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }}
-                          className="text-stone-900 px-6 py-3 rounded-xl font-medium text-sm hover:opacity-90 transition w-fit"
-                          style={{background: theme.accent}}
-                        >
-                          Ürünü İncele
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="flex items-center justify-center h-full">
-                  <p className={theme.textMuted}>Henüz çok satan ürün yok</p>
-                </div>
-              )}
-            </div>
-            
-            {/* Dots Indicator */}
-            {products.filter(p => p.isBestSeller).length > 1 && (
-              <div className="flex justify-center gap-2 mt-4">
-                {products.filter(p => p.isBestSeller).map((_, idx) => (
-                  <button 
-                    key={idx}
-                    onClick={() => setBestSellerIndex(idx)}
-                    className={`w-2 h-2 rounded-full transition-all ${idx === bestSellerIndex ? 'w-6' : ''}`}
-                    style={{background: idx === bestSellerIndex ? theme.accent : theme.border}}
-                  />
-                ))}
-              </div>
-            )}
+      {/* Best Sellers */}
+      <section className="max-w-7xl mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <TrendingUp size={20} style={{color: theme.accent}} />
+            <h3 className={`text-xl font-bold ${theme.text}`}>Çok Satanlar</h3>
           </div>
-
-          {/* New Arrivals */}
-          <div className={`${theme.card} rounded-2xl border p-6`}>
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-2">
-                <span className="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400 font-medium">YENİ</span>
-                <h3 className={`text-xl font-bold ${theme.text}`}>Yeni Ürünler</h3>
-              </div>
-              <div className="flex items-center gap-3">
-                <button 
-                  onClick={() => setShowNewArrivals(true)}
-                  className={`text-xs font-medium px-3 py-1.5 rounded-full border ${theme.border} ${theme.textSecondary} hover:border-green-500 hover:text-green-500 transition-all`}
-                >
-                  Tümünü Gör
-                </button>
-                <div className="flex items-center gap-1">
-                  <button 
-                    onClick={() => setNewArrivalIndex(prev => prev > 0 ? prev - 1 : Math.max(0, products.filter(p => p.isNew).length - 1))}
-                    className={`p-2 rounded-full ${theme.bgTertiary} ${theme.text} hover:bg-green-500 hover:text-white transition-all`}
-                  >
-                    <ChevronUp size={18} />
-                  </button>
-                  <button 
-                    onClick={() => setNewArrivalIndex(prev => prev < products.filter(p => p.isNew).length - 1 ? prev + 1 : 0)}
-                    className={`p-2 rounded-full ${theme.bgTertiary} ${theme.text} hover:bg-green-500 hover:text-white transition-all`}
-                  >
-                    <ChevronDown size={18} />
-                  </button>
-                </div>
-              </div>
-            </div>
-            
-            <div className="relative h-[320px] overflow-hidden">
-              {products.filter(p => p.isNew).length > 0 ? (
-                products.filter(p => p.isNew).map((product, idx) => (
-                  <div 
-                    key={product.id}
-                    className={`absolute inset-0 transition-all duration-500 ease-out ${
-                      idx === newArrivalIndex 
-                        ? 'opacity-100 translate-y-0' 
-                        : idx < newArrivalIndex 
-                          ? 'opacity-0 -translate-y-full' 
-                          : 'opacity-0 translate-y-full'
-                    }`}
-                  >
-                    <div className="flex gap-4 h-full">
-                      <div className="relative w-1/2 rounded-xl overflow-hidden group cursor-pointer" onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
-                        <img src={product.images?.[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                        <div className="absolute top-3 left-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">YENİ</div>
-                        {product.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs">-{product.discount}%</div>}
-                      </div>
-                      <div className="flex-1 flex flex-col justify-start pt-4">
-                        <h4 className={`text-xl font-bold ${theme.text} mb-3`}>{product.name}</h4>
-                        <p className={`text-sm ${theme.textSecondary} mb-6 line-clamp-2`}>{product.description}</p>
-                        <div className="mb-6">
-                          <span className="text-2xl font-bold text-green-400">
-                            ₺{product.discount > 0 ? Math.round(product.priceUnframed * (1 - product.discount/100)) : product.priceUnframed}
-                          </span>
-                          <span className={`text-sm ${theme.textSecondary} ml-1`}>'den başlayan fiyatlarla</span>
-                        </div>
-                        <button 
-                          onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }}
-                          className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl font-medium text-sm transition w-fit"
-                        >
-                          Ürünü İncele
-                        </button>
-                      </div>
-                    </div>
+          <button 
+            onClick={() => setShowBestSellers(true)}
+            className={`text-xs font-medium px-4 py-2 rounded-full border ${theme.border} ${theme.textSecondary} hover:border-amber-500 hover:text-amber-500 transition-all`}
+          >
+            Tümünü Gör →
+          </button>
+        </div>
+        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+          {products.filter(p => p.isBestSeller).length > 0 ? (
+            products.filter(p => p.isBestSeller).map((product) => (
+              <div key={product.id} className="flex-shrink-0 w-40 md:w-48 group">
+                <div className={`relative overflow-hidden ${theme.card} rounded-xl border`}>
+                  <div className="absolute top-2 left-2 text-stone-900 px-2 py-0.5 rounded-full text-[10px] font-bold z-10" style={{background: theme.accent}}>BEST</div>
+                  {product.discount > 0 && <div className="absolute top-2 right-2 bg-red-500 text-white px-1.5 py-0.5 rounded-full text-[10px] z-10">-{product.discount}%</div>}
+                  <div className="cursor-pointer" onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
+                    <img src={product.images?.[0]} alt={product.name} className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-500" />
                   </div>
-                ))
-              ) : (
-                <div className="flex items-center justify-center h-full">
-                  <p className={theme.textMuted}>Henüz yeni ürün yok</p>
                 </div>
-              )}
-            </div>
-            
-            {/* Dots Indicator */}
-            {products.filter(p => p.isNew).length > 1 && (
-              <div className="flex justify-center gap-2 mt-4">
-                {products.filter(p => p.isNew).map((_, idx) => (
-                  <button 
-                    key={idx}
-                    onClick={() => setNewArrivalIndex(idx)}
-                    className={`w-2 h-2 rounded-full transition-all ${idx === newArrivalIndex ? 'w-6 bg-green-500' : ''}`}
-                    style={{background: idx === newArrivalIndex ? undefined : theme.border}}
-                  />
-                ))}
+                <div className="mt-2 px-1">
+                  <h4 className={`text-sm font-medium ${theme.text} truncate`}>{product.name}</h4>
+                  <p className="text-xs mt-1">
+                    <span style={{color: theme.accent}} className="font-bold">₺{product.discount > 0 ? Math.round(product.priceUnframed * (1 - product.discount/100)) : product.priceUnframed}</span>
+                    <span className={`${theme.textMuted} ml-1`}>'den</span>
+                  </p>
+                </div>
               </div>
-            )}
-          </div>
+            ))
+          ) : (
+            <p className={`${theme.textMuted} text-sm`}>Henüz çok satan ürün yok</p>
+          )}
+        </div>
+      </section>
 
+      {/* New Arrivals */}
+      <section className="max-w-7xl mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <span className="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400 font-medium">YENİ</span>
+            <h3 className={`text-xl font-bold ${theme.text}`}>Yeni Ürünler</h3>
+          </div>
+          <button 
+            onClick={() => setShowNewArrivals(true)}
+            className={`text-xs font-medium px-4 py-2 rounded-full border ${theme.border} ${theme.textSecondary} hover:border-green-500 hover:text-green-500 transition-all`}
+          >
+            Tümünü Gör →
+          </button>
+        </div>
+        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+          {products.filter(p => p.isNew).length > 0 ? (
+            products.filter(p => p.isNew).map((product) => (
+              <div key={product.id} className="flex-shrink-0 w-40 md:w-48 group">
+                <div className={`relative overflow-hidden ${theme.card} rounded-xl border`}>
+                  <div className="absolute top-2 left-2 bg-green-500 text-white px-2 py-0.5 rounded-full text-[10px] font-bold z-10">YENİ</div>
+                  {product.discount > 0 && <div className="absolute top-2 right-2 bg-red-500 text-white px-1.5 py-0.5 rounded-full text-[10px] z-10">-{product.discount}%</div>}
+                  <div className="cursor-pointer" onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
+                    <img src={product.images?.[0]} alt={product.name} className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-500" />
+                  </div>
+                </div>
+                <div className="mt-2 px-1">
+                  <h4 className={`text-sm font-medium ${theme.text} truncate`}>{product.name}</h4>
+                  <p className="text-xs mt-1">
+                    <span className="text-green-500 font-bold">₺{product.discount > 0 ? Math.round(product.priceUnframed * (1 - product.discount/100)) : product.priceUnframed}</span>
+                    <span className={`${theme.textMuted} ml-1`}>'den</span>
+                  </p>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className={`${theme.textMuted} text-sm`}>Henüz yeni ürün yok</p>
+          )}
         </div>
       </section>
 
