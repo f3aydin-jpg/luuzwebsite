@@ -307,21 +307,37 @@ export default function WallArtShop() {
       `}</style>
 
       {/* Best Sellers */}
-      <section className="max-w-7xl mx-auto px-4 py-8">
+      <section className="max-w-7xl mx-auto px-4 py-10">
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <TrendingUp size={20} style={{color: theme.accent}} />
-            <h3 className={`text-xl font-bold ${theme.text}`}>Çok Satanlar</h3>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg">
+              <TrendingUp size={20} className="text-white" />
+            </div>
+            <div>
+              <h3 className={`text-2xl font-bold ${theme.text}`}>Çok Satanlar</h3>
+              <p className={`text-xs ${theme.textMuted}`}>En beğenilen posterlerimiz</p>
+            </div>
           </div>
           <button 
             onClick={() => setShowBestSellers(true)}
-            className={`text-xs font-medium px-4 py-2 rounded-full border ${theme.border} ${theme.textSecondary} hover:border-amber-500 hover:text-amber-500 transition-all`}
+            className="text-xs font-semibold px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-stone-900 hover:shadow-lg hover:scale-105 transition-all"
           >
             Tümünü Gör →
           </button>
         </div>
-        <div className="relative">
-          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+        <div className="relative group/slider">
+          {/* Left Arrow */}
+          <button 
+            onClick={() => {
+              const container = document.getElementById('bestSellerScroll');
+              if(container) container.scrollBy({ left: -300, behavior: 'smooth' });
+            }}
+            className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-amber-500 text-stone-900 shadow-xl flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-all hover:scale-110 hover:bg-amber-400 -translate-x-2`}
+          >
+            <ChevronLeft size={24} />
+          </button>
+          
+          <div id="bestSellerScroll" className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth px-1">
             {products.filter(p => p.isBestSeller).length > 0 ? (
               products.filter(p => p.isBestSeller).map((product) => (
                 <div key={product.id} className="flex-shrink-0 w-36 md:w-44 group">
@@ -345,33 +361,56 @@ export default function WallArtShop() {
               <p className={`${theme.textMuted} text-sm`}>Henüz çok satan ürün yok</p>
             )}
           </div>
-          {/* Scroll Indicator */}
-          {products.filter(p => p.isBestSeller).length > 3 && (
-            <div className={`absolute right-0 top-0 bottom-4 w-20 bg-gradient-to-l ${darkMode ? 'from-stone-900 via-stone-900/80' : 'from-stone-50 via-stone-50/80'} to-transparent pointer-events-none flex items-center justify-end pr-1`}>
-              <div className="flex items-center gap-1 bg-amber-500 text-stone-900 px-2 py-1.5 rounded-full shadow-lg">
-                <ChevronRight size={16} className="animate-bounce-x" />
-              </div>
-            </div>
-          )}
+          
+          {/* Right Arrow */}
+          <button 
+            onClick={() => {
+              const container = document.getElementById('bestSellerScroll');
+              if(container) container.scrollBy({ left: 300, behavior: 'smooth' });
+            }}
+            className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-amber-500 text-stone-900 shadow-xl flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-all hover:scale-110 hover:bg-amber-400 translate-x-2`}
+          >
+            <ChevronRight size={24} />
+          </button>
+          
+          {/* Gradient Edges */}
+          <div className={`absolute left-0 top-0 bottom-4 w-8 bg-gradient-to-r ${darkMode ? 'from-stone-900' : 'from-stone-50'} to-transparent pointer-events-none`}></div>
+          <div className={`absolute right-0 top-0 bottom-4 w-8 bg-gradient-to-l ${darkMode ? 'from-stone-900' : 'from-stone-50'} to-transparent pointer-events-none`}></div>
         </div>
       </section>
 
       {/* New Arrivals */}
-      <section className="max-w-7xl mx-auto px-4 py-8">
+      <section className="max-w-7xl mx-auto px-4 py-10">
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <span className="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400 font-medium">YENİ</span>
-            <h3 className={`text-xl font-bold ${theme.text}`}>Yeni Ürünler</h3>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-lg">
+              <Star size={20} className="text-white" />
+            </div>
+            <div>
+              <h3 className={`text-2xl font-bold ${theme.text}`}>Yeni Ürünler</h3>
+              <p className={`text-xs ${theme.textMuted}`}>Koleksiyona yeni eklenenler</p>
+            </div>
           </div>
           <button 
             onClick={() => setShowNewArrivals(true)}
-            className={`text-xs font-medium px-4 py-2 rounded-full border ${theme.border} ${theme.textSecondary} hover:border-green-500 hover:text-green-500 transition-all`}
+            className="text-xs font-semibold px-5 py-2.5 rounded-full bg-gradient-to-r from-green-500 to-green-600 text-white hover:shadow-lg hover:scale-105 transition-all"
           >
             Tümünü Gör →
           </button>
         </div>
-        <div className="relative">
-          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+        <div className="relative group/slider">
+          {/* Left Arrow */}
+          <button 
+            onClick={() => {
+              const container = document.getElementById('newArrivalsScroll');
+              if(container) container.scrollBy({ left: -300, behavior: 'smooth' });
+            }}
+            className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-green-500 text-white shadow-xl flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-all hover:scale-110 hover:bg-green-400 -translate-x-2`}
+          >
+            <ChevronLeft size={24} />
+          </button>
+          
+          <div id="newArrivalsScroll" className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth px-1">
             {products.filter(p => p.isNew).length > 0 ? (
               products.filter(p => p.isNew).map((product) => (
                 <div key={product.id} className="flex-shrink-0 w-36 md:w-44 group">
@@ -395,14 +434,21 @@ export default function WallArtShop() {
               <p className={`${theme.textMuted} text-sm`}>Henüz yeni ürün yok</p>
             )}
           </div>
-          {/* Scroll Indicator */}
-          {products.filter(p => p.isNew).length > 3 && (
-            <div className={`absolute right-0 top-0 bottom-4 w-20 bg-gradient-to-l ${darkMode ? 'from-stone-900 via-stone-900/80' : 'from-stone-50 via-stone-50/80'} to-transparent pointer-events-none flex items-center justify-end pr-1`}>
-              <div className="flex items-center gap-1 bg-green-500 text-white px-2 py-1.5 rounded-full shadow-lg">
-                <ChevronRight size={16} className="animate-bounce-x" />
-              </div>
-            </div>
-          )}
+          
+          {/* Right Arrow */}
+          <button 
+            onClick={() => {
+              const container = document.getElementById('newArrivalsScroll');
+              if(container) container.scrollBy({ left: 300, behavior: 'smooth' });
+            }}
+            className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-green-500 text-white shadow-xl flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-all hover:scale-110 hover:bg-green-400 translate-x-2`}
+          >
+            <ChevronRight size={24} />
+          </button>
+          
+          {/* Gradient Edges */}
+          <div className={`absolute left-0 top-0 bottom-4 w-8 bg-gradient-to-r ${darkMode ? 'from-stone-900' : 'from-stone-50'} to-transparent pointer-events-none`}></div>
+          <div className={`absolute right-0 top-0 bottom-4 w-8 bg-gradient-to-l ${darkMode ? 'from-stone-900' : 'from-stone-50'} to-transparent pointer-events-none`}></div>
         </div>
       </section>
 
