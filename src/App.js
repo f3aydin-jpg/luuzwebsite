@@ -227,15 +227,19 @@ export default function WallArtShop() {
           <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white animate-fade-in">
             Duvarlarınıza <span style={{color: theme.accent}}>Sanat</span> Katın
           </h2>
-          <p className="text-base md:text-lg text-stone-300 max-w-xl mx-auto mb-6 animate-fade-in-delay">
+          <p className="text-base md:text-lg text-stone-300 max-w-xl mx-auto mb-8 animate-fade-in-delay">
             Özgün tasarımlarla mekanlarınıza karakter katın
           </p>
           <button 
             onClick={() => setShowCollection(true)} 
-            className="text-stone-900 px-8 py-3 rounded-xl font-semibold text-sm shadow-2xl hover:shadow-xl hover:scale-105 transition-all duration-300 animate-fade-in-delay-2"
-            style={{background: theme.accent}}
+            className="group relative px-10 py-4 rounded-full font-bold text-base overflow-hidden animate-fade-in-delay-2 transition-all duration-500 hover:scale-105 hover:shadow-[0_0_40px_rgba(232,220,196,0.4)]"
+            style={{background: `linear-gradient(135deg, ${theme.accent} 0%, #d4a574 50%, ${theme.accent} 100%)`, backgroundSize: '200% 200%'}}
           >
-            Koleksiyonu Keşfet
+            <span className="relative z-10 flex items-center gap-2 text-stone-900">
+              Koleksiyonu Keşfet
+              <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
           </button>
         </div>
       </section>
