@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, X, Plus, Minus, Menu, Search, Heart, MessageCircle, Package, Star, ChevronDown, ChevronUp, Filter, Grid, List, ArrowUp, Moon, Sun, Globe, Clock, Truck, Shield, RotateCcw, ChevronLeft, ChevronRight, Check, Tag, TrendingUp, Eye, Instagram, Twitter, Facebook, ZoomIn, Settings } from 'lucide-react';
+import { ShoppingCart, X, Plus, Minus, Menu, Search, Heart, MessageCircle, Package, Star, ChevronDown, ChevronUp, Grid, List, ArrowUp, Moon, Sun, Globe, Clock, Truck, Shield, RotateCcw, ChevronLeft, ChevronRight, Check, Tag, TrendingUp, Eye, Instagram, Twitter, Facebook, ZoomIn, Settings } from 'lucide-react';
 import { db } from './firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import AdminPanel from './AdminPanel';
@@ -18,8 +18,11 @@ export default function WallArtShop() {
   const [selectedCategory, setSelectedCategory] = useState('Tümü');
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [showFilters, setShowFilters] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [priceRange, setPriceRange] = useState([0, 1500]);
+  // eslint-disable-next-line no-unused-vars
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [sortBy, setSortBy] = useState('popular');
   const [viewMode, setViewMode] = useState('grid');
@@ -77,6 +80,7 @@ export default function WallArtShop() {
   }, []);
 
   const categories = ['Tümü', 'Minimal', 'Soyut', 'Doğa', 'Geometrik', 'Tipografi', 'Modern', 'Klasik', 'Portre', 'Manzara'];
+  // eslint-disable-next-line no-unused-vars
   const sizes = ['40x60 cm', '50x70 cm', '60x80 cm', '70x100 cm'];
   const coupons = { 'HOSGELDIN15': { discount: 15, type: 'percent' }, 'YAZ50': { discount: 50, type: 'fixed' } };
   const faqData = [{ q: 'Kargo ne kadar sürede gelir?', a: '2-4 iş günü içinde teslim edilir.' }, { q: 'İade koşulları nelerdir?', a: '14 gün içinde koşulsuz iade hakkınız var.' }, { q: 'Çerçeve malzemesi nedir?', a: '%100 doğal ahşaptan el işçiliği ile üretilir.' }];
