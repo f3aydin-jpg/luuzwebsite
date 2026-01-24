@@ -826,7 +826,7 @@ export default function WallArtShop() {
                       {product.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs z-10">-{product.discount}%</div>}
                       {product.stock === 0 && <div className="absolute inset-0 bg-black/60 z-10 flex items-center justify-center"><span className="text-white text-sm font-medium">{t.outOfStock}</span></div>}
                       <button onClick={() => toggleFavorite(product.id)} className={`absolute ${product.isNew ? 'left-16' : 'left-3'} top-3 z-20 ${theme.bgTertiary} rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110`}><Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={theme.accent} /></button>
-                      <div className="cursor-pointer" onClick={() => { setShowCollection(false); setPageTransition(true); setTimeout(() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); setPageTransition(false); }, 150); }}>
+                      <div className="cursor-pointer" onClick={() => { setPageHistory(prev => [...prev, 'collection']); setShowCollection(false); setPageTransition(true); setTimeout(() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); setPageTransition(false); }, 150); }}>
                         <div className="relative">
                           {!imagesLoaded[product.id] && <div className="skeleton absolute inset-0"></div>}
                           <img 
@@ -852,7 +852,7 @@ export default function WallArtShop() {
                       </div>
                     </div>
                     <button 
-                      onClick={() => { setShowCollection(false); setPageTransition(true); setTimeout(() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); setPageTransition(false); }, 150); }} 
+                      onClick={() => { setPageHistory(prev => [...prev, 'collection']); setShowCollection(false); setPageTransition(true); setTimeout(() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); setPageTransition(false); }, 150); }} 
                       disabled={product.stock === 0} 
                       className={`w-full mt-3 text-stone-900 py-2.5 rounded-xl text-sm font-medium transform hover:scale-[1.02] transition-all duration-200 ${product.stock === 0 ? 'opacity-50' : 'hover:shadow-lg'}`} 
                       style={{background: theme.accent}}
@@ -870,7 +870,7 @@ export default function WallArtShop() {
                       src={product.images?.[0]} 
                       alt={product.name} 
                       className="w-24 h-24 object-cover rounded-lg cursor-pointer" 
-                      onClick={() => { setShowCollection(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }} 
+                      onClick={() => { setPageHistory(prev => [...prev, 'collection']); setShowCollection(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }} 
                     />
                     <div className="flex-1">
                       <div className="flex items-start justify-between">
@@ -894,7 +894,7 @@ export default function WallArtShop() {
                           )}
                         </div>
                         <button 
-                          onClick={() => { setShowCollection(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }} 
+                          onClick={() => { setPageHistory(prev => [...prev, 'collection']); setShowCollection(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }} 
                           className="text-stone-900 px-4 py-1.5 rounded-lg text-xs font-medium" 
                           style={{background: theme.accent}}
                         >
@@ -923,11 +923,22 @@ export default function WallArtShop() {
           {/* Product Page Header */}
           <div className={`sticky top-0 ${theme.bgTertiary} border-b ${theme.border} z-10`}>
             <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-              <button onClick={() => { setPageTransition(true); setTimeout(() => { setSelectedProduct(null); setPageTransition(false); }, 150); }} className={`flex items-center gap-2 ${theme.textSecondary} hover:${theme.text} transition`}>
+              <button onClick={() => { 
+                setPageTransition(true); 
+                setTimeout(() => { 
+                  const prevPage = pageHistory[pageHistory.length - 1];
+                  setPageHistory(prev => prev.slice(0, -1));
+                  setSelectedProduct(null);
+                  if (prevPage === 'collection') setShowCollection(true);
+                  else if (prevPage === 'bestSellers') setShowBestSellers(true);
+                  else if (prevPage === 'newArrivals') setShowNewArrivals(true);
+                  setPageTransition(false); 
+                }, 150); 
+              }} className={`flex items-center gap-2 ${theme.textSecondary} hover:${theme.text} transition`}>
                 <ChevronLeft size={20} />
                 <span className="text-sm">Geri</span>
               </button>
-              <button onClick={() => { setPageTransition(true); setTimeout(() => { setSelectedProduct(null); setPageTransition(false); }, 150); }} className="hover:opacity-80 transition">
+              <button onClick={() => { setSelectedProduct(null); setShowCollection(false); setShowBestSellers(false); setShowNewArrivals(false); setPageHistory([]); }} className="hover:opacity-80 transition">
                 <img src={darkMode ? "/luuz-logo-white.png" : "/luuz-logo-black.png"} alt="LUUZ" className="h-6" />
               </button>
               <div className="flex items-center gap-2">
