@@ -203,7 +203,7 @@ export default function WallArtShop() {
                 key={`hero-${idx}`} 
                 className="aspect-[3/4] overflow-hidden"
                 style={{
-                  opacity: 0.15 + (Math.sin(idx * 0.5) * 0.1),
+                  opacity: 0.35 + (Math.sin(idx * 0.5) * 0.15),
                   animation: `heroPulse ${12 + (idx % 6) * 2}s ease-in-out infinite`,
                   animationDelay: `${(idx % 12) * 1}s`
                 }}
@@ -211,15 +211,15 @@ export default function WallArtShop() {
                 <img 
                   src={product.images?.[0]} 
                   alt="" 
-                  className="w-full h-full object-cover filter blur-[0.5px]"
+                  className="w-full h-full object-cover"
                 />
               </div>
             ))}
           </div>
           {/* Smooth Gradient Overlays */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70"></div>
-          <div className={`absolute inset-0 bg-gradient-to-t ${darkMode ? 'from-stone-900/90' : 'from-stone-100/90'} via-transparent to-transparent`}></div>
-          <div className={`absolute inset-0 bg-gradient-to-b ${darkMode ? 'from-stone-900/50' : 'from-stone-100/50'} via-transparent to-transparent`}></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60"></div>
+          <div className={`absolute inset-0 bg-gradient-to-t ${darkMode ? 'from-stone-900/80' : 'from-stone-100/80'} via-transparent to-transparent`}></div>
+          <div className={`absolute inset-0 bg-gradient-to-b ${darkMode ? 'from-stone-900/40' : 'from-stone-100/40'} via-transparent to-transparent`}></div>
         </div>
         
         {/* Content */}
@@ -263,8 +263,8 @@ export default function WallArtShop() {
           100% { background-position: 200% 0; }
         }
         @keyframes heroPulse {
-          0%, 100% { opacity: 0.1; filter: blur(0.5px) brightness(0.8); }
-          50% { opacity: 0.25; filter: blur(0px) brightness(1); }
+          0%, 100% { opacity: 0.3; filter: brightness(0.9); }
+          50% { opacity: 0.5; filter: brightness(1.1); }
         }
         .animate-fade-in {
           animation: fadeIn 0.8s ease-out forwards;
@@ -308,15 +308,12 @@ export default function WallArtShop() {
 
       {/* Best Sellers */}
       <section className="max-w-7xl mx-auto px-4 py-10">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg">
-              <TrendingUp size={20} className="text-white" />
-            </div>
-            <div>
-              <h3 className={`text-2xl font-bold ${theme.text}`}>Çok Satanlar</h3>
-              <p className={`text-xs ${theme.textMuted}`}>En beğenilen posterlerimiz</p>
-            </div>
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h3 className={`text-3xl md:text-4xl font-bold ${theme.text}`}>
+              <span className="bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 bg-clip-text text-transparent">Çok Satanlar</span>
+            </h3>
+            <p className={`text-sm ${theme.textMuted} mt-1`}>Müşterilerimizin en sevdiği tasarımlar ✨</p>
           </div>
           <button 
             onClick={() => setShowBestSellers(true)}
@@ -381,15 +378,12 @@ export default function WallArtShop() {
 
       {/* New Arrivals */}
       <section className="max-w-7xl mx-auto px-4 py-10">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-lg">
-              <Star size={20} className="text-white" />
-            </div>
-            <div>
-              <h3 className={`text-2xl font-bold ${theme.text}`}>Yeni Ürünler</h3>
-              <p className={`text-xs ${theme.textMuted}`}>Koleksiyona yeni eklenenler</p>
-            </div>
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h3 className={`text-3xl md:text-4xl font-bold ${theme.text}`}>
+              <span className="bg-gradient-to-r from-green-500 via-emerald-400 to-green-500 bg-clip-text text-transparent">Yeni Gelenler</span>
+            </h3>
+            <p className={`text-sm ${theme.textMuted} mt-1`}>Koleksiyona yeni eklenen tasarımlar 🌟</p>
           </div>
           <button 
             onClick={() => setShowNewArrivals(true)}
