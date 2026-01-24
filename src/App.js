@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, X, Plus, Minus, Menu, Search, Heart, MessageCircle, Package, Star, ChevronDown, ChevronUp, Grid, List, ArrowUp, Moon, Sun, Globe, Clock, Truck, Shield, RotateCcw, ChevronLeft, ChevronRight, Check, Tag, TrendingUp, Eye, Instagram, Twitter, Facebook, ZoomIn, Settings } from 'lucide-react';
+import { ShoppingCart, X, Plus, Minus, Menu, Search, Heart, MessageCircle, Package, Star, ChevronDown, ChevronUp, Grid, List, ArrowUp, Moon, Sun, Clock, Truck, Shield, RotateCcw, ChevronLeft, ChevronRight, Check, Tag, TrendingUp, Eye, Instagram, Twitter, Facebook, ZoomIn, Settings } from 'lucide-react';
 import { db } from './firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import AdminPanel from './AdminPanel';
 
 export default function WallArtShop() {
   const [darkMode, setDarkMode] = useState(false);
-  const [language, setLanguage] = useState('tr');
   const [cart, setCart] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [showCart, setShowCart] = useState(false);
@@ -53,9 +52,51 @@ export default function WallArtShop() {
   const [newArrivalIndex, setNewArrivalIndex] = useState(0);
   const [showBestSellers, setShowBestSellers] = useState(false);
   const [showNewArrivals, setShowNewArrivals] = useState(false);
-  const [specialFilter, setSpecialFilter] = useState(null); // 'bestSeller', 'newArrival', or null
+  const [specialFilter, setSpecialFilter] = useState(null);
+  const [pageHistory, setPageHistory] = useState([]);
 
-  const t = language === 'tr' ? { collection: 'Koleksiyon', about: 'Hakkımızda', howItWorks: 'Nasıl Çalışır', faq: 'SSS', search: 'Ürün ara...', cart: 'Sepetim', favorites: 'Favorilerim', addToCart: 'Sepete Ekle', checkout: 'Ödemeye Geç', total: 'Toplam', empty: 'Sepetiniz boş', filters: 'Filtreler', price: 'Fiyat', size: 'Boyut', bestSellers: 'Çok Satanlar', newArrivals: 'Yeni Gelenler', allCollection: 'Tüm Koleksiyon', framed: 'Çerçeveli', unframed: 'Çerçevesiz', inStock: 'Stokta', outOfStock: 'Tükendi', similarProducts: 'Benzer Ürünler', applyCoupon: 'Uygula', newsletter: 'Yeni Koleksiyonlardan Haberdar Olun', subscribe: 'Abone Ol', compare: 'Karşılaştır', recentlyViewed: 'Son Görüntülenenler', orderHistory: 'Sipariş Geçmişi' } : { collection: 'Collection', about: 'About', howItWorks: 'How It Works', faq: 'FAQ', search: 'Search...', cart: 'Cart', favorites: 'Favorites', addToCart: 'Add to Cart', checkout: 'Checkout', total: 'Total', empty: 'Cart is empty', filters: 'Filters', price: 'Price', size: 'Size', bestSellers: 'Best Sellers', newArrivals: 'New Arrivals', allCollection: 'All Collection', framed: 'Framed', unframed: 'Unframed', inStock: 'In Stock', outOfStock: 'Out of Stock', similarProducts: 'Similar', applyCoupon: 'Apply', newsletter: 'Stay Updated', subscribe: 'Subscribe', compare: 'Compare', recentlyViewed: 'Recently Viewed', orderHistory: 'Orders' };
+  const t = { collection: 'Koleksiyon', about: 'Hakkımızda', howItWorks: 'Nasıl Çalışır', faq: 'SSS', search: 'Ürün ara...', cart: 'Sepetim', favorites: 'Favorilerim', addToCart: 'Sepete Ekle', checkout: 'Ödemeye Geç', total: 'Toplam', empty: 'Sepetiniz boş', filters: 'Filtreler', price: 'Fiyat', size: 'Boyut', bestSellers: 'Çok Satanlar', newArrivals: 'Yeni Gelenler', allCollection: 'Tüm Koleksiyon', framed: 'Çerçeveli', unframed: 'Çerçevesiz', inStock: 'Stokta', outOfStock: 'Tükendi', similarProducts: 'Benzer Ürünler', applyCoupon: 'Uygula', newsletter: 'Yeni Koleksiyonlardan Haberdar Olun', subscribe: 'Abone Ol', compare: 'Karşılaştır', recentlyViewed: 'Son Görüntülenenler', orderHistory: 'Sipariş Geçmişi' };
+
+  // Sayfa navigasyon fonksiyonları
+  const navigateTo = (page) => {
+    const currentPage = showCollection ? 'collection' : showBestSellers ? 'bestSellers' : showNewArrivals ? 'newArrivals' : selectedProduct ? 'product' : 'home';
+    if (currentPage !== 'home') {
+      setPageHistory(prev => [...prev, currentPage]);
+    }
+    // Tüm sayfaları kapat
+    setShowCollection(false);
+    setShowBestSellers(false);
+    setShowNewArrivals(false);
+    setSelectedProduct(null);
+    // Yeni sayfayı aç
+    if (page === 'collection') setShowCollection(true);
+    else if (page === 'bestSellers') setShowBestSellers(true);
+    else if (page === 'newArrivals') setShowNewArrivals(true);
+  };
+
+  const goBack = () => {
+    if (pageHistory.length > 0) {
+      const prevPage = pageHistory[pageHistory.length - 1];
+      setPageHistory(prev => prev.slice(0, -1));
+      // Tüm sayfaları kapat
+      setShowCollection(false);
+      setShowBestSellers(false);
+      setShowNewArrivals(false);
+      setSelectedProduct(null);
+      setSpecialFilter(null);
+      // Önceki sayfayı aç
+      if (prevPage === 'collection') setShowCollection(true);
+      else if (prevPage === 'bestSellers') setShowBestSellers(true);
+      else if (prevPage === 'newArrivals') setShowNewArrivals(true);
+    } else {
+      // Geçmiş yoksa anasayfaya git
+      setShowCollection(false);
+      setShowBestSellers(false);
+      setShowNewArrivals(false);
+      setSelectedProduct(null);
+      setSpecialFilter(null);
+    }
+  };
 
   // Firebase'den ürünleri çek
   useEffect(() => {
@@ -160,7 +201,6 @@ export default function WallArtShop() {
             <button onClick={() => setShowFAQ(true)} className={`transition ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'}`}>{t.faq}</button>
           </nav>
           <div className="flex items-center gap-2">
-            <button onClick={() => setLanguage(language === 'tr' ? 'en' : 'tr')} className={`p-2 ${theme.textSecondary}`}><Globe size={18} /></button>
             <button onClick={() => setDarkMode(!darkMode)} className={`p-2 ${theme.textSecondary}`}>{darkMode ? <Sun size={18} /> : <Moon size={18} />}</button>
             <button onClick={() => setShowSearch(!showSearch)} className={`p-2 ${theme.textSecondary}`}><Search size={18} /></button>
             <button onClick={() => setShowFavorites(true)} className={`relative p-2 ${theme.textSecondary}`}>
@@ -176,7 +216,49 @@ export default function WallArtShop() {
         </div>
         {showSearch && (
           <div className="px-4 pb-4">
-            <input type="text" placeholder={t.search} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className={`w-full px-4 py-3 rounded-xl ${theme.input} border focus:outline-none`} autoFocus />
+            <input 
+              type="text" 
+              placeholder={t.search} 
+              value={searchQuery} 
+              onChange={(e) => setSearchQuery(e.target.value)} 
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && searchQuery.trim()) {
+                  setShowCollection(true);
+                  setShowSearch(false);
+                }
+              }}
+              className={`w-full px-4 py-3 rounded-xl ${theme.input} border focus:outline-none`} 
+              autoFocus 
+            />
+            {searchQuery && (
+              <div className={`mt-2 ${theme.card} rounded-xl border max-h-64 overflow-y-auto`}>
+                {products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 5).map(product => (
+                  <button 
+                    key={product.id}
+                    onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); setShowSearch(false); setSearchQuery(''); }}
+                    className={`w-full px-4 py-3 flex items-center gap-3 ${theme.text} hover:${theme.bgTertiary} transition text-left border-b ${theme.border} last:border-0`}
+                  >
+                    <img src={product.images?.[0]} alt={product.name} className="w-10 h-10 rounded-lg object-cover" />
+                    <div>
+                      <p className="text-sm font-medium">{product.name}</p>
+                      <p className={`text-xs ${theme.textMuted}`}>₺{product.priceUnframed}</p>
+                    </div>
+                  </button>
+                ))}
+                {products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
+                  <p className={`px-4 py-3 text-sm ${theme.textMuted}`}>Ürün bulunamadı</p>
+                )}
+                {products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase())).length > 5 && (
+                  <button 
+                    onClick={() => { setShowCollection(true); setShowSearch(false); }}
+                    className={`w-full px-4 py-3 text-sm font-medium text-center hover:${theme.bgTertiary} transition`}
+                    style={{color: theme.accent}}
+                  >
+                    Tüm sonuçları gör ({products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase())).length} ürün)
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         )}
         {showMobileMenu && (
@@ -518,7 +600,7 @@ export default function WallArtShop() {
         <div className={`fixed inset-0 z-50 ${theme.bg} overflow-y-auto animate-fade-in`}>
           <div className={`sticky top-0 ${theme.bgTertiary} border-b ${theme.border} z-10`}>
             <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-              <button onClick={() => { setShowBestSellers(false); setShowCollection(true); }} className={`flex items-center gap-2 ${theme.textSecondary} ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'} transition`}>
+              <button onClick={goBack} className={`flex items-center gap-2 ${theme.textSecondary} ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'} transition`}>
                 <ChevronLeft size={20} />
                 <span className="text-sm">Geri</span>
               </button>
@@ -527,6 +609,9 @@ export default function WallArtShop() {
                 <h1 className={`text-lg font-bold ${theme.text}`}>Çok Satanlar</h1>
               </div>
               <div className="flex items-center gap-2">
+                <button onClick={() => { setShowBestSellers(false); navigateTo('collection'); }} className={`text-xs font-medium px-3 py-1.5 rounded-full border ${theme.border} ${theme.textSecondary} hover:border-amber-500 hover:text-amber-500 transition-all`}>
+                  Tüm Koleksiyon
+                </button>
                 <button onClick={() => setShowCart(true)} className={`relative p-2 ${theme.textSecondary}`}>
                   <ShoppingCart size={18} />
                   {totalItems > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{totalItems}</span>}
@@ -542,7 +627,7 @@ export default function WallArtShop() {
                     <div className="absolute top-3 left-3 text-stone-900 px-2 py-1 rounded-full text-xs font-bold z-10" style={{background: theme.accent}}>BEST</div>
                     {product.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs z-10">-{product.discount}%</div>}
                     {product.stock === 0 && <div className="absolute inset-0 bg-black/60 z-10 flex items-center justify-center"><span className="text-white text-sm font-medium">{t.outOfStock}</span></div>}
-                    <div className="cursor-pointer" onClick={() => { setShowBestSellers(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
+                    <div className="cursor-pointer" onClick={() => { setPageHistory(prev => [...prev, 'bestSellers']); setShowBestSellers(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
                       <img src={product.images?.[0]} alt={product.name} className="w-full aspect-square object-cover group-hover:scale-110 transition-transform duration-700" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
                         <h3 className="text-sm font-semibold text-white">{product.name}</h3>
@@ -550,7 +635,7 @@ export default function WallArtShop() {
                       </div>
                     </div>
                   </div>
-                  <button onClick={() => { setShowBestSellers(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }} disabled={product.stock === 0} className={`w-full mt-3 text-stone-900 py-2.5 rounded-xl text-sm font-medium ${product.stock === 0 ? 'opacity-50' : 'hover:shadow-lg'}`} style={{background: theme.accent}}>
+                  <button onClick={() => { setPageHistory(prev => [...prev, 'bestSellers']); setShowBestSellers(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }} disabled={product.stock === 0} className={`w-full mt-3 text-stone-900 py-2.5 rounded-xl text-sm font-medium ${product.stock === 0 ? 'opacity-50' : 'hover:shadow-lg'}`} style={{background: theme.accent}}>
                     {product.stock === 0 ? t.outOfStock : 'Ürünü İncele'}
                   </button>
                 </div>
@@ -570,7 +655,7 @@ export default function WallArtShop() {
         <div className={`fixed inset-0 z-50 ${theme.bg} overflow-y-auto animate-fade-in`}>
           <div className={`sticky top-0 ${theme.bgTertiary} border-b ${theme.border} z-10`}>
             <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-              <button onClick={() => { setShowNewArrivals(false); setShowCollection(true); }} className={`flex items-center gap-2 ${theme.textSecondary} ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'} transition`}>
+              <button onClick={goBack} className={`flex items-center gap-2 ${theme.textSecondary} ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'} transition`}>
                 <ChevronLeft size={20} />
                 <span className="text-sm">Geri</span>
               </button>
@@ -579,6 +664,9 @@ export default function WallArtShop() {
                 <h1 className={`text-lg font-bold ${theme.text}`}>Yeni Ürünler</h1>
               </div>
               <div className="flex items-center gap-2">
+                <button onClick={() => { setShowNewArrivals(false); navigateTo('collection'); }} className={`text-xs font-medium px-3 py-1.5 rounded-full border ${theme.border} ${theme.textSecondary} hover:border-green-500 hover:text-green-500 transition-all`}>
+                  Tüm Koleksiyon
+                </button>
                 <button onClick={() => setShowCart(true)} className={`relative p-2 ${theme.textSecondary}`}>
                   <ShoppingCart size={18} />
                   {totalItems > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{totalItems}</span>}
@@ -594,7 +682,7 @@ export default function WallArtShop() {
                     <div className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold z-10">YENİ</div>
                     {product.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs z-10">-{product.discount}%</div>}
                     {product.stock === 0 && <div className="absolute inset-0 bg-black/60 z-10 flex items-center justify-center"><span className="text-white text-sm font-medium">{t.outOfStock}</span></div>}
-                    <div className="cursor-pointer" onClick={() => { setShowNewArrivals(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
+                    <div className="cursor-pointer" onClick={() => { setPageHistory(prev => [...prev, 'newArrivals']); setShowNewArrivals(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
                       <img src={product.images?.[0]} alt={product.name} className="w-full aspect-square object-cover group-hover:scale-110 transition-transform duration-700" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
                         <h3 className="text-sm font-semibold text-white">{product.name}</h3>
@@ -602,7 +690,7 @@ export default function WallArtShop() {
                       </div>
                     </div>
                   </div>
-                  <button onClick={() => { setShowNewArrivals(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }} disabled={product.stock === 0} className={`w-full mt-3 text-stone-900 py-2.5 rounded-xl text-sm font-medium ${product.stock === 0 ? 'opacity-50' : 'hover:shadow-lg'}`} style={{background: theme.accent}}>
+                  <button onClick={() => { setPageHistory(prev => [...prev, 'newArrivals']); setShowNewArrivals(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }} disabled={product.stock === 0} className={`w-full mt-3 text-stone-900 py-2.5 rounded-xl text-sm font-medium ${product.stock === 0 ? 'opacity-50' : 'hover:shadow-lg'}`} style={{background: theme.accent}}>
                     {product.stock === 0 ? t.outOfStock : 'Ürünü İncele'}
                   </button>
                 </div>
@@ -623,11 +711,11 @@ export default function WallArtShop() {
           {/* Collection Header */}
           <div className={`sticky top-0 ${theme.bgTertiary} border-b ${theme.border} z-10`}>
             <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-              <button onClick={() => { setShowCollection(false); setSpecialFilter(null); }} className={`flex items-center gap-2 ${theme.textSecondary} ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'} transition`}>
+              <button onClick={() => { setShowCollection(false); setSpecialFilter(null); setSearchQuery(''); setPageHistory([]); }} className={`flex items-center gap-2 ${theme.textSecondary} ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'} transition`}>
                 <ChevronLeft size={20} />
-                <span className="text-sm">Geri</span>
+                <span className="text-sm">Anasayfa</span>
               </button>
-              <button onClick={() => { setShowCollection(false); setSpecialFilter(null); }} className="hover:opacity-80 transition">
+              <button onClick={() => { setShowCollection(false); setSpecialFilter(null); setSearchQuery(''); setPageHistory([]); }} className="hover:opacity-80 transition">
                 <img src={darkMode ? "/luuz-logo-white.png" : "/luuz-logo-black.png"} alt="LUUZ" className="h-6" />
               </button>
               <div className="flex items-center gap-2">
