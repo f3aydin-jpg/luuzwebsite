@@ -5,7 +5,7 @@ import { collection, getDocs } from 'firebase/firestore';
 import AdminPanel from './AdminPanel';
 
 export default function WallArtShop() {
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState('tr');
   const [cart, setCart] = useState([]);
   const [favorites, setFavorites] = useState([]);
@@ -190,35 +190,36 @@ export default function WallArtShop() {
 
       {/* Promo */}
       <div className={`${theme.bgTertiary} ${theme.textSecondary} py-2.5 text-center border-b ${theme.border}`}>
-        <p className="text-xs">🎉 Yeni Müşterilere %15 İndirim - Kod: <span className="text-white font-semibold">HOSGELDIN15</span></p>
+        <p className="text-xs">🎉 Yeni Müşterilere %15 İndirim - Kod: <span className={`font-semibold ${darkMode ? 'text-white' : 'text-stone-900'}`}>HOSGELDIN15</span></p>
       </div>
 
       {/* Hero with Dynamic Product Background */}
       <section className="relative h-[45vh] min-h-[350px] overflow-hidden">
         {/* Dynamic Product Grid Background */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 p-2 opacity-30">
-            {products.length > 0 && [...products, ...products, ...products].slice(0, 24).map((product, idx) => (
+          <div className="absolute inset-0 grid grid-cols-5 md:grid-cols-7 lg:grid-cols-9 gap-1 p-1">
+            {products.length > 0 && [...products, ...products, ...products, ...products].slice(0, 36).map((product, idx) => (
               <div 
                 key={`hero-${idx}`} 
-                className="aspect-[3/4] rounded-lg overflow-hidden"
+                className="aspect-[3/4] overflow-hidden"
                 style={{
-                  animation: `fadeInOut ${8 + (idx % 4)}s ease-in-out infinite`,
-                  animationDelay: `${idx * 0.5}s`
+                  opacity: 0.15 + (Math.sin(idx * 0.5) * 0.1),
+                  animation: `heroPulse ${12 + (idx % 6) * 2}s ease-in-out infinite`,
+                  animationDelay: `${(idx % 12) * 1}s`
                 }}
               >
                 <img 
                   src={product.images?.[0]} 
                   alt="" 
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover filter blur-[0.5px]"
                 />
               </div>
             ))}
           </div>
-          {/* Dark Overlay */}
-          <div className="absolute inset-0 bg-black/60"></div>
-          {/* Gradient Overlay */}
-          <div className={`absolute inset-0 bg-gradient-to-t ${darkMode ? 'from-stone-900' : 'from-stone-100'} via-transparent to-transparent`}></div>
+          {/* Smooth Gradient Overlays */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70"></div>
+          <div className={`absolute inset-0 bg-gradient-to-t ${darkMode ? 'from-stone-900/90' : 'from-stone-100/90'} via-transparent to-transparent`}></div>
+          <div className={`absolute inset-0 bg-gradient-to-b ${darkMode ? 'from-stone-900/50' : 'from-stone-100/50'} via-transparent to-transparent`}></div>
         </div>
         
         {/* Content */}
@@ -257,9 +258,9 @@ export default function WallArtShop() {
           0% { background-position: -200% 0; }
           100% { background-position: 200% 0; }
         }
-        @keyframes fadeInOut {
-          0%, 100% { opacity: 0.3; transform: scale(1); }
-          50% { opacity: 0.8; transform: scale(1.05); }
+        @keyframes heroPulse {
+          0%, 100% { opacity: 0.1; filter: blur(0.5px) brightness(0.8); }
+          50% { opacity: 0.25; filter: blur(0px) brightness(1); }
         }
         .animate-fade-in {
           animation: fadeIn 0.8s ease-out forwards;
@@ -291,6 +292,13 @@ export default function WallArtShop() {
           opacity: 1;
           transform: translateY(0);
           transition: all 0.3s ease-out;
+        }
+        @keyframes bounceX {
+          0%, 100% { transform: translateX(0); }
+          50% { transform: translateX(4px); }
+        }
+        .animate-bounce-x {
+          animation: bounceX 1s ease-in-out infinite;
         }
       `}</style>
 
@@ -335,9 +343,9 @@ export default function WallArtShop() {
           </div>
           {/* Scroll Indicator */}
           {products.filter(p => p.isBestSeller).length > 3 && (
-            <div className={`absolute right-0 top-0 bottom-4 w-16 bg-gradient-to-l ${darkMode ? 'from-stone-900' : 'from-stone-50'} to-transparent pointer-events-none flex items-center justify-end pr-2`}>
-              <div className={`flex items-center gap-1 ${theme.textMuted} text-xs`}>
-                <ChevronRight size={16} className="animate-pulse" />
+            <div className={`absolute right-0 top-0 bottom-4 w-20 bg-gradient-to-l ${darkMode ? 'from-stone-900 via-stone-900/80' : 'from-stone-50 via-stone-50/80'} to-transparent pointer-events-none flex items-center justify-end pr-1`}>
+              <div className="flex items-center gap-1 bg-amber-500 text-stone-900 px-2 py-1.5 rounded-full shadow-lg">
+                <ChevronRight size={16} className="animate-bounce-x" />
               </div>
             </div>
           )}
@@ -385,9 +393,9 @@ export default function WallArtShop() {
           </div>
           {/* Scroll Indicator */}
           {products.filter(p => p.isNew).length > 3 && (
-            <div className={`absolute right-0 top-0 bottom-4 w-16 bg-gradient-to-l ${darkMode ? 'from-stone-900' : 'from-stone-50'} to-transparent pointer-events-none flex items-center justify-end pr-2`}>
-              <div className={`flex items-center gap-1 ${theme.textMuted} text-xs`}>
-                <ChevronRight size={16} className="animate-pulse" />
+            <div className={`absolute right-0 top-0 bottom-4 w-20 bg-gradient-to-l ${darkMode ? 'from-stone-900 via-stone-900/80' : 'from-stone-50 via-stone-50/80'} to-transparent pointer-events-none flex items-center justify-end pr-1`}>
+              <div className="flex items-center gap-1 bg-green-500 text-white px-2 py-1.5 rounded-full shadow-lg">
+                <ChevronRight size={16} className="animate-bounce-x" />
               </div>
             </div>
           )}
