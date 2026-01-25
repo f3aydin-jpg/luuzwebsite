@@ -216,12 +216,17 @@ export default function WallArtShop() {
       setShowAuthModal(false);
       setAuthForm({ email: '', password: '', confirmPassword: '', firstName: '', lastName: '', phone: '' });
     } catch (error) {
+      console.error('Kayıt hatası:', error);
       if (error.code === 'auth/email-already-in-use') {
         setAuthError('Bu e-posta adresi zaten kullanılıyor');
       } else if (error.code === 'auth/invalid-email') {
         setAuthError('Geçersiz e-posta adresi');
+      } else if (error.code === 'auth/weak-password') {
+        setAuthError('Şifre çok zayıf. En az 6 karakter olmalı');
+      } else if (error.code === 'auth/operation-not-allowed') {
+        setAuthError('Email/Password girişi aktif değil. Firebase Console\'dan aktif edin.');
       } else {
-        setAuthError('Kayıt sırasında bir hata oluştu');
+        setAuthError(`Hata: ${error.message}`);
       }
     }
     setAuthLoading(false);
