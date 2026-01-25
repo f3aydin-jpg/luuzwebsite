@@ -1267,7 +1267,22 @@ export default function WallArtShop() {
                     <span className={`text-sm px-3 py-1 rounded-full ${theme.card} border ${theme.textSecondary}`}>{selectedProduct.category}</span>
                     {selectedProduct.stock > 0 && selectedProduct.stock < 5 && <span className="text-sm px-3 py-1 rounded-full bg-orange-500/20 text-orange-400">Son {selectedProduct.stock} adet</span>}
                   </div>
-                  <h1 className={`text-4xl font-bold ${theme.text} mb-4`}>{selectedProduct.name}</h1>
+                  <div className="flex items-start justify-between gap-4 mb-4">
+                    <h1 className={`text-4xl font-bold ${theme.text}`}>{selectedProduct.name}</h1>
+                    <button 
+                      onClick={() => toggleFavorite(selectedProduct.id)} 
+                      className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${
+                        favorites.includes(selectedProduct.id) 
+                          ? 'bg-red-500/10 border-red-500/30 text-red-500' 
+                          : `${theme.card} ${theme.border} ${theme.textSecondary} hover:border-red-500/50 hover:text-red-500`
+                      }`}
+                    >
+                      <Heart size={18} fill={favorites.includes(selectedProduct.id) ? 'currentColor' : 'none'} />
+                      <span className="text-sm font-medium hidden sm:inline">
+                        {favorites.includes(selectedProduct.id) ? 'Favorilerde' : 'Favorilere Ekle'}
+                      </span>
+                    </button>
+                  </div>
                   <p className={`${theme.textSecondary} text-lg leading-relaxed mb-6`}>{selectedProduct.description}</p>
                   
                   {/* Dynamic Price Display */}
