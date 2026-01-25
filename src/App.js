@@ -1346,10 +1346,35 @@ export default function WallArtShop() {
                     </div>
                   </div>
                 </div>
+                
+                {/* Customers Also Bought */}
+                {products.filter(p => p.category === selectedProduct.category && p.id !== selectedProduct.id).length > 0 && (
+                  <div className="mt-6">
+                    <p className={`text-sm font-medium ${theme.text} mb-3`}>Bu ürünü alanlar şunları da aldı</p>
+                    <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                      {products.filter(p => p.category === selectedProduct.category && p.id !== selectedProduct.id).slice(0, 4).map(p => (
+                        <div 
+                          key={p.id} 
+                          className="flex-shrink-0 w-24 cursor-pointer group"
+                          onClick={() => { setSelectedProduct({...p, selectedSize: undefined, selectedFrame: undefined}); setActiveImageIndex(0); window.scrollTo(0, 0); }}
+                        >
+                          <div className={`relative overflow-hidden rounded-xl ${theme.card} border group-hover:border-amber-500/50 transition-all`}>
+                            <img src={p.images[0]} alt={p.name} className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-300" />
+                            {p.discount > 0 && <div className="absolute top-1 right-1 bg-red-500 text-white px-1.5 py-0.5 rounded-full text-[9px]">-{p.discount}%</div>}
+                          </div>
+                          <p className={`text-xs ${theme.text} mt-1.5 truncate`}>{p.name}</p>
+                          <p className={`text-xs font-semibold`} style={{color: theme.accent}}>
+                            {p.discount > 0 ? Math.round(p.priceUnframed * (1 - p.discount/100)) : p.priceUnframed}₺
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Product Info */}
-              <div className="space-y-8">
+              <div className="space-y-6">
                 {/* Main Info - More Prominent */}
                 <div>
                   <div className="flex items-center gap-2 mb-4">
@@ -1440,73 +1465,76 @@ export default function WallArtShop() {
                   </div>
                 )}
 
-                {/* Options Section - Minimal Design */}
-                <div className={`p-5 rounded-2xl ${theme.card} border space-y-5`}>
-                  {/* Size Selection - Minimal */}
-                  <div>
-                    <p className={`text-sm font-medium ${theme.textSecondary} mb-3`}>Boyut</p>
-                    <div className="flex gap-2">
-                      <button 
-                        onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedSize: '30x40'})}
-                        className={`px-5 py-2.5 rounded-lg text-sm font-medium transition ${selectedProduct.selectedSize === '30x40' ? 'text-stone-900' : `${theme.text} border ${theme.border} hover:border-amber-500`}`}
-                        style={selectedProduct.selectedSize === '30x40' ? {background: theme.accent} : {}}
-                      >
-                        30x40 cm
-                      </button>
-                      <button 
-                        onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedSize: '50x70'})}
-                        className={`px-5 py-2.5 rounded-lg text-sm font-medium transition ${selectedProduct.selectedSize === '50x70' ? 'text-stone-900' : `${theme.text} border ${theme.border} hover:border-amber-500`}`}
-                        style={selectedProduct.selectedSize === '50x70' ? {background: theme.accent} : {}}
-                      >
-                        50x70 cm
-                      </button>
+                {/* Options Section - Compact Design */}
+                <div className={`p-4 rounded-2xl ${theme.card} border space-y-4`}>
+                  {/* Size & Frame in one row */}
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* Size Selection */}
+                    <div>
+                      <p className={`text-xs font-medium ${theme.textSecondary} mb-2`}>Boyut</p>
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedSize: '30x40'})}
+                          className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition ${selectedProduct.selectedSize === '30x40' ? 'text-stone-900' : `${theme.text} border ${theme.border} hover:border-amber-500`}`}
+                          style={selectedProduct.selectedSize === '30x40' ? {background: theme.accent} : {}}
+                        >
+                          30x40
+                        </button>
+                        <button 
+                          onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedSize: '50x70'})}
+                          className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition ${selectedProduct.selectedSize === '50x70' ? 'text-stone-900' : `${theme.text} border ${theme.border} hover:border-amber-500`}`}
+                          style={selectedProduct.selectedSize === '50x70' ? {background: theme.accent} : {}}
+                        >
+                          50x70
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Frame Selection */}
+                    <div>
+                      <p className={`text-xs font-medium ${theme.textSecondary} mb-2`}>Çerçeve</p>
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: false})}
+                          className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition ${selectedProduct.selectedFrame === false ? 'text-stone-900' : `${theme.text} border ${theme.border} hover:border-amber-500`}`}
+                          style={selectedProduct.selectedFrame === false ? {background: theme.accent} : {}}
+                        >
+                          Yok
+                        </button>
+                        <button 
+                          onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: true})}
+                          className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition ${selectedProduct.selectedFrame === true ? 'text-stone-900' : `${theme.text} border ${theme.border} hover:border-amber-500`}`}
+                          style={selectedProduct.selectedFrame === true ? {background: theme.accent} : {}}
+                        >
+                          Var
+                        </button>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Frame Selection - Minimal */}
-                  <div>
-                    <p className={`text-sm font-medium ${theme.textSecondary} mb-3`}>Çerçeve</p>
-                    <div className="flex gap-2">
-                      <button 
-                        onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: false})}
-                        className={`px-5 py-2.5 rounded-lg text-sm font-medium transition ${selectedProduct.selectedFrame === false ? 'text-stone-900' : `${theme.text} border ${theme.border} hover:border-amber-500`}`}
-                        style={selectedProduct.selectedFrame === false ? {background: theme.accent} : {}}
-                      >
-                        Çerçevesiz
-                      </button>
-                      <button 
-                        onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: true})}
-                        className={`px-5 py-2.5 rounded-lg text-sm font-medium transition ${selectedProduct.selectedFrame === true ? 'text-stone-900' : `${theme.text} border ${theme.border} hover:border-amber-500`}`}
-                        style={selectedProduct.selectedFrame === true ? {background: theme.accent} : {}}
-                      >
-                        Çerçeveli
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Quantity Selection */}
-                  <div>
-                    <p className={`text-sm font-medium ${theme.textSecondary} mb-3`}>Adet</p>
-                    <div className="flex items-center gap-3">
+                  {/* Quantity Selection - Inline */}
+                  <div className="flex items-center justify-between">
+                    <p className={`text-xs font-medium ${theme.textSecondary}`}>Adet</p>
+                    <div className="flex items-center gap-2">
                       <button 
                         onClick={() => selectedProduct.quantity > 1 && setSelectedProduct({...selectedProduct, quantity: (selectedProduct.quantity || 1) - 1})}
-                        className={`w-10 h-10 rounded-lg border ${theme.border} ${theme.text} flex items-center justify-center hover:border-amber-500 transition disabled:opacity-50`}
+                        className={`w-8 h-8 rounded-lg border ${theme.border} ${theme.text} flex items-center justify-center hover:border-amber-500 transition disabled:opacity-50`}
                         disabled={!selectedProduct.quantity || selectedProduct.quantity <= 1}
                       >
-                        <Minus size={18} />
+                        <Minus size={14} />
                       </button>
-                      <span className={`w-12 text-center text-lg font-semibold ${theme.text}`}>
+                      <span className={`w-8 text-center text-sm font-semibold ${theme.text}`}>
                         {selectedProduct.quantity || 1}
                       </span>
                       <button 
                         onClick={() => setSelectedProduct({...selectedProduct, quantity: (selectedProduct.quantity || 1) + 1})}
-                        className={`w-10 h-10 rounded-lg border ${theme.border} ${theme.text} flex items-center justify-center hover:border-amber-500 transition`}
+                        className={`w-8 h-8 rounded-lg border ${theme.border} ${theme.text} flex items-center justify-center hover:border-amber-500 transition`}
                         disabled={selectedProduct.stock <= (selectedProduct.quantity || 1)}
                       >
-                        <Plus size={18} />
+                        <Plus size={14} />
                       </button>
                       {selectedProduct.stock < 10 && selectedProduct.stock > 0 && (
-                        <span className="text-xs text-orange-400 ml-2">Son {selectedProduct.stock} adet!</span>
+                        <span className="text-xs text-orange-400 ml-1">Son {selectedProduct.stock}!</span>
                       )}
                     </div>
                   </div>
