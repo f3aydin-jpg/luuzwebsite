@@ -632,11 +632,11 @@ export default function WallArtShop() {
             <h3 className={`text-3xl md:text-4xl font-bold ${theme.text}`}>
               <span className="bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 bg-clip-text text-transparent">Çok Satanlar</span>
             </h3>
-            <p className={`text-sm ${theme.textMuted} mt-1`}>Müşterilerimizin en sevdiği tasarımlar ✨</p>
+            <p className={`text-sm ${theme.textMuted} mt-1`}>Müşterilerimizin en sevdiği tasarımlar</p>
           </div>
           <button 
             onClick={() => setShowBestSellers(true)}
-            className="text-xs font-semibold px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-stone-900 hover:shadow-lg hover:scale-105 transition-all"
+            className={`text-xs font-semibold px-5 py-2.5 rounded-full border-2 ${darkMode ? 'border-stone-600 text-stone-300 hover:border-stone-400 hover:text-white' : 'border-stone-400 text-stone-600 hover:border-stone-600 hover:text-stone-900'} hover:shadow-lg hover:scale-105 transition-all`}
           >
             Tümünü Gör →
           </button>
@@ -648,7 +648,7 @@ export default function WallArtShop() {
               const container = document.getElementById('bestSellerScroll');
               if(container) container.scrollBy({ left: -300, behavior: 'smooth' });
             }}
-            className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-amber-500 text-stone-900 shadow-xl flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-all hover:scale-110 hover:bg-amber-400 -translate-x-2`}
+            className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full ${darkMode ? 'bg-stone-700 text-stone-200 hover:bg-stone-600' : 'bg-stone-200 text-stone-700 hover:bg-stone-300'} shadow-xl flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-all hover:scale-110 -translate-x-2`}
           >
             <ChevronLeft size={24} />
           </button>
@@ -684,7 +684,7 @@ export default function WallArtShop() {
               const container = document.getElementById('bestSellerScroll');
               if(container) container.scrollBy({ left: 300, behavior: 'smooth' });
             }}
-            className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-amber-500 text-stone-900 shadow-xl flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-all hover:scale-110 hover:bg-amber-400 translate-x-2`}
+            className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full ${darkMode ? 'bg-stone-700 text-stone-200 hover:bg-stone-600' : 'bg-stone-200 text-stone-700 hover:bg-stone-300'} shadow-xl flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-all hover:scale-110 translate-x-2`}
           >
             <ChevronRight size={24} />
           </button>
@@ -702,11 +702,11 @@ export default function WallArtShop() {
             <h3 className={`text-3xl md:text-4xl font-bold ${theme.text}`}>
               <span className="bg-gradient-to-r from-green-500 via-emerald-400 to-green-500 bg-clip-text text-transparent">Yeni Gelenler</span>
             </h3>
-            <p className={`text-sm ${theme.textMuted} mt-1`}>Koleksiyona yeni eklenen tasarımlar 🌟</p>
+            <p className={`text-sm ${theme.textMuted} mt-1`}>Koleksiyona yeni eklenen tasarımlar</p>
           </div>
           <button 
             onClick={() => setShowNewArrivals(true)}
-            className="text-xs font-semibold px-5 py-2.5 rounded-full bg-gradient-to-r from-green-500 to-green-600 text-white hover:shadow-lg hover:scale-105 transition-all"
+            className={`text-xs font-semibold px-5 py-2.5 rounded-full border-2 ${darkMode ? 'border-stone-600 text-stone-300 hover:border-stone-400 hover:text-white' : 'border-stone-400 text-stone-600 hover:border-stone-600 hover:text-stone-900'} hover:shadow-lg hover:scale-105 transition-all`}
           >
             Tümünü Gör →
           </button>
@@ -718,7 +718,7 @@ export default function WallArtShop() {
               const container = document.getElementById('newArrivalsScroll');
               if(container) container.scrollBy({ left: -300, behavior: 'smooth' });
             }}
-            className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-green-500 text-white shadow-xl flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-all hover:scale-110 hover:bg-green-400 -translate-x-2`}
+            className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full ${darkMode ? 'bg-stone-700 text-stone-200 hover:bg-stone-600' : 'bg-stone-200 text-stone-700 hover:bg-stone-300'} shadow-xl flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-all hover:scale-110 -translate-x-2`}
           >
             <ChevronLeft size={24} />
           </button>
@@ -754,7 +754,7 @@ export default function WallArtShop() {
               const container = document.getElementById('newArrivalsScroll');
               if(container) container.scrollBy({ left: 300, behavior: 'smooth' });
             }}
-            className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-green-500 text-white shadow-xl flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-all hover:scale-110 hover:bg-green-400 translate-x-2`}
+            className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full ${darkMode ? 'bg-stone-700 text-stone-200 hover:bg-stone-600' : 'bg-stone-200 text-stone-700 hover:bg-stone-300'} shadow-xl flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-all hover:scale-110 translate-x-2`}
           >
             <ChevronRight size={24} />
           </button>
