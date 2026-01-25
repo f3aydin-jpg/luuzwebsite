@@ -1307,43 +1307,23 @@ export default function WallArtShop() {
                   </div>
                 </div>
                 
-                {/* Trust Badges */}
-                <div className={`mt-6 grid grid-cols-2 gap-3`}>
-                  <div className={`${theme.card} border rounded-xl p-4 flex items-center gap-3`}>
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${darkMode ? 'bg-green-500/20' : 'bg-green-100'}`}>
-                      <Truck size={20} className="text-green-500" />
-                    </div>
-                    <div>
-                      <p className={`text-sm font-medium ${theme.text}`}>Ücretsiz Kargo</p>
-                      <p className={`text-xs ${theme.textMuted}`}>150₺ üzeri siparişlerde</p>
-                    </div>
+                {/* Trust Badges - Minimal */}
+                <div className={`mt-6 flex flex-wrap gap-4 ${theme.textMuted} text-xs`}>
+                  <div className="flex items-center gap-1.5">
+                    <Truck size={14} className="text-green-500" />
+                    <span>Ücretsiz Kargo</span>
                   </div>
-                  <div className={`${theme.card} border rounded-xl p-4 flex items-center gap-3`}>
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${darkMode ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
-                      <RotateCcw size={20} className="text-blue-500" />
-                    </div>
-                    <div>
-                      <p className={`text-sm font-medium ${theme.text}`}>14 Gün İade</p>
-                      <p className={`text-xs ${theme.textMuted}`}>Koşulsuz iade hakkı</p>
-                    </div>
+                  <div className="flex items-center gap-1.5">
+                    <RotateCcw size={14} className="text-blue-500" />
+                    <span>14 Gün İade</span>
                   </div>
-                  <div className={`${theme.card} border rounded-xl p-4 flex items-center gap-3`}>
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${darkMode ? 'bg-amber-500/20' : 'bg-amber-100'}`}>
-                      <Shield size={20} className="text-amber-500" />
-                    </div>
-                    <div>
-                      <p className={`text-sm font-medium ${theme.text}`}>Güvenli Ödeme</p>
-                      <p className={`text-xs ${theme.textMuted}`}>256-bit SSL şifreleme</p>
-                    </div>
+                  <div className="flex items-center gap-1.5">
+                    <Shield size={14} className="text-amber-500" />
+                    <span>Güvenli Ödeme</span>
                   </div>
-                  <div className={`${theme.card} border rounded-xl p-4 flex items-center gap-3`}>
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${darkMode ? 'bg-purple-500/20' : 'bg-purple-100'}`}>
-                      <Package size={20} className="text-purple-500" />
-                    </div>
-                    <div>
-                      <p className={`text-sm font-medium ${theme.text}`}>Özenli Paket</p>
-                      <p className={`text-xs ${theme.textMuted}`}>Hasar garantili teslimat</p>
-                    </div>
+                  <div className="flex items-center gap-1.5">
+                    <Package size={14} className="text-purple-500" />
+                    <span>Özenli Paket</span>
                   </div>
                 </div>
                 
@@ -1539,51 +1519,54 @@ export default function WallArtShop() {
                     </div>
                   </div>
                   
-                  {/* Add to Cart Button */}
-                  <button 
-                    onClick={() => {
-                      if (selectedProduct.selectedFrame === undefined) {
-                        alert('Lütfen çerçeve seçeneği seçin');
-                      } else if (selectedProduct.selectedSize === undefined) {
-                        alert('Lütfen boyut seçin');
-                      } else {
-                        addToCart(selectedProduct, selectedProduct.selectedFrame);
-                      }
-                    }} 
-                    disabled={selectedProduct.stock === 0}
-                    className={`w-full text-stone-900 py-4 rounded-xl font-semibold text-lg shadow-lg flex items-center justify-center gap-3 ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90 hover:shadow-xl transition-all'}`}
-                    style={{background: theme.accent}}
-                  >
-                    <ShoppingCart size={22} />
-                    {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
-                  </button>
+                  {/* Buttons - Compact */}
+                  <div className="flex gap-2">
+                    {/* Add to Cart Button */}
+                    <button 
+                      onClick={() => {
+                        if (selectedProduct.selectedFrame === undefined) {
+                          alert('Lütfen çerçeve seçeneği seçin');
+                        } else if (selectedProduct.selectedSize === undefined) {
+                          alert('Lütfen boyut seçin');
+                        } else {
+                          addToCart(selectedProduct, selectedProduct.selectedFrame);
+                        }
+                      }} 
+                      disabled={selectedProduct.stock === 0}
+                      className={`flex-1 text-stone-900 py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90 transition-all'}`}
+                      style={{background: theme.accent}}
+                    >
+                      <ShoppingCart size={16} />
+                      {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
+                    </button>
 
-                  {/* WhatsApp Order Button */}
-                  <button 
-                    onClick={() => {
-                      if (selectedProduct.selectedSize === undefined) {
-                        alert('Lütfen boyut seçin');
-                      } else if (selectedProduct.selectedFrame === undefined) {
-                        alert('Lütfen çerçeve seçeneği seçin');
-                      } else {
-                        const message = `Merhaba! LUUZ'dan sipariş vermek istiyorum:\n\n` +
-                          `Urun: ${selectedProduct.name}\n` +
-                          `Boyut: ${selectedProduct.selectedSize}\n` +
-                          `Cerceve: ${selectedProduct.selectedFrame ? 'Cerceveli' : 'Cercevesiz'}\n` +
-                          `Fiyat: ${(() => {
-                            const sizeMultiplier = selectedProduct.selectedSize === '30x40' ? 0.7 : 1;
-                            const basePrice = selectedProduct.selectedFrame ? selectedProduct.priceFramed : selectedProduct.priceUnframed;
-                            return Math.round(basePrice * sizeMultiplier);
-                          })()}TL\n\n` +
-                          `Siparis vermek istiyorum.`;
-                        window.open(`https://wa.me/905060342409?text=${encodeURIComponent(message)}`, '_blank');
-                      }
-                    }}
-                    className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-semibold text-lg shadow-lg flex items-center justify-center gap-3 transition-all hover:shadow-xl"
-                  >
-                    <MessageCircle size={22} />
-                    WhatsApp ile Sipariş Ver
-                  </button>
+                    {/* WhatsApp Order Button */}
+                    <button 
+                      onClick={() => {
+                        if (selectedProduct.selectedSize === undefined) {
+                          alert('Lütfen boyut seçin');
+                        } else if (selectedProduct.selectedFrame === undefined) {
+                          alert('Lütfen çerçeve seçeneği seçin');
+                        } else {
+                          const message = `Merhaba! LUUZ'dan sipariş vermek istiyorum:\n\n` +
+                            `Urun: ${selectedProduct.name}\n` +
+                            `Boyut: ${selectedProduct.selectedSize}\n` +
+                            `Cerceve: ${selectedProduct.selectedFrame ? 'Cerceveli' : 'Cercevesiz'}\n` +
+                            `Fiyat: ${(() => {
+                              const sizeMultiplier = selectedProduct.selectedSize === '30x40' ? 0.7 : 1;
+                              const basePrice = selectedProduct.selectedFrame ? selectedProduct.priceFramed : selectedProduct.priceUnframed;
+                              return Math.round(basePrice * sizeMultiplier);
+                            })()}TL\n\n` +
+                            `Siparis vermek istiyorum.`;
+                          window.open(`https://wa.me/905060342409?text=${encodeURIComponent(message)}`, '_blank');
+                        }
+                      }}
+                      className="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition-all"
+                    >
+                      <MessageCircle size={16} />
+                      WhatsApp
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1632,6 +1615,37 @@ export default function WallArtShop() {
               </div>
             </div>
           </div>
+
+          {/* Newsletter - Product Page */}
+          <section className={`py-8 ${darkMode ? 'bg-stone-800' : 'bg-stone-100'}`}>
+            <div className="max-w-2xl mx-auto px-4 text-center">
+              <h3 className={`text-lg font-bold ${theme.text} mb-2`}>{t.newsletter}</h3>
+              <p className={`${theme.textSecondary} mb-4 text-xs`}>İndirimlerden ilk siz haberdar olun</p>
+              <div className="flex gap-2 max-w-sm mx-auto">
+                <input type="email" placeholder="E-posta" className={`flex-1 px-3 py-2 rounded-lg text-sm ${theme.input} border`} />
+                <button className="text-stone-900 px-4 py-2 rounded-lg text-sm font-medium" style={{background: theme.accent}}>{t.subscribe}</button>
+              </div>
+            </div>
+          </section>
+
+          {/* Footer - Product Page */}
+          <footer className={`${theme.bgTertiary} py-12 border-t ${theme.border}`}>
+            <div className="max-w-7xl mx-auto px-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div>
+                  <img src={darkMode ? "/luuz-logo-white.png" : "/luuz-logo-black.png"} alt="LUUZ" className="h-8 mb-4" />
+                  <p className={`${theme.textMuted} text-xs`}>Özgün duvar sanatı tasarımları.</p>
+                  <div className="flex gap-3 mt-4"><button className={theme.textMuted}><Instagram size={18} /></button><button className={theme.textMuted}><Twitter size={18} /></button><button className={theme.textMuted}><Facebook size={18} /></button></div>
+                </div>
+                <div><h5 className={`font-medium mb-3 text-sm ${theme.text}`}>Linkler</h5><ul className={`space-y-2 ${theme.textMuted} text-xs`}><li><button onClick={() => { setSelectedProduct(null); setShowCollection(true); }}>{t.collection}</button></li><li><button onClick={() => setShowAbout(true)}>{t.about}</button></li><li><button onClick={() => setShowFAQ(true)}>{t.faq}</button></li></ul></div>
+                <div><h5 className={`font-medium mb-3 text-sm ${theme.text}`}>Yardım</h5><ul className={`space-y-2 ${theme.textMuted} text-xs`}><li>Kargo Bilgileri</li><li>İade & Değişim</li><li><button onClick={() => setShowOrderHistory(true)}>{t.orderHistory}</button></li></ul></div>
+                <div><h5 className={`font-medium mb-3 text-sm ${theme.text}`}>İletişim</h5><ul className={`space-y-2 ${theme.textMuted} text-xs`}><li>info@luuz.com.tr</li><li>+90 212 555 00 00</li><li>İstanbul, Türkiye</li></ul></div>
+              </div>
+              <div className={`border-t ${theme.border} mt-8 pt-8 flex justify-between items-center ${theme.textMuted} text-xs`}>
+                <span>© 2025 LUUZ. Tüm hakları saklıdır.</span>
+              </div>
+            </div>
+          </footer>
         </div>
       )}
       {/* Cart */}
