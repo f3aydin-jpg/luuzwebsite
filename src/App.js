@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, X, Plus, Minus, Menu, Search, Heart, MessageCircle, Package, Star, ChevronDown, ChevronUp, Grid, List, ArrowUp, Moon, Sun, Clock, Truck, Shield, RotateCcw, ChevronLeft, ChevronRight, Check, Tag, TrendingUp, Eye, Instagram, Twitter, Facebook, ZoomIn, Settings, User, LogOut, Mail, Lock, MapPin, Phone, CreditCard, History } from 'lucide-react';
+import { ShoppingCart, X, Plus, Minus, Menu, Search, Heart, MessageCircle, Package, Star, ChevronDown, ChevronUp, Grid, List, ArrowUp, Moon, Sun, Truck, Shield, RotateCcw, ChevronLeft, ChevronRight, Check, Tag, TrendingUp, Eye, Instagram, Twitter, Facebook, ZoomIn, Settings, User, LogOut, Mail, Lock, Phone } from 'lucide-react';
 import { db, auth } from './firebase';
-import { collection, getDocs, doc, setDoc, getDoc, updateDoc, addDoc, query, where, orderBy } from 'firebase/firestore';
+import { collection, getDocs, doc, setDoc, getDoc, updateDoc, query, where, orderBy } from 'firebase/firestore';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from 'firebase/auth';
 import AdminPanel from './AdminPanel';
 
