@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, X, Plus, Minus, Menu, Search, Heart, MessageCircle, Package, Star, ChevronDown, ChevronUp, Grid, List, ArrowUp, Moon, Sun, Clock, Truck, Shield, RotateCcw, ChevronLeft, ChevronRight, Check, Tag, TrendingUp, Eye, Instagram, Twitter, Facebook, ZoomIn, Settings } from 'lucide-react';
-import { db } from './firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { ShoppingCart, X, Plus, Minus, Menu, Search, Heart, MessageCircle, Package, Star, ChevronDown, ChevronUp, Grid, List, ArrowUp, Moon, Sun, Clock, Truck, Shield, RotateCcw, ChevronLeft, ChevronRight, Check, Tag, TrendingUp, Eye, Instagram, Twitter, Facebook, ZoomIn, Settings, User, LogOut, Mail, Lock, MapPin, Phone, CreditCard, History } from 'lucide-react';
+import { db, auth } from './firebase';
+import { collection, getDocs, doc, setDoc, getDoc, updateDoc, addDoc, query, where, orderBy } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from 'firebase/auth';
 import AdminPanel from './AdminPanel';
 
 export default function WallArtShop() {
@@ -37,7 +38,7 @@ export default function WallArtShop() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [openFAQ, setOpenFAQ] = useState(null);
-  const [orderHistory] = useState([{ id: 'LUUZ7X8K2M', date: '12.01.2025', total: 1850, status: 'Teslim Edildi', items: 2 }]);
+  const [userOrders, setUserOrders] = useState([]);
   const [checkoutData, setCheckoutData] = useState({ firstName: '', lastName: '', email: '', phone: '', address: '', city: '', postalCode: '', cardNumber: '', expiry: '', cvv: '' });
   const [showZoom, setShowZoom] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
@@ -54,6 +55,24 @@ export default function WallArtShop() {
   const [showNewArrivals, setShowNewArrivals] = useState(false);
   const [specialFilter, setSpecialFilter] = useState(null);
   const [pageHistory, setPageHistory] = useState([]);
+  
+  // Üyelik sistemi state'leri
+  const [user, setUser] = useState(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState('login'); // 'login', 'register', 'profile'
+  const [authLoading, setAuthLoading] = useState(false);
+  const [authError, setAuthError] = useState('');
+  const [authForm, setAuthForm] = useState({
+    email: '',
+    password: '',
+    confirmPassword: '',
+    firstName: '',
+    lastName: '',
+    phone: ''
+  });
+  const [userProfile, setUserProfile] = useState(null);
+  const [showProfile, setShowProfile] = useState(false);
+  const [editingProfile, setEditingProfile] = useState(false);
 
   const t = { collection: 'Koleksiyon', about: 'Hakkımızda', howItWorks: 'Nasıl Çalışır', faq: 'SSS', search: 'Ürün ara...', cart: 'Sepetim', favorites: 'Favorilerim', addToCart: 'Sepete Ekle', checkout: 'Ödemeye Geç', total: 'Toplam', empty: 'Sepetiniz boş', filters: 'Filtreler', price: 'Fiyat', size: 'Boyut', bestSellers: 'Çok Satanlar', newArrivals: 'Yeni Gelenler', allCollection: 'Tüm Koleksiyon', framed: 'Çerçeveli', unframed: 'Çerçevesiz', inStock: 'Stokta', outOfStock: 'Tükendi', similarProducts: 'Benzer Ürünler', applyCoupon: 'Uygula', newsletter: 'Yeni Koleksiyonlardan Haberdar Olun', subscribe: 'Abone Ol', compare: 'Karşılaştır', recentlyViewed: 'Son Görüntülenenler', orderHistory: 'Sipariş Geçmişi' };
 
@@ -114,12 +133,183 @@ export default function WallArtShop() {
     setIsLoading(false);
   };
 
+  // Kullanıcı profilini yükle
+  const loadUserProfile = async (userId) => {
+    try {
+      const userDoc = await getDoc(doc(db, 'users', userId));
+      if (userDoc.exists()) {
+        setUserProfile(userDoc.data());
+        setFavorites(userDoc.data().favorites || []);
+      }
+    } catch (error) {
+      console.error('Profil yükleme hatası:', error);
+    }
+  };
+
+  // Kullanıcı siparişlerini yükle
+  const loadUserOrders = async (userId) => {
+    try {
+      const ordersQuery = query(
+        collection(db, 'orders'),
+        where('userId', '==', userId),
+        orderBy('createdAt', 'desc')
+      );
+      const querySnapshot = await getDocs(ordersQuery);
+      const orders = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setUserOrders(orders);
+    } catch (error) {
+      console.error('Siparişler yüklenirken hata:', error);
+    }
+  };
+
+  // Favorileri kaydet
+  const saveFavorites = async (newFavorites) => {
+    if (user) {
+      try {
+        await updateDoc(doc(db, 'users', user.uid), {
+          favorites: newFavorites
+        });
+      } catch (error) {
+        console.error('Favoriler kaydedilemedi:', error);
+      }
+    }
+  };
+
+  // Kayıt ol
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setAuthError('');
+    
+    if (authForm.password !== authForm.confirmPassword) {
+      setAuthError('Şifreler eşleşmiyor');
+      return;
+    }
+    
+    if (authForm.password.length < 6) {
+      setAuthError('Şifre en az 6 karakter olmalıdır');
+      return;
+    }
+
+    setAuthLoading(true);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, authForm.email, authForm.password);
+      
+      // Kullanıcı adını güncelle
+      await updateProfile(userCredential.user, {
+        displayName: `${authForm.firstName} ${authForm.lastName}`
+      });
+
+      // Firestore'a kullanıcı bilgilerini kaydet
+      await setDoc(doc(db, 'users', userCredential.user.uid), {
+        firstName: authForm.firstName,
+        lastName: authForm.lastName,
+        email: authForm.email,
+        phone: authForm.phone,
+        favorites: [],
+        addresses: [],
+        createdAt: new Date().toISOString()
+      });
+
+      setShowAuthModal(false);
+      setAuthForm({ email: '', password: '', confirmPassword: '', firstName: '', lastName: '', phone: '' });
+    } catch (error) {
+      if (error.code === 'auth/email-already-in-use') {
+        setAuthError('Bu e-posta adresi zaten kullanılıyor');
+      } else if (error.code === 'auth/invalid-email') {
+        setAuthError('Geçersiz e-posta adresi');
+      } else {
+        setAuthError('Kayıt sırasında bir hata oluştu');
+      }
+    }
+    setAuthLoading(false);
+  };
+
+  // Giriş yap
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setAuthError('');
+    setAuthLoading(true);
+    
+    try {
+      await signInWithEmailAndPassword(auth, authForm.email, authForm.password);
+      setShowAuthModal(false);
+      setAuthForm({ email: '', password: '', confirmPassword: '', firstName: '', lastName: '', phone: '' });
+    } catch (error) {
+      if (error.code === 'auth/user-not-found') {
+        setAuthError('Bu e-posta ile kayıtlı kullanıcı bulunamadı');
+      } else if (error.code === 'auth/wrong-password') {
+        setAuthError('Hatalı şifre');
+      } else if (error.code === 'auth/invalid-email') {
+        setAuthError('Geçersiz e-posta adresi');
+      } else {
+        setAuthError('Giriş sırasında bir hata oluştu');
+      }
+    }
+    setAuthLoading(false);
+  };
+
+  // Çıkış yap
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setUserProfile(null);
+      setUserOrders([]);
+      setFavorites([]);
+      setShowProfile(false);
+    } catch (error) {
+      console.error('Çıkış hatası:', error);
+    }
+  };
+
+  // Profil güncelle
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+    if (!user) return;
+
+    try {
+      await updateDoc(doc(db, 'users', user.uid), {
+        firstName: userProfile.firstName,
+        lastName: userProfile.lastName,
+        phone: userProfile.phone,
+        address: userProfile.address || '',
+        city: userProfile.city || '',
+        postalCode: userProfile.postalCode || ''
+      });
+      
+      await updateProfile(user, {
+        displayName: `${userProfile.firstName} ${userProfile.lastName}`
+      });
+      
+      setEditingProfile(false);
+      alert('Profil güncellendi!');
+    } catch (error) {
+      console.error('Profil güncelleme hatası:', error);
+      alert('Profil güncellenirken bir hata oluştu');
+    }
+  };
+
   useEffect(() => {
     fetchProducts();
     
+    // Auth durumunu dinle
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+      if (currentUser) {
+        await loadUserProfile(currentUser.uid);
+        await loadUserOrders(currentUser.uid);
+      }
+    });
+    
     const handleScroll = () => setShowScrollTop(window.scrollY > 400);
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      unsubscribe();
+    };
   }, []);
 
   const categories = ['Tümü', 'Minimal', 'Soyut', 'Doğa', 'Geometrik', 'Tipografi', 'Modern', 'Klasik', 'Portre', 'Manzara'];
@@ -137,7 +327,13 @@ export default function WallArtShop() {
     return matchesCategory && matchesSearch && matchesPrice && matchesSize && matchesSpecial;
   }).sort((a, b) => sortBy === 'priceLow' ? a.priceUnframed - b.priceUnframed : sortBy === 'priceHigh' ? b.priceUnframed - a.priceUnframed : sortBy === 'newest' ? b.isNew - a.isNew : b.isBestSeller - a.isBestSeller);
 
-  const toggleFavorite = (id) => favorites.includes(id) ? setFavorites(favorites.filter(f => f !== id)) : setFavorites([...favorites, id]);
+  const toggleFavorite = (id) => {
+    const newFavorites = favorites.includes(id) 
+      ? favorites.filter(f => f !== id) 
+      : [...favorites, id];
+    setFavorites(newFavorites);
+    saveFavorites(newFavorites);
+  };
   const addToRecentlyViewed = (p) => setRecentlyViewed(prev => [p, ...prev.filter(x => x.id !== p.id)].slice(0, 6));
   // eslint-disable-next-line no-unused-vars
   const toggleCompare = (p) => compareProducts.find(x => x.id === p.id) ? setCompareProducts(compareProducts.filter(x => x.id !== p.id)) : compareProducts.length < 4 && setCompareProducts([...compareProducts, p]);
@@ -207,7 +403,16 @@ export default function WallArtShop() {
               <Heart size={18} fill={favorites.length > 0 ? theme.accent : 'none'} color={favorites.length > 0 ? theme.accent : 'currentColor'} />
               {favorites.length > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{favorites.length}</span>}
             </button>
-            <button onClick={() => setShowOrderHistory(true)} className={`hidden md:block p-2 ${theme.textSecondary}`}><Clock size={18} /></button>
+            {user ? (
+              <button onClick={() => setShowProfile(true)} className={`p-2 ${theme.textSecondary} relative`}>
+                <User size={18} />
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2" style={{borderColor: darkMode ? '#1c1917' : '#fafaf9'}}></span>
+              </button>
+            ) : (
+              <button onClick={() => setShowAuthModal(true)} className={`p-2 ${theme.textSecondary}`}>
+                <User size={18} />
+              </button>
+            )}
             <button onClick={() => setShowCart(true)} className={`relative p-2 ${theme.textSecondary}`}>
               <ShoppingCart size={18} />
               {totalItems > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{totalItems}</span>}
@@ -1391,6 +1596,320 @@ export default function WallArtShop() {
           <div className={`p-4 h-64 ${theme.bgTertiary}`}><div className={`${theme.bgSecondary} p-3 rounded-xl shadow-sm`}><p className={`text-sm ${theme.text}`}>Merhaba! Nasıl yardımcı olabilirim? 😊</p></div></div>
           <div className={`p-3 border-t ${theme.border}`}>
             <div className="flex gap-2"><input type="text" placeholder="Mesajınızı yazın..." className={`flex-1 ${theme.input} border rounded-xl px-4 py-2 text-sm`} /><button className="w-10 h-10 rounded-xl text-stone-900 flex items-center justify-center" style={{background: theme.accent}}><ChevronRight size={18} /></button></div>
+          </div>
+        </div>
+      )}
+
+      {/* Auth Modal */}
+      {showAuthModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowAuthModal(false)}>
+          <div className={`${theme.bgSecondary} rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-scale-in`} onClick={e => e.stopPropagation()}>
+            {/* Header */}
+            <div className={`p-6 border-b ${theme.border} flex items-center justify-between`}>
+              <h2 className={`text-xl font-bold ${theme.text}`}>
+                {authMode === 'login' ? 'Giriş Yap' : 'Hesap Oluştur'}
+              </h2>
+              <button onClick={() => setShowAuthModal(false)} className={theme.textMuted}><X size={24} /></button>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={authMode === 'login' ? handleLogin : handleRegister} className="p-6 space-y-4">
+              {authMode === 'register' && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className={`text-xs font-medium ${theme.textSecondary} mb-1 block`}>Ad</label>
+                    <input
+                      type="text"
+                      value={authForm.firstName}
+                      onChange={e => setAuthForm({...authForm, firstName: e.target.value})}
+                      className={`w-full px-4 py-3 rounded-xl ${theme.input} border focus:outline-none focus:ring-2 focus:ring-amber-500/50`}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className={`text-xs font-medium ${theme.textSecondary} mb-1 block`}>Soyad</label>
+                    <input
+                      type="text"
+                      value={authForm.lastName}
+                      onChange={e => setAuthForm({...authForm, lastName: e.target.value})}
+                      className={`w-full px-4 py-3 rounded-xl ${theme.input} border focus:outline-none focus:ring-2 focus:ring-amber-500/50`}
+                      required
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <label className={`text-xs font-medium ${theme.textSecondary} mb-1 block`}>E-posta</label>
+                <div className="relative">
+                  <Mail size={18} className={`absolute left-4 top-1/2 -translate-y-1/2 ${theme.textMuted}`} />
+                  <input
+                    type="email"
+                    value={authForm.email}
+                    onChange={e => setAuthForm({...authForm, email: e.target.value})}
+                    className={`w-full pl-12 pr-4 py-3 rounded-xl ${theme.input} border focus:outline-none focus:ring-2 focus:ring-amber-500/50`}
+                    placeholder="ornek@email.com"
+                    required
+                  />
+                </div>
+              </div>
+
+              {authMode === 'register' && (
+                <div>
+                  <label className={`text-xs font-medium ${theme.textSecondary} mb-1 block`}>Telefon</label>
+                  <div className="relative">
+                    <Phone size={18} className={`absolute left-4 top-1/2 -translate-y-1/2 ${theme.textMuted}`} />
+                    <input
+                      type="tel"
+                      value={authForm.phone}
+                      onChange={e => setAuthForm({...authForm, phone: e.target.value})}
+                      className={`w-full pl-12 pr-4 py-3 rounded-xl ${theme.input} border focus:outline-none focus:ring-2 focus:ring-amber-500/50`}
+                      placeholder="05XX XXX XX XX"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <label className={`text-xs font-medium ${theme.textSecondary} mb-1 block`}>Şifre</label>
+                <div className="relative">
+                  <Lock size={18} className={`absolute left-4 top-1/2 -translate-y-1/2 ${theme.textMuted}`} />
+                  <input
+                    type="password"
+                    value={authForm.password}
+                    onChange={e => setAuthForm({...authForm, password: e.target.value})}
+                    className={`w-full pl-12 pr-4 py-3 rounded-xl ${theme.input} border focus:outline-none focus:ring-2 focus:ring-amber-500/50`}
+                    placeholder="••••••••"
+                    required
+                  />
+                </div>
+              </div>
+
+              {authMode === 'register' && (
+                <div>
+                  <label className={`text-xs font-medium ${theme.textSecondary} mb-1 block`}>Şifre Tekrar</label>
+                  <div className="relative">
+                    <Lock size={18} className={`absolute left-4 top-1/2 -translate-y-1/2 ${theme.textMuted}`} />
+                    <input
+                      type="password"
+                      value={authForm.confirmPassword}
+                      onChange={e => setAuthForm({...authForm, confirmPassword: e.target.value})}
+                      className={`w-full pl-12 pr-4 py-3 rounded-xl ${theme.input} border focus:outline-none focus:ring-2 focus:ring-amber-500/50`}
+                      placeholder="••••••••"
+                      required
+                    />
+                  </div>
+                </div>
+              )}
+
+              {authError && (
+                <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3">
+                  <p className="text-red-500 text-sm">{authError}</p>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={authLoading}
+                className="w-full py-3 rounded-xl text-stone-900 font-semibold hover:opacity-90 transition disabled:opacity-50"
+                style={{background: theme.accent}}
+              >
+                {authLoading ? 'Yükleniyor...' : authMode === 'login' ? 'Giriş Yap' : 'Hesap Oluştur'}
+              </button>
+            </form>
+
+            {/* Footer */}
+            <div className={`p-6 border-t ${theme.border} text-center`}>
+              {authMode === 'login' ? (
+                <p className={`text-sm ${theme.textSecondary}`}>
+                  Hesabınız yok mu?{' '}
+                  <button 
+                    onClick={() => { setAuthMode('register'); setAuthError(''); }}
+                    className="font-semibold hover:underline"
+                    style={{color: theme.accent}}
+                  >
+                    Kayıt Ol
+                  </button>
+                </p>
+              ) : (
+                <p className={`text-sm ${theme.textSecondary}`}>
+                  Zaten hesabınız var mı?{' '}
+                  <button 
+                    onClick={() => { setAuthMode('login'); setAuthError(''); }}
+                    className="font-semibold hover:underline"
+                    style={{color: theme.accent}}
+                  >
+                    Giriş Yap
+                  </button>
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Profile Modal */}
+      {showProfile && user && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowProfile(false)}>
+          <div className={`${theme.bgSecondary} rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl animate-scale-in`} onClick={e => e.stopPropagation()}>
+            {/* Header */}
+            <div className={`sticky top-0 ${theme.bgSecondary} p-6 border-b ${theme.border} flex items-center justify-between z-10`}>
+              <h2 className={`text-xl font-bold ${theme.text}`}>Hesabım</h2>
+              <button onClick={() => setShowProfile(false)} className={theme.textMuted}><X size={24} /></button>
+            </div>
+
+            {/* Profile Content */}
+            <div className="p-6 space-y-6">
+              {/* User Info Card */}
+              <div className={`${theme.card} rounded-2xl border p-6`}>
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold text-stone-900" style={{background: theme.accent}}>
+                    {user.displayName?.charAt(0) || user.email?.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <h3 className={`text-lg font-bold ${theme.text}`}>{user.displayName || 'Kullanıcı'}</h3>
+                    <p className={`text-sm ${theme.textMuted}`}>{user.email}</p>
+                  </div>
+                </div>
+
+                {editingProfile ? (
+                  <form onSubmit={handleUpdateProfile} className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className={`text-xs font-medium ${theme.textSecondary} mb-1 block`}>Ad</label>
+                        <input
+                          type="text"
+                          value={userProfile?.firstName || ''}
+                          onChange={e => setUserProfile({...userProfile, firstName: e.target.value})}
+                          className={`w-full px-4 py-2 rounded-xl ${theme.input} border text-sm`}
+                        />
+                      </div>
+                      <div>
+                        <label className={`text-xs font-medium ${theme.textSecondary} mb-1 block`}>Soyad</label>
+                        <input
+                          type="text"
+                          value={userProfile?.lastName || ''}
+                          onChange={e => setUserProfile({...userProfile, lastName: e.target.value})}
+                          className={`w-full px-4 py-2 rounded-xl ${theme.input} border text-sm`}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className={`text-xs font-medium ${theme.textSecondary} mb-1 block`}>Telefon</label>
+                      <input
+                        type="tel"
+                        value={userProfile?.phone || ''}
+                        onChange={e => setUserProfile({...userProfile, phone: e.target.value})}
+                        className={`w-full px-4 py-2 rounded-xl ${theme.input} border text-sm`}
+                      />
+                    </div>
+                    <div>
+                      <label className={`text-xs font-medium ${theme.textSecondary} mb-1 block`}>Adres</label>
+                      <input
+                        type="text"
+                        value={userProfile?.address || ''}
+                        onChange={e => setUserProfile({...userProfile, address: e.target.value})}
+                        className={`w-full px-4 py-2 rounded-xl ${theme.input} border text-sm`}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className={`text-xs font-medium ${theme.textSecondary} mb-1 block`}>Şehir</label>
+                        <input
+                          type="text"
+                          value={userProfile?.city || ''}
+                          onChange={e => setUserProfile({...userProfile, city: e.target.value})}
+                          className={`w-full px-4 py-2 rounded-xl ${theme.input} border text-sm`}
+                        />
+                      </div>
+                      <div>
+                        <label className={`text-xs font-medium ${theme.textSecondary} mb-1 block`}>Posta Kodu</label>
+                        <input
+                          type="text"
+                          value={userProfile?.postalCode || ''}
+                          onChange={e => setUserProfile({...userProfile, postalCode: e.target.value})}
+                          className={`w-full px-4 py-2 rounded-xl ${theme.input} border text-sm`}
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <button type="submit" className="flex-1 py-2 rounded-xl text-stone-900 font-medium text-sm" style={{background: theme.accent}}>
+                        Kaydet
+                      </button>
+                      <button type="button" onClick={() => setEditingProfile(false)} className={`flex-1 py-2 rounded-xl border ${theme.border} ${theme.text} font-medium text-sm`}>
+                        İptal
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <button onClick={() => setEditingProfile(true)} className={`w-full py-2 rounded-xl border ${theme.border} ${theme.textSecondary} text-sm font-medium hover:border-amber-500 transition`}>
+                    Profili Düzenle
+                  </button>
+                )}
+              </div>
+
+              {/* Quick Links */}
+              <div className="grid grid-cols-3 gap-4">
+                <button onClick={() => { setShowProfile(false); setShowFavorites(true); }} className={`${theme.card} rounded-xl border p-4 text-center hover:border-amber-500 transition`}>
+                  <Heart size={24} className={`mx-auto mb-2 ${theme.textSecondary}`} style={{color: favorites.length > 0 ? theme.accent : undefined}} />
+                  <p className={`text-sm font-medium ${theme.text}`}>Favorilerim</p>
+                  <p className={`text-xs ${theme.textMuted}`}>{favorites.length} ürün</p>
+                </button>
+                <button onClick={() => { setShowProfile(false); setShowOrderHistory(true); }} className={`${theme.card} rounded-xl border p-4 text-center hover:border-amber-500 transition`}>
+                  <Package size={24} className={`mx-auto mb-2 ${theme.textSecondary}`} />
+                  <p className={`text-sm font-medium ${theme.text}`}>Siparişlerim</p>
+                  <p className={`text-xs ${theme.textMuted}`}>{userOrders.length} sipariş</p>
+                </button>
+                <button onClick={() => { setShowProfile(false); setShowCart(true); }} className={`${theme.card} rounded-xl border p-4 text-center hover:border-amber-500 transition`}>
+                  <ShoppingCart size={24} className={`mx-auto mb-2 ${theme.textSecondary}`} />
+                  <p className={`text-sm font-medium ${theme.text}`}>Sepetim</p>
+                  <p className={`text-xs ${theme.textMuted}`}>{totalItems} ürün</p>
+                </button>
+              </div>
+
+              {/* Recent Orders */}
+              <div>
+                <h3 className={`text-lg font-bold ${theme.text} mb-4`}>Son Siparişler</h3>
+                {userOrders.length > 0 ? (
+                  <div className="space-y-3">
+                    {userOrders.slice(0, 3).map(order => (
+                      <div key={order.id} className={`${theme.card} rounded-xl border p-4`}>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className={`text-sm font-medium ${theme.text}`}>#{order.id.slice(-8).toUpperCase()}</span>
+                          <span className={`text-xs px-2 py-1 rounded-full ${
+                            order.status === 'delivered' ? 'bg-green-500/20 text-green-500' :
+                            order.status === 'shipped' ? 'bg-blue-500/20 text-blue-500' :
+                            order.status === 'processing' ? 'bg-amber-500/20 text-amber-500' :
+                            'bg-stone-500/20 text-stone-500'
+                          }`}>
+                            {order.status === 'delivered' ? 'Teslim Edildi' :
+                             order.status === 'shipped' ? 'Kargoda' :
+                             order.status === 'processing' ? 'Hazırlanıyor' : 'Bekliyor'}
+                          </span>
+                        </div>
+                        <p className={`text-xs ${theme.textMuted}`}>
+                          {new Date(order.createdAt).toLocaleDateString('tr-TR')} • {order.items?.length || 0} ürün • ₺{order.total}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className={`${theme.card} rounded-xl border p-8 text-center`}>
+                    <Package size={40} className={`mx-auto mb-3 ${theme.textMuted}`} />
+                    <p className={`${theme.textMuted}`}>Henüz siparişiniz yok</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Logout Button */}
+              <button 
+                onClick={handleLogout}
+                className="w-full py-3 rounded-xl border border-red-500/30 text-red-500 font-medium hover:bg-red-500/10 transition flex items-center justify-center gap-2"
+              >
+                <LogOut size={18} />
+                Çıkış Yap
+              </button>
+            </div>
           </div>
         </div>
       )}
