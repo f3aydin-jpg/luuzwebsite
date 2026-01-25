@@ -626,49 +626,48 @@ export default function WallArtShop() {
       `}</style>
 
       {/* Best Sellers */}
-      <section className="max-w-7xl mx-auto px-4 py-10">
-        <div className="flex items-center justify-between mb-8">
+      <section className="max-w-7xl mx-auto px-4 py-12">
+        <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className={`text-3xl md:text-4xl font-bold ${theme.text}`}>
-              <span className="bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 bg-clip-text text-transparent">Çok Satanlar</span>
-            </h3>
-            <p className={`text-sm ${theme.textMuted} mt-1`}>Müşterilerimizin en sevdiği tasarımlar</p>
+            <h3 className={`text-xl md:text-2xl font-medium tracking-wide ${theme.text} uppercase`}>Çok Satanlar</h3>
           </div>
           <button 
             onClick={() => setShowBestSellers(true)}
-            className={`text-xs font-semibold px-5 py-2.5 rounded-full border-2 ${darkMode ? 'border-stone-600 text-stone-300 hover:border-stone-400 hover:text-white' : 'border-stone-400 text-stone-600 hover:border-stone-600 hover:text-stone-900'} hover:shadow-lg hover:scale-105 transition-all`}
+            className={`text-xs font-medium ${theme.textSecondary} hover:${theme.text} transition-colors flex items-center gap-1`}
           >
-            Tümünü Gör →
+            Tümünü Gör <ChevronRight size={14} />
           </button>
         </div>
-        <div className="relative group/slider">
-          {/* Left Arrow */}
-          <button 
-            onClick={() => {
-              const container = document.getElementById('bestSellerScroll');
-              if(container) container.scrollBy({ left: -300, behavior: 'smooth' });
-            }}
-            className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full ${darkMode ? 'bg-stone-700 text-stone-200 hover:bg-stone-600' : 'bg-stone-200 text-stone-700 hover:bg-stone-300'} shadow-xl flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-all hover:scale-110 -translate-x-2`}
-          >
-            <ChevronLeft size={24} />
-          </button>
-          
-          <div id="bestSellerScroll" className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth px-1">
+        <div className="relative">
+          <div id="bestSellerScroll" className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide scroll-smooth">
             {products.filter(p => p.isBestSeller).length > 0 ? (
               products.filter(p => p.isBestSeller).map((product) => (
-                <div key={product.id} className="flex-shrink-0 w-36 md:w-44 group">
-                  <div className={`relative overflow-hidden ${theme.card} rounded-xl border p-3`}>
-                    <div className="absolute top-2 left-2 text-stone-900 px-2 py-0.5 rounded-full text-[10px] font-bold z-10" style={{background: theme.accent}}>BEST</div>
-                    {product.discount > 0 && <div className="absolute top-2 right-2 bg-red-500 text-white px-1.5 py-0.5 rounded-full text-[10px] z-10">-{product.discount}%</div>}
-                    <div className="cursor-pointer" onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
-                      <img src={product.images?.[0]} alt={product.name} className="w-full aspect-[3/4] object-cover rounded-lg group-hover:scale-105 transition-transform duration-500" />
+                <div key={product.id} className="flex-shrink-0 w-48 md:w-56 group cursor-pointer" onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
+                  <div className="relative aspect-[3/4] mb-3 overflow-hidden bg-stone-100">
+                    <img src={product.images?.[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                    {/* Hover Icons */}
+                    <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={(e) => { e.stopPropagation(); toggleFavorite(product.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
+                        <Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={favorites.includes(product.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
+                      </button>
+                      <button className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
+                        <ZoomIn size={16} className={darkMode ? 'text-white' : 'text-stone-900'} />
+                      </button>
                     </div>
+                    {product.discount > 0 && <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 text-[10px] font-medium uppercase">İndirim</div>}
                   </div>
-                  <div className="mt-2 px-1">
-                    <h4 className={`text-sm font-medium ${theme.text} truncate`}>{product.name}</h4>
-                    <p className="text-xs mt-1">
-                      <span style={{color: theme.accent}} className="font-bold">₺{product.discount > 0 ? Math.round(product.priceUnframed * (1 - product.discount/100)) : product.priceUnframed}</span>
-                      <span className={`${theme.textMuted} ml-1`}>'den</span>
+                  <div>
+                    <p className={`text-[10px] ${theme.textMuted} uppercase tracking-wider mb-1`}>LUUZ POSTER</p>
+                    <h4 className={`text-sm ${theme.text} mb-1 line-clamp-2`}>{product.name}</h4>
+                    <p className={`text-sm ${theme.text}`}>
+                      {product.discount > 0 ? (
+                        <>
+                          <span className="line-through text-stone-400 mr-2">{product.priceUnframed} TL</span>
+                          <span className="text-red-500">{Math.round(product.priceUnframed * (1 - product.discount/100))} TL</span>
+                        </>
+                      ) : (
+                        <span>{Math.round(product.priceUnframed * 0.7)} TL – {product.priceUnframed} TL</span>
+                      )}
                     </p>
                   </div>
                 </div>
@@ -677,68 +676,52 @@ export default function WallArtShop() {
               <p className={`${theme.textMuted} text-sm`}>Henüz çok satan ürün yok</p>
             )}
           </div>
-          
-          {/* Right Arrow */}
-          <button 
-            onClick={() => {
-              const container = document.getElementById('bestSellerScroll');
-              if(container) container.scrollBy({ left: 300, behavior: 'smooth' });
-            }}
-            className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full ${darkMode ? 'bg-stone-700 text-stone-200 hover:bg-stone-600' : 'bg-stone-200 text-stone-700 hover:bg-stone-300'} shadow-xl flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-all hover:scale-110 translate-x-2`}
-          >
-            <ChevronRight size={24} />
-          </button>
-          
-          {/* Gradient Edges */}
-          <div className={`absolute left-0 top-0 bottom-4 w-8 bg-gradient-to-r ${darkMode ? 'from-stone-900' : 'from-stone-50'} to-transparent pointer-events-none`}></div>
-          <div className={`absolute right-0 top-0 bottom-4 w-8 bg-gradient-to-l ${darkMode ? 'from-stone-900' : 'from-stone-50'} to-transparent pointer-events-none`}></div>
         </div>
       </section>
 
       {/* New Arrivals */}
-      <section className="max-w-7xl mx-auto px-4 py-10">
-        <div className="flex items-center justify-between mb-8">
+      <section className="max-w-7xl mx-auto px-4 py-12">
+        <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className={`text-3xl md:text-4xl font-bold ${theme.text}`}>
-              <span className="bg-gradient-to-r from-green-500 via-emerald-400 to-green-500 bg-clip-text text-transparent">Yeni Gelenler</span>
-            </h3>
-            <p className={`text-sm ${theme.textMuted} mt-1`}>Koleksiyona yeni eklenen tasarımlar</p>
+            <h3 className={`text-xl md:text-2xl font-medium tracking-wide ${theme.text} uppercase`}>Yeni Gelenler</h3>
           </div>
           <button 
             onClick={() => setShowNewArrivals(true)}
-            className={`text-xs font-semibold px-5 py-2.5 rounded-full border-2 ${darkMode ? 'border-stone-600 text-stone-300 hover:border-stone-400 hover:text-white' : 'border-stone-400 text-stone-600 hover:border-stone-600 hover:text-stone-900'} hover:shadow-lg hover:scale-105 transition-all`}
+            className={`text-xs font-medium ${theme.textSecondary} hover:${theme.text} transition-colors flex items-center gap-1`}
           >
-            Tümünü Gör →
+            Tümünü Gör <ChevronRight size={14} />
           </button>
         </div>
-        <div className="relative group/slider">
-          {/* Left Arrow */}
-          <button 
-            onClick={() => {
-              const container = document.getElementById('newArrivalsScroll');
-              if(container) container.scrollBy({ left: -300, behavior: 'smooth' });
-            }}
-            className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full ${darkMode ? 'bg-stone-700 text-stone-200 hover:bg-stone-600' : 'bg-stone-200 text-stone-700 hover:bg-stone-300'} shadow-xl flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-all hover:scale-110 -translate-x-2`}
-          >
-            <ChevronLeft size={24} />
-          </button>
-          
-          <div id="newArrivalsScroll" className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth px-1">
+        <div className="relative">
+          <div id="newArrivalsScroll" className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide scroll-smooth">
             {products.filter(p => p.isNew).length > 0 ? (
               products.filter(p => p.isNew).map((product) => (
-                <div key={product.id} className="flex-shrink-0 w-36 md:w-44 group">
-                  <div className={`relative overflow-hidden ${theme.card} rounded-xl border p-3`}>
-                    <div className="absolute top-2 left-2 bg-green-500 text-white px-2 py-0.5 rounded-full text-[10px] font-bold z-10">YENİ</div>
-                    {product.discount > 0 && <div className="absolute top-2 right-2 bg-red-500 text-white px-1.5 py-0.5 rounded-full text-[10px] z-10">-{product.discount}%</div>}
-                    <div className="cursor-pointer" onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
-                      <img src={product.images?.[0]} alt={product.name} className="w-full aspect-[3/4] object-cover rounded-lg group-hover:scale-105 transition-transform duration-500" />
+                <div key={product.id} className="flex-shrink-0 w-48 md:w-56 group cursor-pointer" onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
+                  <div className="relative aspect-[3/4] mb-3 overflow-hidden bg-stone-100">
+                    <img src={product.images?.[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                    {/* Hover Icons */}
+                    <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={(e) => { e.stopPropagation(); toggleFavorite(product.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
+                        <Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={favorites.includes(product.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
+                      </button>
+                      <button className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
+                        <ZoomIn size={16} className={darkMode ? 'text-white' : 'text-stone-900'} />
+                      </button>
                     </div>
+                    {product.discount > 0 && <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 text-[10px] font-medium uppercase">İndirim</div>}
                   </div>
-                  <div className="mt-2 px-1">
-                    <h4 className={`text-sm font-medium ${theme.text} truncate`}>{product.name}</h4>
-                    <p className="text-xs mt-1">
-                      <span className="text-green-500 font-bold">₺{product.discount > 0 ? Math.round(product.priceUnframed * (1 - product.discount/100)) : product.priceUnframed}</span>
-                      <span className={`${theme.textMuted} ml-1`}>'den</span>
+                  <div>
+                    <p className={`text-[10px] ${theme.textMuted} uppercase tracking-wider mb-1`}>LUUZ POSTER</p>
+                    <h4 className={`text-sm ${theme.text} mb-1 line-clamp-2`}>{product.name}</h4>
+                    <p className={`text-sm ${theme.text}`}>
+                      {product.discount > 0 ? (
+                        <>
+                          <span className="line-through text-stone-400 mr-2">{product.priceUnframed} TL</span>
+                          <span className="text-red-500">{Math.round(product.priceUnframed * (1 - product.discount/100))} TL</span>
+                        </>
+                      ) : (
+                        <span>{Math.round(product.priceUnframed * 0.7)} TL – {product.priceUnframed} TL</span>
+                      )}
                     </p>
                   </div>
                 </div>
@@ -747,30 +730,23 @@ export default function WallArtShop() {
               <p className={`${theme.textMuted} text-sm`}>Henüz yeni ürün yok</p>
             )}
           </div>
-          
-          {/* Right Arrow */}
-          <button 
-            onClick={() => {
-              const container = document.getElementById('newArrivalsScroll');
-              if(container) container.scrollBy({ left: 300, behavior: 'smooth' });
-            }}
-            className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full ${darkMode ? 'bg-stone-700 text-stone-200 hover:bg-stone-600' : 'bg-stone-200 text-stone-700 hover:bg-stone-300'} shadow-xl flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-all hover:scale-110 translate-x-2`}
-          >
-            <ChevronRight size={24} />
-          </button>
-          
-          {/* Gradient Edges */}
-          <div className={`absolute left-0 top-0 bottom-4 w-8 bg-gradient-to-r ${darkMode ? 'from-stone-900' : 'from-stone-50'} to-transparent pointer-events-none`}></div>
-          <div className={`absolute right-0 top-0 bottom-4 w-8 bg-gradient-to-l ${darkMode ? 'from-stone-900' : 'from-stone-50'} to-transparent pointer-events-none`}></div>
         </div>
       </section>
 
       {/* Recently Viewed */}
       {recentlyViewed.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 py-8">
-          <h3 className={`text-lg font-bold ${theme.text} mb-4 flex items-center gap-2`}><Eye size={18} style={{color: theme.accent}} />{t.recentlyViewed}</h3>
-          <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
-            {recentlyViewed.map(p => <div key={p.id} className="flex-shrink-0 w-32 cursor-pointer" onClick={() => setSelectedProduct(p)}><img src={p.images[0]} alt={p.name} className="w-full aspect-square object-cover rounded-lg" /><p className={`text-xs ${theme.text} mt-1 truncate`}>{p.name}</p><p className={`text-xs ${theme.textMuted}`}>{p.priceUnframed}₺</p></div>)}
+          <h3 className={`text-lg font-medium ${theme.text} mb-4 uppercase tracking-wide`}>{t.recentlyViewed}</h3>
+          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+            {recentlyViewed.map(p => (
+              <div key={p.id} className="flex-shrink-0 w-32 cursor-pointer group" onClick={() => setSelectedProduct(p)}>
+                <div className="aspect-square overflow-hidden bg-stone-100 mb-2">
+                  <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                </div>
+                <p className={`text-xs ${theme.text} truncate`}>{p.name}</p>
+                <p className={`text-xs ${theme.textMuted}`}>{p.priceUnframed} TL</p>
+              </div>
+            ))}
           </div>
         </section>
       )}
@@ -841,18 +817,12 @@ export default function WallArtShop() {
                 <ChevronLeft size={20} />
                 <span className="text-sm">Geri</span>
               </button>
-              <div className="flex items-center gap-2">
-                <TrendingUp size={20} style={{color: theme.accent}} />
-                <h1 className={`text-lg font-bold ${theme.text}`}>Çok Satanlar</h1>
-              </div>
+              <img src={darkMode ? "/luuz-logo-white.png" : "/luuz-logo-black.png"} alt="LUUZ" className="h-6" />
               <div className="flex items-center gap-1">
-                <button onClick={() => { setShowBestSellers(false); navigateTo('collection'); }} className={`hidden md:block text-xs font-medium px-3 py-1.5 rounded-full border ${theme.border} ${theme.textSecondary} hover:border-amber-500 hover:text-amber-500 transition-all`}>
-                  Tüm Koleksiyon
-                </button>
                 <button onClick={() => setShowSearch(!showSearch)} className={`p-2 ${theme.textSecondary}`}><Search size={18} /></button>
                 <button onClick={() => setShowFavorites(true)} className={`relative p-2 ${theme.textSecondary}`}>
                   <Heart size={18} fill={favorites.length > 0 ? theme.accent : 'none'} color={favorites.length > 0 ? theme.accent : 'currentColor'} />
-                  {favorites.length > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{favorites.length}</span>}
+                  {favorites.length > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{favorites.length}</span>}
                 </button>
                 {user ? (
                   <button onClick={() => setShowProfile(true)} className={`p-2 ${theme.textSecondary} relative`}>
@@ -864,30 +834,44 @@ export default function WallArtShop() {
                 )}
                 <button onClick={() => setShowCart(true)} className={`relative p-2 ${theme.textSecondary}`}>
                   <ShoppingCart size={18} />
-                  {totalItems > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{totalItems}</span>}
+                  {totalItems > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{totalItems}</span>}
                 </button>
               </div>
             </div>
           </div>
           <div className="max-w-7xl mx-auto px-4 py-8">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            <h1 className={`text-2xl font-medium tracking-wide ${theme.text} uppercase mb-8 text-center`}>Çok Satanlar</h1>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {products.filter(p => p.isBestSeller).map((product, idx) => (
-                <div key={product.id} className="group animate-fade-in" style={{ animationDelay: `${idx * 0.05}s` }}>
-                  <div className={`relative overflow-hidden ${theme.card} rounded-2xl shadow-lg border transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300`}>
-                    <div className="absolute top-3 left-3 text-stone-900 px-2 py-1 rounded-full text-xs font-bold z-10" style={{background: theme.accent}}>BEST</div>
-                    {product.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs z-10">-{product.discount}%</div>}
-                    {product.stock === 0 && <div className="absolute inset-0 bg-black/60 z-10 flex items-center justify-center"><span className="text-white text-sm font-medium">{t.outOfStock}</span></div>}
-                    <div className="cursor-pointer" onClick={() => { setPageHistory(prev => [...prev, 'bestSellers']); setShowBestSellers(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
-                      <img src={product.images?.[0]} alt={product.name} className="w-full aspect-square object-cover group-hover:scale-110 transition-transform duration-700" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
-                        <h3 className="text-sm font-semibold text-white">{product.name}</h3>
-                        <p className="text-sm text-stone-300">{product.priceUnframed}₺</p>
-                      </div>
+                <div key={product.id} className="group cursor-pointer animate-fade-in" style={{ animationDelay: `${idx * 0.05}s` }} onClick={() => { setPageHistory(prev => [...prev, 'bestSellers']); setShowBestSellers(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
+                  <div className="relative aspect-[3/4] overflow-hidden bg-stone-100 mb-3">
+                    <img src={product.images?.[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                    {/* Hover Icons */}
+                    <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={(e) => { e.stopPropagation(); toggleFavorite(product.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
+                        <Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={favorites.includes(product.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
+                      </button>
+                      <button className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
+                        <ZoomIn size={16} className={darkMode ? 'text-white' : 'text-stone-900'} />
+                      </button>
                     </div>
+                    {product.discount > 0 && <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 text-[10px] font-medium uppercase">İndirim</div>}
+                    {product.stock === 0 && <div className="absolute inset-0 bg-black/60 flex items-center justify-center"><span className="text-white text-sm font-medium">{t.outOfStock}</span></div>}
                   </div>
-                  <button onClick={() => { setPageHistory(prev => [...prev, 'bestSellers']); setShowBestSellers(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }} disabled={product.stock === 0} className={`w-full mt-3 text-stone-900 py-2.5 rounded-xl text-sm font-medium ${product.stock === 0 ? 'opacity-50' : 'hover:shadow-lg'}`} style={{background: theme.accent}}>
-                    {product.stock === 0 ? t.outOfStock : 'Ürünü İncele'}
-                  </button>
+                  <div>
+                    <p className={`text-[10px] ${theme.textMuted} uppercase tracking-wider mb-1`}>LUUZ POSTER</p>
+                    <h3 className={`text-sm ${theme.text} mb-1 line-clamp-2`}>{product.name}</h3>
+                    <p className={`text-sm ${theme.text}`}>
+                      {product.discount > 0 ? (
+                        <>
+                          <span className="line-through text-stone-400 mr-2">{product.priceUnframed} TL</span>
+                          <span className="text-red-500">{Math.round(product.priceUnframed * (1 - product.discount/100))} TL</span>
+                        </>
+                      ) : (
+                        <span>{Math.round(product.priceUnframed * 0.7)} TL – {product.priceUnframed} TL</span>
+                      )}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -909,53 +893,61 @@ export default function WallArtShop() {
                 <ChevronLeft size={20} />
                 <span className="text-sm">Geri</span>
               </button>
-              <div className="flex items-center gap-2">
-                <span className="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400 font-medium">YENİ</span>
-                <h1 className={`text-lg font-bold ${theme.text}`}>Yeni Ürünler</h1>
-              </div>
+              <img src={darkMode ? "/luuz-logo-white.png" : "/luuz-logo-black.png"} alt="LUUZ" className="h-6" />
               <div className="flex items-center gap-1">
-                <button onClick={() => { setShowNewArrivals(false); navigateTo('collection'); }} className={`hidden md:block text-xs font-medium px-3 py-1.5 rounded-full border ${theme.border} ${theme.textSecondary} hover:border-green-500 hover:text-green-500 transition-all`}>
-                  Tüm Koleksiyon
-                </button>
                 <button onClick={() => setShowSearch(!showSearch)} className={`p-2 ${theme.textSecondary}`}><Search size={18} /></button>
                 <button onClick={() => setShowFavorites(true)} className={`relative p-2 ${theme.textSecondary}`}>
                   <Heart size={18} fill={favorites.length > 0 ? theme.accent : 'none'} color={favorites.length > 0 ? theme.accent : 'currentColor'} />
-                  {favorites.length > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{favorites.length}</span>}
+                  {favorites.length > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{favorites.length}</span>}
                 </button>
                 {user ? (
                   <button onClick={() => setShowProfile(true)} className={`p-2 ${theme.textSecondary} relative`}>
                     <User size={18} />
-                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2" style={{borderColor: darkMode ? '#1c1917' : '#fafaf9'}}></span>
+                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 border-2" style={{borderColor: darkMode ? '#1c1917' : '#fafaf9'}}></span>
                   </button>
                 ) : (
                   <button onClick={() => setShowAuthModal(true)} className={`p-2 ${theme.textSecondary}`}><User size={18} /></button>
                 )}
                 <button onClick={() => setShowCart(true)} className={`relative p-2 ${theme.textSecondary}`}>
                   <ShoppingCart size={18} />
-                  {totalItems > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{totalItems}</span>}
+                  {totalItems > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{totalItems}</span>}
                 </button>
               </div>
             </div>
           </div>
           <div className="max-w-7xl mx-auto px-4 py-8">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            <h1 className={`text-2xl font-medium tracking-wide ${theme.text} uppercase mb-8 text-center`}>Yeni Gelenler</h1>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {products.filter(p => p.isNew).map((product, idx) => (
-                <div key={product.id} className="group animate-fade-in" style={{ animationDelay: `${idx * 0.05}s` }}>
-                  <div className={`relative overflow-hidden ${theme.card} rounded-2xl shadow-lg border transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300`}>
-                    <div className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold z-10">YENİ</div>
-                    {product.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs z-10">-{product.discount}%</div>}
-                    {product.stock === 0 && <div className="absolute inset-0 bg-black/60 z-10 flex items-center justify-center"><span className="text-white text-sm font-medium">{t.outOfStock}</span></div>}
-                    <div className="cursor-pointer" onClick={() => { setPageHistory(prev => [...prev, 'newArrivals']); setShowNewArrivals(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
-                      <img src={product.images?.[0]} alt={product.name} className="w-full aspect-square object-cover group-hover:scale-110 transition-transform duration-700" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
-                        <h3 className="text-sm font-semibold text-white">{product.name}</h3>
-                        <p className="text-sm text-stone-300">{product.priceUnframed}₺</p>
-                      </div>
+                <div key={product.id} className="group cursor-pointer animate-fade-in" style={{ animationDelay: `${idx * 0.05}s` }} onClick={() => { setPageHistory(prev => [...prev, 'newArrivals']); setShowNewArrivals(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
+                  <div className="relative aspect-[3/4] overflow-hidden bg-stone-100 mb-3">
+                    <img src={product.images?.[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                    {/* Hover Icons */}
+                    <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={(e) => { e.stopPropagation(); toggleFavorite(product.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
+                        <Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={favorites.includes(product.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
+                      </button>
+                      <button className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
+                        <ZoomIn size={16} className={darkMode ? 'text-white' : 'text-stone-900'} />
+                      </button>
                     </div>
+                    {product.discount > 0 && <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 text-[10px] font-medium uppercase">İndirim</div>}
+                    {product.stock === 0 && <div className="absolute inset-0 bg-black/60 flex items-center justify-center"><span className="text-white text-sm font-medium">{t.outOfStock}</span></div>}
                   </div>
-                  <button onClick={() => { setPageHistory(prev => [...prev, 'newArrivals']); setShowNewArrivals(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }} disabled={product.stock === 0} className={`w-full mt-3 text-stone-900 py-2.5 rounded-xl text-sm font-medium ${product.stock === 0 ? 'opacity-50' : 'hover:shadow-lg'}`} style={{background: theme.accent}}>
-                    {product.stock === 0 ? t.outOfStock : 'Ürünü İncele'}
-                  </button>
+                  <div>
+                    <p className={`text-[10px] ${theme.textMuted} uppercase tracking-wider mb-1`}>LUUZ POSTER</p>
+                    <h3 className={`text-sm ${theme.text} mb-1 line-clamp-2`}>{product.name}</h3>
+                    <p className={`text-sm ${theme.text}`}>
+                      {product.discount > 0 ? (
+                        <>
+                          <span className="line-through text-stone-400 mr-2">{product.priceUnframed} TL</span>
+                          <span className="text-red-500">{Math.round(product.priceUnframed * (1 - product.discount/100))} TL</span>
+                        </>
+                      ) : (
+                        <span>{Math.round(product.priceUnframed * 0.7)} TL – {product.priceUnframed} TL</span>
+                      )}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -1092,65 +1084,64 @@ export default function WallArtShop() {
                     className="group animate-fade-in"
                     style={{ animationDelay: `${idx * 0.05}s` }}
                   >
-                    <div className={`relative overflow-hidden ${theme.card} rounded-2xl shadow-lg border transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300`}>
-                      {product.isNew && <div className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs z-10">YENİ</div>}
-                      {product.discount > 0 && <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs z-10">-{product.discount}%</div>}
-                      {product.stock === 0 && <div className="absolute inset-0 bg-black/60 z-10 flex items-center justify-center"><span className="text-white text-sm font-medium">{t.outOfStock}</span></div>}
-                      <button onClick={() => toggleFavorite(product.id)} className={`absolute ${product.isNew ? 'left-16' : 'left-3'} top-3 z-20 ${theme.bgTertiary} rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110`}><Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={theme.accent} /></button>
-                      <div className="cursor-pointer" onClick={() => { setPageHistory(prev => [...prev, 'collection']); setShowCollection(false); setPageTransition(true); setTimeout(() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); setPageTransition(false); }, 150); }}>
-                        <div className="relative">
-                          {!imagesLoaded[product.id] && <div className="skeleton absolute inset-0"></div>}
-                          <img 
-                            src={product.images?.[0]} 
-                            alt={product.name} 
-                            className={`w-full aspect-square object-cover group-hover:scale-110 transition-transform duration-700 ${imagesLoaded[product.id] ? 'opacity-100' : 'opacity-0'}`}
-                            onLoad={() => setImagesLoaded(prev => ({...prev, [product.id]: true}))}
-                          />
-                        </div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
-                          <h3 className="text-sm font-semibold text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">{product.name}</h3>
-                          <div className="flex items-center gap-2 mt-1 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 delay-75">
-                            {product.discount > 0 ? (
-                              <>
-                                <p className="text-sm text-stone-400 line-through">{product.priceUnframed}₺</p>
-                                <p className="text-sm text-green-400 font-bold">{Math.round(product.priceUnframed * (1 - product.discount/100))}₺</p>
-                              </>
-                            ) : (
-                              <p className="text-sm text-stone-300">{product.priceUnframed}₺</p>
-                            )}
-                          </div>
-                        </div>
+                    <div className="relative aspect-[3/4] overflow-hidden bg-stone-100 mb-3">
+                      {!imagesLoaded[product.id] && <div className="skeleton absolute inset-0"></div>}
+                      <img 
+                        src={product.images?.[0]} 
+                        alt={product.name} 
+                        className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ${imagesLoaded[product.id] ? 'opacity-100' : 'opacity-0'}`}
+                        onLoad={() => setImagesLoaded(prev => ({...prev, [product.id]: true}))}
+                        onClick={() => { setPageHistory(prev => [...prev, 'collection']); setShowCollection(false); setPageTransition(true); setTimeout(() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); setPageTransition(false); }, 150); }}
+                      />
+                      {/* Hover Icons */}
+                      <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onClick={(e) => { e.stopPropagation(); toggleFavorite(product.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
+                          <Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={favorites.includes(product.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
+                        </button>
+                        <button className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
+                          <ZoomIn size={16} className={darkMode ? 'text-white' : 'text-stone-900'} />
+                        </button>
                       </div>
+                      {product.discount > 0 && <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 text-[10px] font-medium uppercase">İndirim</div>}
+                      {product.stock === 0 && <div className="absolute inset-0 bg-black/60 flex items-center justify-center"><span className="text-white text-sm font-medium">{t.outOfStock}</span></div>}
                     </div>
-                    <button 
-                      onClick={() => { setPageHistory(prev => [...prev, 'collection']); setShowCollection(false); setPageTransition(true); setTimeout(() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); setPageTransition(false); }, 150); }} 
-                      disabled={product.stock === 0} 
-                      className={`w-full mt-3 text-stone-900 py-2.5 rounded-xl text-sm font-medium transform hover:scale-[1.02] transition-all duration-200 ${product.stock === 0 ? 'opacity-50' : 'hover:shadow-lg'}`} 
-                      style={{background: theme.accent}}
-                    >
-                      {product.stock === 0 ? t.outOfStock : 'Ürünü İncele'}
-                    </button>
+                    <div className="cursor-pointer" onClick={() => { setPageHistory(prev => [...prev, 'collection']); setShowCollection(false); setPageTransition(true); setTimeout(() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); setPageTransition(false); }, 150); }}>
+                      <p className={`text-[10px] ${theme.textMuted} uppercase tracking-wider mb-1`}>LUUZ POSTER</p>
+                      <h3 className={`text-sm ${theme.text} mb-1 line-clamp-2`}>{product.name}</h3>
+                      <p className={`text-sm ${theme.text}`}>
+                        {product.discount > 0 ? (
+                          <>
+                            <span className="line-through text-stone-400 mr-2">{product.priceUnframed} TL</span>
+                            <span className="text-red-500">{Math.round(product.priceUnframed * (1 - product.discount/100))} TL</span>
+                          </>
+                        ) : (
+                          <span>{Math.round(product.priceUnframed * 0.7)} TL – {product.priceUnframed} TL</span>
+                        )}
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>
             ) : (
               <div className="space-y-3">
                 {filteredProducts.map(product => (
-                  <div key={product.id} className={`flex gap-4 ${theme.card} border rounded-xl p-3 hover:shadow-lg transition-all`}>
-                    <img 
-                      src={product.images?.[0]} 
-                      alt={product.name} 
-                      className="w-24 h-24 object-cover rounded-lg cursor-pointer" 
-                      onClick={() => { setPageHistory(prev => [...prev, 'collection']); setShowCollection(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }} 
-                    />
+                  <div key={product.id} className={`flex gap-4 ${theme.card} border p-3 hover:bg-stone-100 dark:hover:bg-stone-800 transition-all cursor-pointer`} onClick={() => { setPageHistory(prev => [...prev, 'collection']); setShowCollection(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }}>
+                    <div className="w-24 h-24 overflow-hidden bg-stone-100">
+                      <img 
+                        src={product.images?.[0]} 
+                        alt={product.name} 
+                        className="w-full h-full object-cover" 
+                      />
+                    </div>
                     <div className="flex-1">
                       <div className="flex items-start justify-between">
                         <div>
+                          <p className={`text-[10px] ${theme.textMuted} uppercase tracking-wider mb-1`}>LUUZ POSTER</p>
                           <h3 className={`font-medium ${theme.text}`}>{product.name}</h3>
                           <p className={`text-xs ${theme.textMuted}`}>{product.category}</p>
                         </div>
-                        <button onClick={() => toggleFavorite(product.id)}>
-                          <Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={theme.accent} />
+                        <button onClick={(e) => { e.stopPropagation(); toggleFavorite(product.id); }}>
+                          <Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={favorites.includes(product.id) ? theme.accent : (darkMode ? '#a8a29e' : '#78716c')} />
                         </button>
                       </div>
                       <div className="flex items-center justify-between mt-2">
