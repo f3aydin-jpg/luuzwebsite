@@ -1510,14 +1510,31 @@ export default function WallArtShop() {
           <div className={`${theme.bgSecondary} rounded-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto shadow-2xl`}>
             <div className={`sticky top-0 ${theme.bgSecondary} p-5 border-b ${theme.border} flex justify-between items-center`}><h2 className={`text-xl font-bold ${theme.text}`}>{t.orderHistory}</h2><button onClick={() => setShowOrderHistory(false)} className={theme.textSecondary}><X size={24} /></button></div>
             <div className="p-5 space-y-3">
-              {orderHistory.length === 0 ? <div className="text-center py-12"><Package size={48} className={`mx-auto mb-4 ${theme.textMuted}`} /><p className={theme.textMuted}>Henüz sipariş yok</p></div> : (
-                orderHistory.map(order => (
+              {!user ? (
+                <div className="text-center py-12">
+                  <User size={48} className={`mx-auto mb-4 ${theme.textMuted}`} />
+                  <p className={`${theme.textMuted} mb-4`}>Siparişlerinizi görmek için giriş yapın</p>
+                  <button onClick={() => { setShowOrderHistory(false); setShowAuthModal(true); }} className="px-6 py-2 rounded-xl text-stone-900 font-medium" style={{background: theme.accent}}>Giriş Yap</button>
+                </div>
+              ) : userOrders.length === 0 ? (
+                <div className="text-center py-12"><Package size={48} className={`mx-auto mb-4 ${theme.textMuted}`} /><p className={theme.textMuted}>Henüz sipariş yok</p></div>
+              ) : (
+                userOrders.map(order => (
                   <div key={order.id} className={`${theme.card} border rounded-xl p-4`}>
                     <div className="flex justify-between items-start mb-2">
-                      <div><p className={`font-mono text-sm ${theme.text}`}>{order.id}</p><p className={`text-xs ${theme.textMuted}`}>{order.date}</p></div>
-                      <span className={`text-xs px-2 py-1 rounded-full ${order.status === 'Teslim Edildi' ? 'bg-green-500/20 text-green-400' : 'bg-amber-500/20 text-amber-400'}`}>{order.status}</span>
+                      <div><p className={`font-mono text-sm ${theme.text}`}>#{order.id.slice(-8).toUpperCase()}</p><p className={`text-xs ${theme.textMuted}`}>{new Date(order.createdAt).toLocaleDateString('tr-TR')}</p></div>
+                      <span className={`text-xs px-2 py-1 rounded-full ${
+                        order.status === 'delivered' ? 'bg-green-500/20 text-green-400' :
+                        order.status === 'shipped' ? 'bg-blue-500/20 text-blue-400' :
+                        order.status === 'processing' ? 'bg-amber-500/20 text-amber-400' :
+                        'bg-stone-500/20 text-stone-400'
+                      }`}>
+                        {order.status === 'delivered' ? 'Teslim Edildi' :
+                         order.status === 'shipped' ? 'Kargoda' :
+                         order.status === 'processing' ? 'Hazırlanıyor' : 'Bekliyor'}
+                      </span>
                     </div>
-                    <div className="flex justify-between items-center"><span className={`text-xs ${theme.textMuted}`}>{order.items} ürün</span><span className={`font-bold ${theme.text}`}>{order.total}₺</span></div>
+                    <div className="flex justify-between items-center"><span className={`text-xs ${theme.textMuted}`}>{order.items?.length || 0} ürün</span><span className={`font-bold ${theme.text}`}>₺{order.total}</span></div>
                   </div>
                 ))
               )}
