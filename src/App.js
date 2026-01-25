@@ -818,10 +818,23 @@ export default function WallArtShop() {
                 <TrendingUp size={20} style={{color: theme.accent}} />
                 <h1 className={`text-lg font-bold ${theme.text}`}>Çok Satanlar</h1>
               </div>
-              <div className="flex items-center gap-2">
-                <button onClick={() => { setShowBestSellers(false); navigateTo('collection'); }} className={`text-xs font-medium px-3 py-1.5 rounded-full border ${theme.border} ${theme.textSecondary} hover:border-amber-500 hover:text-amber-500 transition-all`}>
+              <div className="flex items-center gap-1">
+                <button onClick={() => { setShowBestSellers(false); navigateTo('collection'); }} className={`hidden md:block text-xs font-medium px-3 py-1.5 rounded-full border ${theme.border} ${theme.textSecondary} hover:border-amber-500 hover:text-amber-500 transition-all`}>
                   Tüm Koleksiyon
                 </button>
+                <button onClick={() => setShowSearch(!showSearch)} className={`p-2 ${theme.textSecondary}`}><Search size={18} /></button>
+                <button onClick={() => setShowFavorites(true)} className={`relative p-2 ${theme.textSecondary}`}>
+                  <Heart size={18} fill={favorites.length > 0 ? theme.accent : 'none'} color={favorites.length > 0 ? theme.accent : 'currentColor'} />
+                  {favorites.length > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{favorites.length}</span>}
+                </button>
+                {user ? (
+                  <button onClick={() => setShowProfile(true)} className={`p-2 ${theme.textSecondary} relative`}>
+                    <User size={18} />
+                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2" style={{borderColor: darkMode ? '#1c1917' : '#fafaf9'}}></span>
+                  </button>
+                ) : (
+                  <button onClick={() => setShowAuthModal(true)} className={`p-2 ${theme.textSecondary}`}><User size={18} /></button>
+                )}
                 <button onClick={() => setShowCart(true)} className={`relative p-2 ${theme.textSecondary}`}>
                   <ShoppingCart size={18} />
                   {totalItems > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{totalItems}</span>}
@@ -873,10 +886,23 @@ export default function WallArtShop() {
                 <span className="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400 font-medium">YENİ</span>
                 <h1 className={`text-lg font-bold ${theme.text}`}>Yeni Ürünler</h1>
               </div>
-              <div className="flex items-center gap-2">
-                <button onClick={() => { setShowNewArrivals(false); navigateTo('collection'); }} className={`text-xs font-medium px-3 py-1.5 rounded-full border ${theme.border} ${theme.textSecondary} hover:border-green-500 hover:text-green-500 transition-all`}>
+              <div className="flex items-center gap-1">
+                <button onClick={() => { setShowNewArrivals(false); navigateTo('collection'); }} className={`hidden md:block text-xs font-medium px-3 py-1.5 rounded-full border ${theme.border} ${theme.textSecondary} hover:border-green-500 hover:text-green-500 transition-all`}>
                   Tüm Koleksiyon
                 </button>
+                <button onClick={() => setShowSearch(!showSearch)} className={`p-2 ${theme.textSecondary}`}><Search size={18} /></button>
+                <button onClick={() => setShowFavorites(true)} className={`relative p-2 ${theme.textSecondary}`}>
+                  <Heart size={18} fill={favorites.length > 0 ? theme.accent : 'none'} color={favorites.length > 0 ? theme.accent : 'currentColor'} />
+                  {favorites.length > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{favorites.length}</span>}
+                </button>
+                {user ? (
+                  <button onClick={() => setShowProfile(true)} className={`p-2 ${theme.textSecondary} relative`}>
+                    <User size={18} />
+                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2" style={{borderColor: darkMode ? '#1c1917' : '#fafaf9'}}></span>
+                  </button>
+                ) : (
+                  <button onClick={() => setShowAuthModal(true)} className={`p-2 ${theme.textSecondary}`}><User size={18} /></button>
+                )}
                 <button onClick={() => setShowCart(true)} className={`relative p-2 ${theme.textSecondary}`}>
                   <ShoppingCart size={18} />
                   {totalItems > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{totalItems}</span>}
@@ -928,12 +954,20 @@ export default function WallArtShop() {
               <button onClick={() => { setShowCollection(false); setSpecialFilter(null); setSearchQuery(''); setPageHistory([]); }} className="hover:opacity-80 transition">
                 <img src={darkMode ? "/luuz-logo-white.png" : "/luuz-logo-black.png"} alt="LUUZ" className="h-6" />
               </button>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
                 <button onClick={() => setShowSearch(!showSearch)} className={`p-2 ${theme.textSecondary}`}><Search size={18} /></button>
                 <button onClick={() => setShowFavorites(true)} className={`relative p-2 ${theme.textSecondary}`}>
                   <Heart size={18} fill={favorites.length > 0 ? theme.accent : 'none'} color={favorites.length > 0 ? theme.accent : 'currentColor'} />
                   {favorites.length > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{favorites.length}</span>}
                 </button>
+                {user ? (
+                  <button onClick={() => setShowProfile(true)} className={`p-2 ${theme.textSecondary} relative`}>
+                    <User size={18} />
+                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2" style={{borderColor: darkMode ? '#1c1917' : '#fafaf9'}}></span>
+                  </button>
+                ) : (
+                  <button onClick={() => setShowAuthModal(true)} className={`p-2 ${theme.textSecondary}`}><User size={18} /></button>
+                )}
                 <button onClick={() => setShowCart(true)} className={`relative p-2 ${theme.textSecondary}`}>
                   <ShoppingCart size={18} />
                   {totalItems > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{totalItems}</span>}
@@ -1151,12 +1185,21 @@ export default function WallArtShop() {
               <button onClick={() => { setSelectedProduct(null); setShowCollection(false); setShowBestSellers(false); setShowNewArrivals(false); setPageHistory([]); }} className="hover:opacity-80 transition">
                 <img src={darkMode ? "/luuz-logo-white.png" : "/luuz-logo-black.png"} alt="LUUZ" className="h-6" />
               </button>
-              <div className="flex items-center gap-2">
-                <button onClick={() => toggleFavorite(selectedProduct.id)} className={`p-2 rounded-full ${theme.card} hover:scale-110 transition-transform`}>
-                  <Heart size={20} fill={favorites.includes(selectedProduct.id) ? theme.accent : 'none'} color={theme.accent} />
+              <div className="flex items-center gap-1">
+                <button onClick={() => setShowSearch(!showSearch)} className={`p-2 ${theme.textSecondary}`}><Search size={18} /></button>
+                <button onClick={() => toggleFavorite(selectedProduct.id)} className={`p-2 rounded-full hover:scale-110 transition-transform`}>
+                  <Heart size={18} fill={favorites.includes(selectedProduct.id) ? theme.accent : 'none'} color={favorites.includes(selectedProduct.id) ? theme.accent : 'currentColor'} />
                 </button>
+                {user ? (
+                  <button onClick={() => setShowProfile(true)} className={`p-2 ${theme.textSecondary} relative`}>
+                    <User size={18} />
+                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2" style={{borderColor: darkMode ? '#1c1917' : '#fafaf9'}}></span>
+                  </button>
+                ) : (
+                  <button onClick={() => setShowAuthModal(true)} className={`p-2 ${theme.textSecondary}`}><User size={18} /></button>
+                )}
                 <button onClick={() => setShowCart(true)} className={`relative p-2 ${theme.textSecondary} hover:scale-110 transition-transform`}>
-                  <ShoppingCart size={20} />
+                  <ShoppingCart size={18} />
                   {totalItems > 0 && <span className="absolute -top-1 -right-1 text-stone-900 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{background: theme.accent}}>{totalItems}</span>}
                 </button>
               </div>
@@ -1683,10 +1726,18 @@ export default function WallArtShop() {
                     <Phone size={18} className={`absolute left-4 top-1/2 -translate-y-1/2 ${theme.textMuted}`} />
                     <input
                       type="tel"
+                      inputMode="numeric"
                       value={authForm.phone}
-                      onChange={e => setAuthForm({...authForm, phone: e.target.value})}
+                      onChange={e => {
+                        const value = e.target.value.replace(/\D/g, '').slice(0, 11);
+                        let formatted = value;
+                        if (value.length > 4) formatted = value.slice(0, 4) + ' ' + value.slice(4);
+                        if (value.length > 7) formatted = value.slice(0, 4) + ' ' + value.slice(4, 7) + ' ' + value.slice(7);
+                        if (value.length > 9) formatted = value.slice(0, 4) + ' ' + value.slice(4, 7) + ' ' + value.slice(7, 9) + ' ' + value.slice(9);
+                        setAuthForm({...authForm, phone: formatted});
+                      }}
                       className={`w-full pl-12 pr-4 py-3 rounded-xl ${theme.input} border focus:outline-none focus:ring-2 focus:ring-amber-500/50`}
-                      placeholder="05XX XXX XX XX"
+                      placeholder="0532 123 45 67"
                     />
                   </div>
                 </div>
