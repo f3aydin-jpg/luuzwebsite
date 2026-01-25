@@ -1187,8 +1187,8 @@ export default function WallArtShop() {
               </button>
               <div className="flex items-center gap-1">
                 <button onClick={() => setShowSearch(!showSearch)} className={`p-2 ${theme.textSecondary}`}><Search size={18} /></button>
-                <button onClick={() => toggleFavorite(selectedProduct.id)} className={`p-2 rounded-full hover:scale-110 transition-transform`}>
-                  <Heart size={18} fill={favorites.includes(selectedProduct.id) ? theme.accent : 'none'} color={favorites.includes(selectedProduct.id) ? theme.accent : 'currentColor'} />
+                <button onClick={() => toggleFavorite(selectedProduct.id)} className={`p-2 ${theme.textSecondary} rounded-full hover:scale-110 transition-transform`}>
+                  <Heart size={18} fill={favorites.includes(selectedProduct.id) ? theme.accent : 'none'} color={favorites.includes(selectedProduct.id) ? theme.accent : (darkMode ? '#a8a29e' : '#78716c')} />
                 </button>
                 {user ? (
                   <button onClick={() => setShowProfile(true)} className={`p-2 ${theme.textSecondary} relative`}>
