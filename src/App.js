@@ -99,22 +99,22 @@ export default function WallArtShop() {
   };
 
   // Firebase'den ürünleri çek
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'products'));
-        const firebaseProducts = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        setProducts(firebaseProducts);
-      } catch (error) {
-        console.error('Firebase hatası:', error);
-        setProducts([]);
-      }
-      setIsLoading(false);
-    };
+  const fetchProducts = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'products'));
+      const firebaseProducts = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setProducts(firebaseProducts);
+    } catch (error) {
+      console.error('Firebase hatası:', error);
+      setProducts([]);
+    }
+    setIsLoading(false);
+  };
 
+  useEffect(() => {
     fetchProducts();
     
     const handleScroll = () => setShowScrollTop(window.scrollY > 400);
@@ -593,7 +593,7 @@ export default function WallArtShop() {
       </footer>
 
       {/* Admin Panel */}
-      {showAdmin && <AdminPanel onClose={() => setShowAdmin(false)} />}
+      {showAdmin && <AdminPanel onClose={() => { setShowAdmin(false); fetchProducts(); }} />}
 
       {/* Best Sellers Page - Full Screen */}
       {showBestSellers && (
