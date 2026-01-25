@@ -344,11 +344,38 @@ export default function WallArtShop() {
   const toggleCompare = (p) => compareProducts.find(x => x.id === p.id) ? setCompareProducts(compareProducts.filter(x => x.id !== p.id)) : compareProducts.length < 4 && setCompareProducts([...compareProducts, p]);
 
   const addToCart = (product, isFramed) => {
-    const price = isFramed ? product.priceFramed : product.priceUnframed;
+    // Yeni fiyat yapısını kullan
+    let price;
+    const size = product.selectedSize || '50x70';
+    
+    if (size === '30x40') {
+      price = isFramed 
+        ? (product.price30x40Framed || Math.round(product.priceFramed * 0.7))
+        : (product.price30x40Unframed || Math.round(product.priceUnframed * 0.7));
+    } else {
+      price = isFramed 
+        ? (product.price50x70Framed || product.priceFramed)
+        : (product.price50x70Unframed || product.priceUnframed);
+    }
+    
     const discountedPrice = product.discount > 0 ? Math.round(price * (1 - product.discount / 100)) : price;
-    const cartItem = { ...product, isFramed, price: discountedPrice, cartId: `${product.id}-${isFramed}` };
-    const existing = cart.find(item => item.cartId === cartItem.cartId);
-    existing ? setCart(cart.map(item => item.cartId === cartItem.cartId ? { ...item, quantity: item.quantity + 1 } : item)) : setCart([...cart, { ...cartItem, quantity: 1 }]);
+    const quantity = product.quantity || 1;
+    const cartId = `${product.id}-${size}-${isFramed}`;
+    
+    const cartItem = { 
+      ...product, 
+      isFramed, 
+      selectedSize: size,
+      price: discountedPrice, 
+      cartId 
+    };
+    
+    const existing = cart.find(item => item.cartId === cartId);
+    if (existing) {
+      setCart(cart.map(item => item.cartId === cartId ? { ...item, quantity: item.quantity + quantity } : item));
+    } else {
+      setCart([...cart, { ...cartItem, quantity }]);
+    }
     setSelectedProduct(null);
   };
 
@@ -1287,26 +1314,45 @@ export default function WallArtShop() {
                   
                   {/* Dynamic Price Display */}
                   {(() => {
-                    const sizeMultiplier = selectedProduct.selectedSize === '30x40' ? 0.7 : 1;
-                    const basePrice = selectedProduct.selectedFrame ? selectedProduct.priceFramed : selectedProduct.priceUnframed;
-                    const calculatedPrice = Math.round(basePrice * sizeMultiplier);
-                    const originalPrice = Math.round((selectedProduct.selectedFrame ? selectedProduct.priceFramed : selectedProduct.priceUnframed) * sizeMultiplier);
-                    const discountedPrice = selectedProduct.discount > 0 ? Math.round(calculatedPrice * (1 - selectedProduct.discount / 100)) : calculatedPrice;
+                    // Yeni fiyat yapısını kullan, yoksa eski yapıya geri dön
+                    let basePrice;
+                    if (selectedProduct.selectedSize === '30x40') {
+                      basePrice = selectedProduct.selectedFrame 
+                        ? (selectedProduct.price30x40Framed || Math.round(selectedProduct.priceFramed * 0.7))
+                        : (selectedProduct.price30x40Unframed || Math.round(selectedProduct.priceUnframed * 0.7));
+                    } else {
+                      basePrice = selectedProduct.selectedFrame 
+                        ? (selectedProduct.price50x70Framed || selectedProduct.priceFramed)
+                        : (selectedProduct.price50x70Unframed || selectedProduct.priceUnframed);
+                    }
+                    
+                    const quantity = selectedProduct.quantity || 1;
+                    const unitPrice = basePrice;
+                    const discountedUnitPrice = selectedProduct.discount > 0 ? Math.round(unitPrice * (1 - selectedProduct.discount / 100)) : unitPrice;
+                    const totalPrice = discountedUnitPrice * quantity;
+                    
+                    // Minimum fiyat hesaplama (seçim yapılmadan önce)
+                    const minPrice = selectedProduct.price30x40Unframed || Math.round(selectedProduct.priceUnframed * 0.7);
                     
                     return (
-                      <div className="flex items-baseline gap-3 mb-4">
-                        {selectedProduct.selectedSize || selectedProduct.selectedFrame !== undefined ? (
-                          selectedProduct.discount > 0 ? (
-                            <>
-                              <span className={`text-2xl ${theme.textMuted} line-through`}>{originalPrice}₺</span>
-                              <span className="text-4xl font-bold text-green-400">{discountedPrice}₺</span>
+                      <div className="flex items-baseline gap-3 mb-4 flex-wrap">
+                        {selectedProduct.selectedSize && selectedProduct.selectedFrame !== undefined ? (
+                          <>
+                            {selectedProduct.discount > 0 && (
+                              <span className={`text-xl ${theme.textMuted} line-through`}>{unitPrice * quantity}₺</span>
+                            )}
+                            <span className={`text-4xl font-bold ${selectedProduct.discount > 0 ? 'text-green-400' : ''}`} style={selectedProduct.discount > 0 ? {} : {color: theme.accent}}>
+                              {totalPrice}₺
+                            </span>
+                            {selectedProduct.discount > 0 && (
                               <span className="text-sm text-green-400">%{selectedProduct.discount} indirim</span>
-                            </>
-                          ) : (
-                            <span className={`text-4xl font-bold`} style={{color: theme.accent}}>{calculatedPrice}₺</span>
-                          )
+                            )}
+                            {quantity > 1 && (
+                              <span className={`text-sm ${theme.textMuted}`}>({discountedUnitPrice}₺ x {quantity})</span>
+                            )}
+                          </>
                         ) : (
-                          <span className={`text-4xl font-bold ${theme.text}`}>{Math.round(selectedProduct.priceUnframed * 0.7)}₺'den başlayan</span>
+                          <span className={`text-4xl font-bold ${theme.text}`}>{minPrice}₺'den başlayan</span>
                         )}
                       </div>
                     );
@@ -1320,7 +1366,7 @@ export default function WallArtShop() {
                 </div>
 
                 {/* Reviews */}
-                {selectedProduct.reviews.length > 0 && (
+                {selectedProduct.reviews?.length > 0 && (
                   <div className={`p-4 rounded-xl ${theme.card} border`}>
                     <h4 className={`text-base font-medium ${theme.text} mb-3`}>Müşteri Yorumları ({selectedProduct.reviews.length})</h4>
                     {selectedProduct.reviews.map((r, idx) => (
@@ -1373,6 +1419,33 @@ export default function WallArtShop() {
                       >
                         Çerçeveli
                       </button>
+                    </div>
+                  </div>
+
+                  {/* Quantity Selection */}
+                  <div>
+                    <p className={`text-sm font-medium ${theme.textSecondary} mb-3`}>Adet</p>
+                    <div className="flex items-center gap-3">
+                      <button 
+                        onClick={() => selectedProduct.quantity > 1 && setSelectedProduct({...selectedProduct, quantity: (selectedProduct.quantity || 1) - 1})}
+                        className={`w-10 h-10 rounded-lg border ${theme.border} ${theme.text} flex items-center justify-center hover:border-amber-500 transition disabled:opacity-50`}
+                        disabled={!selectedProduct.quantity || selectedProduct.quantity <= 1}
+                      >
+                        <Minus size={18} />
+                      </button>
+                      <span className={`w-12 text-center text-lg font-semibold ${theme.text}`}>
+                        {selectedProduct.quantity || 1}
+                      </span>
+                      <button 
+                        onClick={() => setSelectedProduct({...selectedProduct, quantity: (selectedProduct.quantity || 1) + 1})}
+                        className={`w-10 h-10 rounded-lg border ${theme.border} ${theme.text} flex items-center justify-center hover:border-amber-500 transition`}
+                        disabled={selectedProduct.stock <= (selectedProduct.quantity || 1)}
+                      >
+                        <Plus size={18} />
+                      </button>
+                      {selectedProduct.stock < 10 && selectedProduct.stock > 0 && (
+                        <span className="text-xs text-orange-400 ml-2">Son {selectedProduct.stock} adet!</span>
+                      )}
                     </div>
                   </div>
                   
@@ -1483,7 +1556,7 @@ export default function WallArtShop() {
                     <img src={item.images[0]} alt="" className="w-20 h-20 object-cover rounded-lg" />
                     <div className="flex-1">
                       <h3 className={`font-medium text-sm ${theme.text}`}>{item.name}</h3>
-                      <p className={`text-xs ${theme.textMuted}`}>{item.isFramed ? t.framed : t.unframed}</p>
+                      <p className={`text-xs ${theme.textMuted}`}>{item.selectedSize || '50x70'} cm • {item.isFramed ? t.framed : t.unframed}</p>
                       {item.discount > 0 && <p className="text-xs text-green-400">-{item.discount}%</p>}
                       <p className="font-bold mt-1" style={{color: theme.accent}}>{item.price}₺</p>
                       <div className="flex items-center gap-2 mt-2">
