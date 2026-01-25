@@ -18,8 +18,10 @@ export default function AdminPanel({ onClose }) {
     name: '',
     description: '',
     category: 'Minimal',
-    priceUnframed: '',
-    priceFramed: '',
+    price30x40Unframed: '',
+    price30x40Framed: '',
+    price50x70Unframed: '',
+    price50x70Framed: '',
     stock: '',
     isNew: false,
     isBestSeller: false,
@@ -101,12 +103,21 @@ export default function AdminPanel({ onClose }) {
 
     try {
       const productData = {
-        ...formData,
-        priceUnframed: Number(formData.priceUnframed),
-        priceFramed: Number(formData.priceFramed),
+        name: formData.name,
+        description: formData.description,
+        category: formData.category,
+        price30x40Unframed: Number(formData.price30x40Unframed),
+        price30x40Framed: Number(formData.price30x40Framed),
+        price50x70Unframed: Number(formData.price50x70Unframed),
+        price50x70Framed: Number(formData.price50x70Framed),
+        // Eski alanları da tutuyoruz geriye uyumluluk için
+        priceUnframed: Number(formData.price50x70Unframed),
+        priceFramed: Number(formData.price50x70Framed),
         stock: Number(formData.stock),
         discount: Number(formData.discount),
-        size: "50x70 cm",
+        isNew: formData.isNew,
+        isBestSeller: formData.isBestSeller,
+        images: formData.images,
         reviews: [],
         updatedAt: new Date().toISOString()
       };
@@ -149,8 +160,10 @@ export default function AdminPanel({ onClose }) {
       name: product.name,
       description: product.description,
       category: product.category,
-      priceUnframed: product.priceUnframed,
-      priceFramed: product.priceFramed,
+      price30x40Unframed: product.price30x40Unframed || Math.round(product.priceUnframed * 0.7) || '',
+      price30x40Framed: product.price30x40Framed || Math.round(product.priceFramed * 0.7) || '',
+      price50x70Unframed: product.price50x70Unframed || product.priceUnframed || '',
+      price50x70Framed: product.price50x70Framed || product.priceFramed || '',
       stock: product.stock,
       isNew: product.isNew || false,
       isBestSeller: product.isBestSeller || false,
@@ -165,8 +178,10 @@ export default function AdminPanel({ onClose }) {
       name: '',
       description: '',
       category: 'Minimal',
-      priceUnframed: '',
-      priceFramed: '',
+      price30x40Unframed: '',
+      price30x40Framed: '',
+      price50x70Unframed: '',
+      price50x70Framed: '',
       stock: '',
       isNew: false,
       isBestSeller: false,
@@ -424,27 +439,61 @@ export default function AdminPanel({ onClose }) {
                 </select>
               </div>
 
-              {/* Prices */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-stone-300 text-sm mb-2">Fiyat (Çerçevesiz) *</label>
-                  <input
-                    type="number"
-                    value={formData.priceUnframed}
-                    onChange={(e) => setFormData({ ...formData, priceUnframed: e.target.value })}
-                    className="w-full bg-stone-700 border border-stone-600 rounded-xl px-4 py-3 text-white"
-                    required
-                  />
+              {/* Prices - 30x40 */}
+              <div>
+                <label className="block text-amber-400 text-sm mb-2 font-medium">30x40 cm Fiyatları</label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-stone-400 text-xs mb-1">Çerçevesiz *</label>
+                    <input
+                      type="number"
+                      value={formData.price30x40Unframed}
+                      onChange={(e) => setFormData({ ...formData, price30x40Unframed: e.target.value })}
+                      className="w-full bg-stone-700 border border-stone-600 rounded-xl px-4 py-3 text-white"
+                      placeholder="₺"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-stone-400 text-xs mb-1">Çerçeveli *</label>
+                    <input
+                      type="number"
+                      value={formData.price30x40Framed}
+                      onChange={(e) => setFormData({ ...formData, price30x40Framed: e.target.value })}
+                      className="w-full bg-stone-700 border border-stone-600 rounded-xl px-4 py-3 text-white"
+                      placeholder="₺"
+                      required
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-stone-300 text-sm mb-2">Fiyat (Çerçeveli) *</label>
-                  <input
-                    type="number"
-                    value={formData.priceFramed}
-                    onChange={(e) => setFormData({ ...formData, priceFramed: e.target.value })}
-                    className="w-full bg-stone-700 border border-stone-600 rounded-xl px-4 py-3 text-white"
-                    required
-                  />
+              </div>
+
+              {/* Prices - 50x70 */}
+              <div>
+                <label className="block text-amber-400 text-sm mb-2 font-medium">50x70 cm Fiyatları</label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-stone-400 text-xs mb-1">Çerçevesiz *</label>
+                    <input
+                      type="number"
+                      value={formData.price50x70Unframed}
+                      onChange={(e) => setFormData({ ...formData, price50x70Unframed: e.target.value })}
+                      className="w-full bg-stone-700 border border-stone-600 rounded-xl px-4 py-3 text-white"
+                      placeholder="₺"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-stone-400 text-xs mb-1">Çerçeveli *</label>
+                    <input
+                      type="number"
+                      value={formData.price50x70Framed}
+                      onChange={(e) => setFormData({ ...formData, price50x70Framed: e.target.value })}
+                      className="w-full bg-stone-700 border border-stone-600 rounded-xl px-4 py-3 text-white"
+                      placeholder="₺"
+                      required
+                    />
+                  </div>
                 </div>
               </div>
 
