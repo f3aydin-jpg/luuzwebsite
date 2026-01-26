@@ -905,15 +905,23 @@ export default function WallArtShop() {
                     <div className="flex gap-2">
                       <button 
                         onClick={() => setQuickViewProduct({...quickViewProduct, selectedSize: '30x40'})}
-                        className={`px-4 py-2 text-sm font-medium transition border rounded-sm ${quickViewProduct.selectedSize === '30x40' ? 'bg-stone-900 border-stone-900 dark:bg-white dark:border-white' : 'border-stone-400 hover:border-stone-900 dark:border-stone-500 dark:hover:border-white'}`}
-                        style={{ color: quickViewProduct.selectedSize === '30x40' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917') }}
+                        className="px-4 py-2 text-sm font-medium transition rounded-sm"
+                        style={{ 
+                          backgroundColor: quickViewProduct.selectedSize === '30x40' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: quickViewProduct.selectedSize === '30x40' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${quickViewProduct.selectedSize === '30x40' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
+                        }}
                       >
                         30x40 cm
                       </button>
                       <button 
                         onClick={() => setQuickViewProduct({...quickViewProduct, selectedSize: '50x70'})}
-                        className={`px-4 py-2 text-sm font-medium transition border rounded-sm ${quickViewProduct.selectedSize === '50x70' ? 'bg-stone-900 border-stone-900 dark:bg-white dark:border-white' : 'border-stone-400 hover:border-stone-900 dark:border-stone-500 dark:hover:border-white'}`}
-                        style={{ color: quickViewProduct.selectedSize === '50x70' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917') }}
+                        className="px-4 py-2 text-sm font-medium transition rounded-sm"
+                        style={{ 
+                          backgroundColor: quickViewProduct.selectedSize === '50x70' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: quickViewProduct.selectedSize === '50x70' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${quickViewProduct.selectedSize === '50x70' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
+                        }}
                       >
                         50x70 cm
                       </button>
@@ -926,29 +934,45 @@ export default function WallArtShop() {
                     <div className="flex flex-wrap gap-2">
                       <button 
                         onClick={() => setQuickViewProduct({...quickViewProduct, selectedFrame: 'none'})}
-                        className={`px-3 py-2 text-sm font-medium transition border rounded-sm ${quickViewProduct.selectedFrame === 'none' ? 'bg-stone-900 border-stone-900 dark:bg-white dark:border-white' : 'border-stone-400 hover:border-stone-900 dark:border-stone-500 dark:hover:border-white'}`}
-                        style={{ color: quickViewProduct.selectedFrame === 'none' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917') }}
+                        className="px-3 py-2 text-sm font-medium transition rounded-sm"
+                        style={{ 
+                          backgroundColor: quickViewProduct.selectedFrame === 'none' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: quickViewProduct.selectedFrame === 'none' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${quickViewProduct.selectedFrame === 'none' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
+                        }}
                       >
                         Çerçevesiz
                       </button>
                       <button 
                         onClick={() => setQuickViewProduct({...quickViewProduct, selectedFrame: 'wood'})}
-                        className={`px-3 py-2 text-sm font-medium transition border rounded-sm ${quickViewProduct.selectedFrame === 'wood' ? 'bg-stone-900 border-stone-900 dark:bg-white dark:border-white' : 'border-stone-400 hover:border-stone-900 dark:border-stone-500 dark:hover:border-white'}`}
-                        style={{ color: quickViewProduct.selectedFrame === 'wood' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917') }}
+                        className="px-3 py-2 text-sm font-medium transition rounded-sm"
+                        style={{ 
+                          backgroundColor: quickViewProduct.selectedFrame === 'wood' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: quickViewProduct.selectedFrame === 'wood' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${quickViewProduct.selectedFrame === 'wood' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
+                        }}
                       >
                         Ahşap
                       </button>
                       <button 
                         onClick={() => setQuickViewProduct({...quickViewProduct, selectedFrame: 'black'})}
-                        className={`px-3 py-2 text-sm font-medium transition border rounded-sm ${quickViewProduct.selectedFrame === 'black' ? 'bg-stone-900 border-stone-900 dark:bg-white dark:border-white' : 'border-stone-400 hover:border-stone-900 dark:border-stone-500 dark:hover:border-white'}`}
-                        style={{ color: quickViewProduct.selectedFrame === 'black' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917') }}
+                        className="px-3 py-2 text-sm font-medium transition rounded-sm"
+                        style={{ 
+                          backgroundColor: quickViewProduct.selectedFrame === 'black' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: quickViewProduct.selectedFrame === 'black' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${quickViewProduct.selectedFrame === 'black' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
+                        }}
                       >
                         Siyah
                       </button>
                       <button 
                         onClick={() => setQuickViewProduct({...quickViewProduct, selectedFrame: 'white'})}
-                        className={`px-3 py-2 text-sm font-medium transition border rounded-sm ${quickViewProduct.selectedFrame === 'white' ? 'bg-stone-900 border-stone-900 dark:bg-white dark:border-white' : 'border-stone-400 hover:border-stone-900 dark:border-stone-500 dark:hover:border-white'}`}
-                        style={{ color: quickViewProduct.selectedFrame === 'white' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917') }}
+                        className="px-3 py-2 text-sm font-medium transition rounded-sm"
+                        style={{ 
+                          backgroundColor: quickViewProduct.selectedFrame === 'white' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: quickViewProduct.selectedFrame === 'white' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${quickViewProduct.selectedFrame === 'white' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
+                        }}
                       >
                         Beyaz
                       </button>
@@ -958,10 +982,13 @@ export default function WallArtShop() {
                   {/* Quantity */}
                   <div>
                     <p className={`text-xs font-medium ${theme.textMuted} uppercase tracking-wider mb-2`}>Adet</p>
-                    <div className="inline-flex items-center border border-stone-400 dark:border-stone-500 rounded-sm">
+                    <div 
+                      className="inline-flex items-center rounded-sm"
+                      style={{ border: `1px solid ${darkMode ? '#78716c' : '#a8a29e'}` }}
+                    >
                       <button 
                         onClick={() => quickViewProduct.quantity > 1 && setQuickViewProduct({...quickViewProduct, quantity: quickViewProduct.quantity - 1})}
-                        className="w-9 h-9 flex items-center justify-center hover:bg-stone-100 dark:hover:bg-stone-800"
+                        className="w-9 h-9 flex items-center justify-center"
                         style={{ color: darkMode ? '#ffffff' : '#1c1917' }}
                       >
                         <Minus size={14} />
@@ -969,7 +996,7 @@ export default function WallArtShop() {
                       <span className="w-10 text-center text-sm font-medium" style={{ color: darkMode ? '#ffffff' : '#1c1917' }}>{quickViewProduct.quantity || 1}</span>
                       <button 
                         onClick={() => setQuickViewProduct({...quickViewProduct, quantity: (quickViewProduct.quantity || 1) + 1})}
-                        className="w-9 h-9 flex items-center justify-center hover:bg-stone-100 dark:hover:bg-stone-800"
+                        className="w-9 h-9 flex items-center justify-center"
                         style={{ color: darkMode ? '#ffffff' : '#1c1917' }}
                       >
                         <Plus size={14} />
@@ -989,8 +1016,11 @@ export default function WallArtShop() {
                         }
                       }}
                       disabled={quickViewProduct.stock === 0}
-                      className={`w-full py-3 text-sm font-medium uppercase tracking-wider transition rounded-sm ${quickViewProduct.stock === 0 ? 'opacity-50' : 'hover:opacity-90'} bg-stone-900 dark:bg-white`}
-                      style={{ color: darkMode ? '#1c1917' : '#ffffff' }}
+                      className={`w-full py-3 text-sm font-medium uppercase tracking-wider transition rounded-sm ${quickViewProduct.stock === 0 ? 'opacity-50' : 'hover:opacity-90'}`}
+                      style={{ 
+                        backgroundColor: darkMode ? '#ffffff' : '#1c1917',
+                        color: darkMode ? '#1c1917' : '#ffffff'
+                      }}
                     >
                       {quickViewProduct.stock === 0 ? t.outOfStock : t.addToCart}
                     </button>
@@ -1629,15 +1659,23 @@ export default function WallArtShop() {
                     <div className="flex gap-2">
                       <button 
                         onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedSize: '30x40'})}
-                        className={`px-4 py-2.5 text-sm font-medium transition border rounded-sm ${selectedProduct.selectedSize === '30x40' ? 'bg-stone-900 text-white border-stone-900 dark:bg-white dark:text-stone-900 dark:border-white' : 'border-stone-400 hover:border-stone-900 dark:border-stone-500 dark:hover:border-white'}`}
-                        style={{ color: selectedProduct.selectedSize === '30x40' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917') }}
+                        className="px-4 py-2.5 text-sm font-medium transition rounded-sm"
+                        style={{ 
+                          backgroundColor: selectedProduct.selectedSize === '30x40' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: selectedProduct.selectedSize === '30x40' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${selectedProduct.selectedSize === '30x40' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
+                        }}
                       >
                         30x40 cm
                       </button>
                       <button 
                         onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedSize: '50x70'})}
-                        className={`px-4 py-2.5 text-sm font-medium transition border rounded-sm ${selectedProduct.selectedSize === '50x70' ? 'bg-stone-900 text-white border-stone-900 dark:bg-white dark:text-stone-900 dark:border-white' : 'border-stone-400 hover:border-stone-900 dark:border-stone-500 dark:hover:border-white'}`}
-                        style={{ color: selectedProduct.selectedSize === '50x70' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917') }}
+                        className="px-4 py-2.5 text-sm font-medium transition rounded-sm"
+                        style={{ 
+                          backgroundColor: selectedProduct.selectedSize === '50x70' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: selectedProduct.selectedSize === '50x70' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${selectedProduct.selectedSize === '50x70' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
+                        }}
                       >
                         50x70 cm
                       </button>
@@ -1650,29 +1688,45 @@ export default function WallArtShop() {
                     <div className="flex flex-wrap gap-2">
                       <button 
                         onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: 'none'})}
-                        className={`px-3 py-2.5 text-sm font-medium transition border rounded-sm ${selectedProduct.selectedFrame === 'none' ? 'bg-stone-900 border-stone-900 dark:bg-white dark:border-white' : 'border-stone-400 hover:border-stone-900 dark:border-stone-500 dark:hover:border-white'}`}
-                        style={{ color: selectedProduct.selectedFrame === 'none' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917') }}
+                        className="px-3 py-2.5 text-sm font-medium transition rounded-sm"
+                        style={{ 
+                          backgroundColor: selectedProduct.selectedFrame === 'none' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: selectedProduct.selectedFrame === 'none' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${selectedProduct.selectedFrame === 'none' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
+                        }}
                       >
                         Çerçevesiz
                       </button>
                       <button 
                         onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: 'wood'})}
-                        className={`px-3 py-2.5 text-sm font-medium transition border rounded-sm ${selectedProduct.selectedFrame === 'wood' ? 'bg-stone-900 border-stone-900 dark:bg-white dark:border-white' : 'border-stone-400 hover:border-stone-900 dark:border-stone-500 dark:hover:border-white'}`}
-                        style={{ color: selectedProduct.selectedFrame === 'wood' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917') }}
+                        className="px-3 py-2.5 text-sm font-medium transition rounded-sm"
+                        style={{ 
+                          backgroundColor: selectedProduct.selectedFrame === 'wood' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: selectedProduct.selectedFrame === 'wood' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${selectedProduct.selectedFrame === 'wood' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
+                        }}
                       >
                         Ahşap Çerçeve
                       </button>
                       <button 
                         onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: 'black'})}
-                        className={`px-3 py-2.5 text-sm font-medium transition border rounded-sm ${selectedProduct.selectedFrame === 'black' ? 'bg-stone-900 border-stone-900 dark:bg-white dark:border-white' : 'border-stone-400 hover:border-stone-900 dark:border-stone-500 dark:hover:border-white'}`}
-                        style={{ color: selectedProduct.selectedFrame === 'black' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917') }}
+                        className="px-3 py-2.5 text-sm font-medium transition rounded-sm"
+                        style={{ 
+                          backgroundColor: selectedProduct.selectedFrame === 'black' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: selectedProduct.selectedFrame === 'black' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${selectedProduct.selectedFrame === 'black' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
+                        }}
                       >
                         Siyah Çerçeve
                       </button>
                       <button 
                         onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: 'white'})}
-                        className={`px-3 py-2.5 text-sm font-medium transition border rounded-sm ${selectedProduct.selectedFrame === 'white' ? 'bg-stone-900 border-stone-900 dark:bg-white dark:border-white' : 'border-stone-400 hover:border-stone-900 dark:border-stone-500 dark:hover:border-white'}`}
-                        style={{ color: selectedProduct.selectedFrame === 'white' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917') }}
+                        className="px-3 py-2.5 text-sm font-medium transition rounded-sm"
+                        style={{ 
+                          backgroundColor: selectedProduct.selectedFrame === 'white' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: selectedProduct.selectedFrame === 'white' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${selectedProduct.selectedFrame === 'white' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
+                        }}
                       >
                         Beyaz Çerçeve
                       </button>
@@ -1683,10 +1737,13 @@ export default function WallArtShop() {
                   <div>
                     <p className={`text-xs font-medium ${theme.textMuted} uppercase tracking-wider mb-2`}>Adet</p>
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center border border-stone-400 dark:border-stone-500 rounded-sm">
+                      <div 
+                        className="flex items-center rounded-sm"
+                        style={{ border: `1px solid ${darkMode ? '#78716c' : '#a8a29e'}` }}
+                      >
                         <button 
                           onClick={() => selectedProduct.quantity > 1 && setSelectedProduct({...selectedProduct, quantity: (selectedProduct.quantity || 1) - 1})}
-                          className="w-9 h-9 flex items-center justify-center hover:bg-stone-100 dark:hover:bg-stone-800 transition disabled:opacity-50"
+                          className="w-9 h-9 flex items-center justify-center transition disabled:opacity-50"
                           style={{ color: darkMode ? '#ffffff' : '#1c1917' }}
                           disabled={!selectedProduct.quantity || selectedProduct.quantity <= 1}
                         >
@@ -1697,7 +1754,7 @@ export default function WallArtShop() {
                         </span>
                         <button 
                           onClick={() => setSelectedProduct({...selectedProduct, quantity: (selectedProduct.quantity || 1) + 1})}
-                          className="w-9 h-9 flex items-center justify-center hover:bg-stone-100 dark:hover:bg-stone-800 transition"
+                          className="w-9 h-9 flex items-center justify-center transition"
                           style={{ color: darkMode ? '#ffffff' : '#1c1917' }}
                           disabled={selectedProduct.stock <= (selectedProduct.quantity || 1)}
                         >
@@ -1723,8 +1780,11 @@ export default function WallArtShop() {
                         }
                       }} 
                       disabled={selectedProduct.stock === 0}
-                      className={`w-full py-3.5 text-sm font-medium uppercase tracking-wider transition rounded-sm ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'} bg-stone-900 dark:bg-white`}
-                      style={{ color: darkMode ? '#1c1917' : '#ffffff' }}
+                      className={`w-full py-3.5 text-sm font-medium uppercase tracking-wider transition rounded-sm ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'}`}
+                      style={{ 
+                        backgroundColor: darkMode ? '#ffffff' : '#1c1917',
+                        color: darkMode ? '#1c1917' : '#ffffff'
+                      }}
                     >
                       {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
                     </button>
@@ -1747,8 +1807,14 @@ export default function WallArtShop() {
                           window.open(`https://wa.me/905060342409?text=${encodeURIComponent(message)}`, '_blank');
                         }
                       }}
-                      className="w-full py-3.5 text-sm font-medium uppercase tracking-wider border transition flex items-center justify-center gap-2 border-stone-400 hover:bg-stone-100 dark:border-stone-500 dark:hover:bg-stone-800 rounded-sm"
-                      style={{ color: darkMode ? '#ffffff' : '#1c1917' }}
+                      className="w-full py-3.5 text-sm font-medium uppercase tracking-wider transition flex items-center justify-center gap-2 rounded-sm group"
+                      style={{ 
+                        border: `1px solid ${darkMode ? '#78716c' : '#a8a29e'}`,
+                        color: darkMode ? '#ffffff' : '#1c1917',
+                        backgroundColor: 'transparent'
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#25D366'; e.currentTarget.style.borderColor = '#25D366'; e.currentTarget.style.color = '#ffffff'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.borderColor = darkMode ? '#78716c' : '#a8a29e'; e.currentTarget.style.color = darkMode ? '#ffffff' : '#1c1917'; }}
                     >
                       <MessageCircle size={16} />
                       WhatsApp ile Sipariş Ver
