@@ -822,27 +822,52 @@ export default function WallArtShop() {
             </button>
             
             <div className="grid md:grid-cols-2 gap-0">
-              {/* Product Image */}
-              <div className="relative aspect-[3/4] bg-stone-100">
-                <img src={quickViewProduct.images?.[0]} alt={quickViewProduct.name} className="w-full h-full object-cover" />
-                {quickViewProduct.discount > 0 && <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 text-xs font-medium uppercase">İndirim</div>}
+              {/* Product Images with Thumbnails */}
+              <div className="p-4 md:p-6">
+                {/* Main Image */}
+                <div className="relative aspect-[3/4] bg-stone-100 mb-3">
+                  <img src={quickViewProduct.images?.[quickViewProduct.activeIndex || 0]} alt={quickViewProduct.name} className="w-full h-full object-cover" />
+                  {quickViewProduct.discount > 0 && <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 text-xs font-medium uppercase">İndirim</div>}
+                </div>
+                {/* Thumbnails */}
+                {quickViewProduct.images?.length > 1 && (
+                  <div className="flex gap-2">
+                    {quickViewProduct.images.map((img, idx) => (
+                      <button 
+                        key={idx} 
+                        onClick={() => setQuickViewProduct({...quickViewProduct, activeIndex: idx})}
+                        className={`w-16 h-20 overflow-hidden transition-all ${(quickViewProduct.activeIndex || 0) === idx ? 'ring-1 ring-stone-900 dark:ring-white' : 'opacity-60 hover:opacity-100'}`}
+                      >
+                        <img src={img} alt="" className="w-full h-full object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
               
               {/* Product Info */}
               <div className="p-6 md:p-8 space-y-4">
                 <div>
                   <p className={`text-[10px] ${theme.textMuted} uppercase tracking-wider mb-2`}>LUUZ POSTER</p>
-                  <h2 className={`text-xl md:text-2xl font-medium ${theme.text} mb-3`}>{quickViewProduct.name}</h2>
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <h2 className={`text-xl md:text-2xl font-medium ${theme.text}`}>{quickViewProduct.name}</h2>
+                    <button 
+                      onClick={() => toggleFavorite(quickViewProduct.id)}
+                      className={`flex-shrink-0 p-2 transition ${favorites.includes(quickViewProduct.id) ? 'text-red-500' : theme.textMuted}`}
+                    >
+                      <Heart size={20} fill={favorites.includes(quickViewProduct.id) ? 'currentColor' : 'none'} />
+                    </button>
+                  </div>
                   
                   {/* Price */}
                   {(() => {
                     let basePrice;
                     if (quickViewProduct.selectedSize === '30x40') {
-                      basePrice = quickViewProduct.selectedFrame 
+                      basePrice = quickViewProduct.selectedFrame && quickViewProduct.selectedFrame !== 'none'
                         ? (quickViewProduct.price30x40Framed || Math.round(quickViewProduct.priceFramed * 0.7))
                         : (quickViewProduct.price30x40Unframed || Math.round(quickViewProduct.priceUnframed * 0.7));
                     } else {
-                      basePrice = quickViewProduct.selectedFrame 
+                      basePrice = quickViewProduct.selectedFrame && quickViewProduct.selectedFrame !== 'none'
                         ? (quickViewProduct.price50x70Framed || quickViewProduct.priceFramed)
                         : (quickViewProduct.price50x70Unframed || quickViewProduct.priceUnframed);
                     }
@@ -880,13 +905,13 @@ export default function WallArtShop() {
                     <div className="flex gap-2">
                       <button 
                         onClick={() => setQuickViewProduct({...quickViewProduct, selectedSize: '30x40'})}
-                        className={`px-4 py-2 text-sm font-medium transition border ${quickViewProduct.selectedSize === '30x40' ? `${darkMode ? 'bg-white text-stone-900 border-white' : 'bg-stone-900 text-white border-stone-900'}` : `${theme.text} ${theme.border}`}`}
+                        className={`px-4 py-2 text-sm font-medium transition border ${quickViewProduct.selectedSize === '30x40' ? 'bg-stone-900 text-white border-stone-900 dark:bg-white dark:text-stone-900 dark:border-white' : `${theme.text} ${theme.border}`}`}
                       >
                         30x40 cm
                       </button>
                       <button 
                         onClick={() => setQuickViewProduct({...quickViewProduct, selectedSize: '50x70'})}
-                        className={`px-4 py-2 text-sm font-medium transition border ${quickViewProduct.selectedSize === '50x70' ? `${darkMode ? 'bg-white text-stone-900 border-white' : 'bg-stone-900 text-white border-stone-900'}` : `${theme.text} ${theme.border}`}`}
+                        className={`px-4 py-2 text-sm font-medium transition border ${quickViewProduct.selectedSize === '50x70' ? 'bg-stone-900 text-white border-stone-900 dark:bg-white dark:text-stone-900 dark:border-white' : `${theme.text} ${theme.border}`}`}
                       >
                         50x70 cm
                       </button>
@@ -899,25 +924,25 @@ export default function WallArtShop() {
                     <div className="flex flex-wrap gap-2">
                       <button 
                         onClick={() => setQuickViewProduct({...quickViewProduct, selectedFrame: 'none'})}
-                        className={`px-3 py-2 text-sm font-medium transition border ${quickViewProduct.selectedFrame === 'none' ? `${darkMode ? 'bg-white text-stone-900 border-white' : 'bg-stone-900 text-white border-stone-900'}` : `${theme.text} ${theme.border}`}`}
+                        className={`px-3 py-2 text-sm font-medium transition border ${quickViewProduct.selectedFrame === 'none' ? 'bg-stone-900 text-white border-stone-900 dark:bg-white dark:text-stone-900 dark:border-white' : `${theme.text} ${theme.border}`}`}
                       >
                         Çerçevesiz
                       </button>
                       <button 
                         onClick={() => setQuickViewProduct({...quickViewProduct, selectedFrame: 'wood'})}
-                        className={`px-3 py-2 text-sm font-medium transition border ${quickViewProduct.selectedFrame === 'wood' ? `${darkMode ? 'bg-white text-stone-900 border-white' : 'bg-stone-900 text-white border-stone-900'}` : `${theme.text} ${theme.border}`}`}
+                        className={`px-3 py-2 text-sm font-medium transition border ${quickViewProduct.selectedFrame === 'wood' ? 'bg-stone-900 text-white border-stone-900 dark:bg-white dark:text-stone-900 dark:border-white' : `${theme.text} ${theme.border}`}`}
                       >
                         Ahşap
                       </button>
                       <button 
                         onClick={() => setQuickViewProduct({...quickViewProduct, selectedFrame: 'black'})}
-                        className={`px-3 py-2 text-sm font-medium transition border ${quickViewProduct.selectedFrame === 'black' ? `${darkMode ? 'bg-white text-stone-900 border-white' : 'bg-stone-900 text-white border-stone-900'}` : `${theme.text} ${theme.border}`}`}
+                        className={`px-3 py-2 text-sm font-medium transition border ${quickViewProduct.selectedFrame === 'black' ? 'bg-stone-900 text-white border-stone-900 dark:bg-white dark:text-stone-900 dark:border-white' : `${theme.text} ${theme.border}`}`}
                       >
                         Siyah
                       </button>
                       <button 
                         onClick={() => setQuickViewProduct({...quickViewProduct, selectedFrame: 'white'})}
-                        className={`px-3 py-2 text-sm font-medium transition border ${quickViewProduct.selectedFrame === 'white' ? `${darkMode ? 'bg-white text-stone-900 border-white' : 'bg-stone-900 text-white border-stone-900'}` : `${theme.text} ${theme.border}`}`}
+                        className={`px-3 py-2 text-sm font-medium transition border ${quickViewProduct.selectedFrame === 'white' ? 'bg-stone-900 text-white border-stone-900 dark:bg-white dark:text-stone-900 dark:border-white' : `${theme.text} ${theme.border}`}`}
                       >
                         Beyaz
                       </button>
@@ -945,7 +970,7 @@ export default function WallArtShop() {
                   </div>
 
                   {/* Buttons */}
-                  <div className="space-y-2 pt-2">
+                  <div className="space-y-3 pt-2">
                     <button 
                       onClick={() => {
                         if (quickViewProduct.selectedFrame === undefined || quickViewProduct.selectedSize === undefined) {
@@ -956,15 +981,15 @@ export default function WallArtShop() {
                         }
                       }}
                       disabled={quickViewProduct.stock === 0}
-                      className={`w-full py-3 text-sm font-medium uppercase tracking-wider transition ${quickViewProduct.stock === 0 ? 'opacity-50' : 'hover:opacity-90'} ${darkMode ? 'bg-white text-stone-900' : 'bg-stone-900 text-white'}`}
+                      className={`w-full py-3 text-sm font-medium uppercase tracking-wider transition ${quickViewProduct.stock === 0 ? 'opacity-50' : 'hover:opacity-90'} bg-stone-900 text-white dark:bg-white dark:text-stone-900`}
                     >
                       {quickViewProduct.stock === 0 ? t.outOfStock : t.addToCart}
                     </button>
                     <button 
                       onClick={() => { setSelectedProduct({...quickViewProduct}); setQuickViewProduct(null); addToRecentlyViewed(quickViewProduct); }}
-                      className={`w-full py-3 text-sm font-medium uppercase tracking-wider border transition ${theme.text} ${theme.border} hover:bg-stone-100 dark:hover:bg-stone-800`}
+                      className={`text-sm ${theme.textMuted} hover:${theme.text} underline transition`}
                     >
-                      Ürün Detayı
+                      Ürün detayına git →
                     </button>
                   </div>
 
@@ -1521,18 +1546,26 @@ export default function WallArtShop() {
                 {/* Main Info */}
                 <div>
                   <p className={`text-[10px] ${theme.textMuted} uppercase tracking-wider mb-2`}>LUUZ POSTER</p>
-                  <h1 className={`text-2xl md:text-3xl font-medium ${theme.text} mb-3`}>{selectedProduct.name}</h1>
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <h1 className={`text-2xl md:text-3xl font-medium ${theme.text}`}>{selectedProduct.name}</h1>
+                    <button 
+                      onClick={() => toggleFavorite(selectedProduct.id)}
+                      className={`flex-shrink-0 p-2 transition ${favorites.includes(selectedProduct.id) ? 'text-red-500' : theme.textMuted}`}
+                    >
+                      <Heart size={22} fill={favorites.includes(selectedProduct.id) ? 'currentColor' : 'none'} />
+                    </button>
+                  </div>
                   
                   {/* Dynamic Price Display */}
                   {(() => {
                     // Yeni fiyat yapısını kullan, yoksa eski yapıya geri dön
                     let basePrice;
                     if (selectedProduct.selectedSize === '30x40') {
-                      basePrice = selectedProduct.selectedFrame 
+                      basePrice = selectedProduct.selectedFrame && selectedProduct.selectedFrame !== 'none'
                         ? (selectedProduct.price30x40Framed || Math.round(selectedProduct.priceFramed * 0.7))
                         : (selectedProduct.price30x40Unframed || Math.round(selectedProduct.priceUnframed * 0.7));
                     } else {
-                      basePrice = selectedProduct.selectedFrame 
+                      basePrice = selectedProduct.selectedFrame && selectedProduct.selectedFrame !== 'none'
                         ? (selectedProduct.price50x70Framed || selectedProduct.priceFramed)
                         : (selectedProduct.price50x70Unframed || selectedProduct.priceUnframed);
                     }
@@ -1547,7 +1580,7 @@ export default function WallArtShop() {
                     const maxPrice = selectedProduct.price50x70Framed || selectedProduct.priceFramed || selectedProduct.priceUnframed;
                     
                     return (
-                      <div className="mb-6">
+                      <div className="mb-4">
                         {selectedProduct.selectedSize && selectedProduct.selectedFrame !== undefined ? (
                           <div className="flex items-baseline gap-3 flex-wrap">
                             {selectedProduct.discount > 0 && (
@@ -1668,18 +1701,9 @@ export default function WallArtShop() {
                         }
                       }} 
                       disabled={selectedProduct.stock === 0}
-                      className={`w-full py-3.5 text-sm font-medium uppercase tracking-wider transition ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'} ${darkMode ? 'bg-white text-stone-900' : 'bg-stone-900 text-white'}`}
+                      className={`w-full py-3.5 text-sm font-medium uppercase tracking-wider transition ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'} bg-stone-900 text-white dark:bg-white dark:text-stone-900`}
                     >
                       {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
-                    </button>
-
-                    {/* Favorilere Ekle Button */}
-                    <button 
-                      onClick={() => toggleFavorite(selectedProduct.id)}
-                      className={`w-full py-3.5 text-sm font-medium uppercase tracking-wider border transition flex items-center justify-center gap-2 ${favorites.includes(selectedProduct.id) ? 'border-red-500 text-red-500' : `${theme.text} ${theme.border} hover:bg-stone-100 dark:hover:bg-stone-800`}`}
-                    >
-                      <Heart size={16} fill={favorites.includes(selectedProduct.id) ? 'currentColor' : 'none'} />
-                      {favorites.includes(selectedProduct.id) ? 'Favorilerde' : 'Favorilere Ekle'}
                     </button>
 
                     <button 
@@ -1689,15 +1713,13 @@ export default function WallArtShop() {
                         } else if (selectedProduct.selectedFrame === undefined) {
                           alert('Lütfen çerçeve seçeneği seçin');
                         } else {
+                          const frameText = selectedProduct.selectedFrame === 'none' ? 'Çerçevesiz' : 
+                            selectedProduct.selectedFrame === 'wood' ? 'Ahşap Çerçeve' :
+                            selectedProduct.selectedFrame === 'black' ? 'Siyah Çerçeve' : 'Beyaz Çerçeve';
                           const message = `Merhaba! LUUZ'dan sipariş vermek istiyorum:\n\n` +
                             `Urun: ${selectedProduct.name}\n` +
                             `Boyut: ${selectedProduct.selectedSize}\n` +
-                            `Cerceve: ${selectedProduct.selectedFrame ? 'Cerceveli' : 'Cercevesiz'}\n` +
-                            `Fiyat: ${(() => {
-                              const sizeMultiplier = selectedProduct.selectedSize === '30x40' ? 0.7 : 1;
-                              const basePrice = selectedProduct.selectedFrame ? selectedProduct.priceFramed : selectedProduct.priceUnframed;
-                              return Math.round(basePrice * sizeMultiplier);
-                            })()}TL\n\n` +
+                            `Cerceve: ${frameText}\n` +
                             `Siparis vermek istiyorum.`;
                           window.open(`https://wa.me/905060342409?text=${encodeURIComponent(message)}`, '_blank');
                         }
@@ -1772,20 +1794,26 @@ export default function WallArtShop() {
             {/* Similar Products */}
             <div className={`mt-12 pt-8 border-t ${theme.border}`}>
               <h3 className={`text-xl font-medium tracking-wide ${theme.text} uppercase mb-6`}>Benzer Ürünler</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">{products.filter(p => p.category === selectedProduct.category && p.id !== selectedProduct.id).slice(0, 4).map(p => (
+              <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">{products.filter(p => p.category === selectedProduct.category && p.id !== selectedProduct.id).slice(0, 6).map(p => (
                 <div 
                   key={p.id} 
-                  className="group cursor-pointer" 
+                  className="flex-shrink-0 w-48 md:w-56 group cursor-pointer" 
                   onClick={() => { setSelectedProduct({...p, selectedSize: undefined, selectedFrame: undefined}); setActiveImageIndex(0); setOpenAccordion(null); window.scrollTo(0, 0); }}
                 >
                   <div className="relative aspect-[3/4] overflow-hidden bg-stone-100 mb-3">
-                    <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                    <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {/* First Image */}
+                    <img src={p.images?.[0]} alt={p.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out group-hover:opacity-0" />
+                    {/* Second Image (shown on hover) */}
+                    <img src={p.images?.[1] || p.images?.[0]} alt={p.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100" />
+                    <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                       <button onClick={(e) => { e.stopPropagation(); toggleFavorite(p.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
                         <Heart size={16} fill={favorites.includes(p.id) ? theme.accent : 'none'} color={favorites.includes(p.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
                       </button>
+                      <button onClick={(e) => { e.stopPropagation(); setQuickViewProduct({...p, selectedSize: undefined, selectedFrame: undefined, quantity: 1, activeIndex: 0}); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
+                        <ZoomIn size={16} className={darkMode ? 'text-white' : 'text-stone-900'} />
+                      </button>
                     </div>
-                    {p.discount > 0 && <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 text-[10px] font-medium uppercase">İndirim</div>}
+                    {p.discount > 0 && <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 text-[10px] font-medium uppercase z-10">İndirim</div>}
                   </div>
                   <div>
                     <p className={`text-[10px] ${theme.textMuted} uppercase tracking-wider mb-1`}>LUUZ POSTER</p>
