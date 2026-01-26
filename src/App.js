@@ -1431,7 +1431,7 @@ export default function WallArtShop() {
                   <div>
                     <p className={`text-xs font-medium ${theme.textMuted} uppercase tracking-wider mb-3`}>Adet</p>
                     <div className="flex items-center gap-4">
-                      <div className="flex items-center border ${theme.border}">
+                      <div className={`flex items-center border ${theme.border}`}>
                         <button 
                           onClick={() => selectedProduct.quantity > 1 && setSelectedProduct({...selectedProduct, quantity: (selectedProduct.quantity || 1) - 1})}
                           className={`w-10 h-10 flex items-center justify-center ${theme.text} hover:bg-stone-100 dark:hover:bg-stone-800 transition disabled:opacity-50`}
