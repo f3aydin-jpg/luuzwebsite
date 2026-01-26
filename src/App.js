@@ -55,6 +55,8 @@ export default function WallArtShop() {
   const [showNewArrivals, setShowNewArrivals] = useState(false);
   const [specialFilter, setSpecialFilter] = useState(null);
   const [pageHistory, setPageHistory] = useState([]);
+  const [quickViewProduct, setQuickViewProduct] = useState(null);
+  const [openAccordion, setOpenAccordion] = useState(null);
   
   // Üyelik sistemi state'leri
   const [user, setUser] = useState(null);
@@ -625,7 +627,7 @@ export default function WallArtShop() {
                       <button onClick={(e) => { e.stopPropagation(); toggleFavorite(product.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
                         <Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={favorites.includes(product.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
                       </button>
-                      <button className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
+                      <button onClick={(e) => { e.stopPropagation(); setQuickViewProduct({...product, selectedSize: undefined, selectedFrame: undefined, quantity: 1}); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
                         <ZoomIn size={16} className={darkMode ? 'text-white' : 'text-stone-900'} />
                       </button>
                     </div>
@@ -679,7 +681,7 @@ export default function WallArtShop() {
                       <button onClick={(e) => { e.stopPropagation(); toggleFavorite(product.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
                         <Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={favorites.includes(product.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
                       </button>
-                      <button className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
+                      <button onClick={(e) => { e.stopPropagation(); setQuickViewProduct({...product, selectedSize: undefined, selectedFrame: undefined, quantity: 1}); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
                         <ZoomIn size={16} className={darkMode ? 'text-white' : 'text-stone-900'} />
                       </button>
                     </div>
@@ -805,6 +807,209 @@ export default function WallArtShop() {
           </div>
         </div>
       </footer>
+
+      {/* Quick View Modal */}
+      {quickViewProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setQuickViewProduct(null)}></div>
+          <div className={`relative ${theme.bg} w-full max-w-4xl max-h-[90vh] overflow-y-auto animate-scale-in`}>
+            <button onClick={() => setQuickViewProduct(null)} className={`absolute top-4 right-4 z-10 p-2 ${theme.textSecondary} hover:${theme.text}`}>
+              <X size={24} />
+            </button>
+            
+            <div className="grid md:grid-cols-2 gap-0">
+              {/* Product Image */}
+              <div className="relative aspect-[3/4] bg-stone-100">
+                <img src={quickViewProduct.images?.[0]} alt={quickViewProduct.name} className="w-full h-full object-cover" />
+                {quickViewProduct.discount > 0 && <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 text-xs font-medium uppercase">İndirim</div>}
+              </div>
+              
+              {/* Product Info */}
+              <div className="p-6 md:p-8 space-y-4">
+                <div>
+                  <p className={`text-[10px] ${theme.textMuted} uppercase tracking-wider mb-2`}>LUUZ POSTER</p>
+                  <h2 className={`text-xl md:text-2xl font-medium ${theme.text} mb-3`}>{quickViewProduct.name}</h2>
+                  
+                  {/* Price */}
+                  {(() => {
+                    let basePrice;
+                    if (quickViewProduct.selectedSize === '30x40') {
+                      basePrice = quickViewProduct.selectedFrame 
+                        ? (quickViewProduct.price30x40Framed || Math.round(quickViewProduct.priceFramed * 0.7))
+                        : (quickViewProduct.price30x40Unframed || Math.round(quickViewProduct.priceUnframed * 0.7));
+                    } else {
+                      basePrice = quickViewProduct.selectedFrame 
+                        ? (quickViewProduct.price50x70Framed || quickViewProduct.priceFramed)
+                        : (quickViewProduct.price50x70Unframed || quickViewProduct.priceUnframed);
+                    }
+                    const quantity = quickViewProduct.quantity || 1;
+                    const discountedPrice = quickViewProduct.discount > 0 ? Math.round(basePrice * (1 - quickViewProduct.discount / 100)) : basePrice;
+                    const minPrice = quickViewProduct.price30x40Unframed || Math.round(quickViewProduct.priceUnframed * 0.7);
+                    const maxPrice = quickViewProduct.price50x70Framed || quickViewProduct.priceFramed || quickViewProduct.priceUnframed;
+                    
+                    return (
+                      <div className="mb-3">
+                        {quickViewProduct.selectedSize && quickViewProduct.selectedFrame !== undefined ? (
+                          <div className="flex items-baseline gap-2">
+                            {quickViewProduct.discount > 0 && <span className={`text-base ${theme.textMuted} line-through`}>{basePrice * quantity} TL</span>}
+                            <span className={`text-xl font-medium ${quickViewProduct.discount > 0 ? 'text-red-500' : theme.text}`}>{discountedPrice * quantity} TL</span>
+                          </div>
+                        ) : (
+                          <p className={`text-lg ${theme.text}`}>{minPrice} TL – {maxPrice} TL</p>
+                        )}
+                      </div>
+                    );
+                  })()}
+                  
+                  {quickViewProduct.stock > 0 ? (
+                    <p className={`text-xs ${theme.textMuted} flex items-center gap-2`}><Check size={14} className="text-green-500" />Stokta mevcut</p>
+                  ) : (
+                    <p className="text-xs text-red-400">{t.outOfStock}</p>
+                  )}
+                </div>
+
+                {/* Options */}
+                <div className={`pt-4 border-t ${theme.border} space-y-4`}>
+                  {/* Size */}
+                  <div>
+                    <p className={`text-xs font-medium ${theme.textMuted} uppercase tracking-wider mb-2`}>Boyut</p>
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => setQuickViewProduct({...quickViewProduct, selectedSize: '30x40'})}
+                        className={`px-4 py-2 text-sm font-medium transition border ${quickViewProduct.selectedSize === '30x40' ? `${darkMode ? 'bg-white text-stone-900 border-white' : 'bg-stone-900 text-white border-stone-900'}` : `${theme.text} ${theme.border}`}`}
+                      >
+                        30x40 cm
+                      </button>
+                      <button 
+                        onClick={() => setQuickViewProduct({...quickViewProduct, selectedSize: '50x70'})}
+                        className={`px-4 py-2 text-sm font-medium transition border ${quickViewProduct.selectedSize === '50x70' ? `${darkMode ? 'bg-white text-stone-900 border-white' : 'bg-stone-900 text-white border-stone-900'}` : `${theme.text} ${theme.border}`}`}
+                      >
+                        50x70 cm
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Frame */}
+                  <div>
+                    <p className={`text-xs font-medium ${theme.textMuted} uppercase tracking-wider mb-2`}>Çerçeve</p>
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => setQuickViewProduct({...quickViewProduct, selectedFrame: false})}
+                        className={`px-4 py-2 text-sm font-medium transition border ${quickViewProduct.selectedFrame === false ? `${darkMode ? 'bg-white text-stone-900 border-white' : 'bg-stone-900 text-white border-stone-900'}` : `${theme.text} ${theme.border}`}`}
+                      >
+                        Çerçevesiz
+                      </button>
+                      <button 
+                        onClick={() => setQuickViewProduct({...quickViewProduct, selectedFrame: true})}
+                        className={`px-4 py-2 text-sm font-medium transition border ${quickViewProduct.selectedFrame === true ? `${darkMode ? 'bg-white text-stone-900 border-white' : 'bg-stone-900 text-white border-stone-900'}` : `${theme.text} ${theme.border}`}`}
+                      >
+                        Çerçeveli
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Quantity */}
+                  <div>
+                    <p className={`text-xs font-medium ${theme.textMuted} uppercase tracking-wider mb-2`}>Adet</p>
+                    <div className={`inline-flex items-center border ${theme.border}`}>
+                      <button 
+                        onClick={() => quickViewProduct.quantity > 1 && setQuickViewProduct({...quickViewProduct, quantity: quickViewProduct.quantity - 1})}
+                        className={`w-9 h-9 flex items-center justify-center ${theme.text} hover:bg-stone-100 dark:hover:bg-stone-800`}
+                      >
+                        <Minus size={14} />
+                      </button>
+                      <span className={`w-10 text-center text-sm font-medium ${theme.text}`}>{quickViewProduct.quantity || 1}</span>
+                      <button 
+                        onClick={() => setQuickViewProduct({...quickViewProduct, quantity: (quickViewProduct.quantity || 1) + 1})}
+                        className={`w-9 h-9 flex items-center justify-center ${theme.text} hover:bg-stone-100 dark:hover:bg-stone-800`}
+                      >
+                        <Plus size={14} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Buttons */}
+                  <div className="space-y-2 pt-2">
+                    <button 
+                      onClick={() => {
+                        if (quickViewProduct.selectedFrame === undefined || quickViewProduct.selectedSize === undefined) {
+                          alert('Lütfen boyut ve çerçeve seçin');
+                        } else {
+                          addToCart(quickViewProduct, quickViewProduct.selectedFrame);
+                          setQuickViewProduct(null);
+                        }
+                      }}
+                      disabled={quickViewProduct.stock === 0}
+                      className={`w-full py-3 text-sm font-medium uppercase tracking-wider transition ${quickViewProduct.stock === 0 ? 'opacity-50' : 'hover:opacity-90'} ${darkMode ? 'bg-white text-stone-900' : 'bg-stone-900 text-white'}`}
+                    >
+                      {quickViewProduct.stock === 0 ? t.outOfStock : t.addToCart}
+                    </button>
+                    <button 
+                      onClick={() => { setSelectedProduct({...quickViewProduct}); setQuickViewProduct(null); addToRecentlyViewed(quickViewProduct); }}
+                      className={`w-full py-3 text-sm font-medium uppercase tracking-wider border transition ${theme.text} ${theme.border} hover:bg-stone-100 dark:hover:bg-stone-800`}
+                    >
+                      Ürün Detayı
+                    </button>
+                  </div>
+
+                  {/* Accordion */}
+                  <div className={`pt-4 border-t ${theme.border}`}>
+                    {/* Detaylar */}
+                    <div className={`border-b ${theme.border}`}>
+                      <button 
+                        onClick={() => setOpenAccordion(openAccordion === 'qv-details' ? null : 'qv-details')}
+                        className={`w-full py-3 flex items-center justify-between ${theme.text}`}
+                      >
+                        <span className="text-sm font-medium">Detaylar</span>
+                        {openAccordion === 'qv-details' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                      </button>
+                      {openAccordion === 'qv-details' && (
+                        <div className={`pb-3 text-sm ${theme.textSecondary}`}>
+                          <p>{quickViewProduct.description || 'Yüksek kaliteli baskı teknolojisi ile üretilmiş poster.'}</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Kargo */}
+                    <div className={`border-b ${theme.border}`}>
+                      <button 
+                        onClick={() => setOpenAccordion(openAccordion === 'qv-shipping' ? null : 'qv-shipping')}
+                        className={`w-full py-3 flex items-center justify-between ${theme.text}`}
+                      >
+                        <span className="text-sm font-medium">Kargo</span>
+                        {openAccordion === 'qv-shipping' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                      </button>
+                      {openAccordion === 'qv-shipping' && (
+                        <div className={`pb-3 text-sm ${theme.textSecondary} space-y-1`}>
+                          <p>• Türkiye geneli ücretsiz kargo</p>
+                          <p>• 2-4 iş günü içinde teslimat</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Malzemeler */}
+                    <div>
+                      <button 
+                        onClick={() => setOpenAccordion(openAccordion === 'qv-materials' ? null : 'qv-materials')}
+                        className={`w-full py-3 flex items-center justify-between ${theme.text}`}
+                      >
+                        <span className="text-sm font-medium">Malzemeler</span>
+                        {openAccordion === 'qv-materials' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                      </button>
+                      {openAccordion === 'qv-materials' && (
+                        <div className={`pb-3 text-sm ${theme.textSecondary} space-y-1`}>
+                          <p>• 200gr mat kuşe kağıt</p>
+                          <p>• UV dayanıklı mürekkep</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Admin Panel */}
       {showAdmin && <AdminPanel onClose={() => { setShowAdmin(false); fetchProducts(); }} />}
@@ -1293,31 +1498,14 @@ export default function WallArtShop() {
                     )}
                   </div>
                 </div>
-                
-                {/* Trust Badges - Minimal Inline */}
-                <div className={`mt-8 pt-6 border-t ${theme.border} flex flex-wrap gap-6 ${theme.textMuted} text-xs`}>
-                  <div className="flex items-center gap-2">
-                    <Truck size={14} />
-                    <span>Ücretsiz Kargo</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <RotateCcw size={14} />
-                    <span>14 Gün İade</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Shield size={14} />
-                    <span>Güvenli Ödeme</span>
-                  </div>
-                </div>
               </div>
 
               {/* Product Info */}
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {/* Main Info */}
                 <div>
                   <p className={`text-[10px] ${theme.textMuted} uppercase tracking-wider mb-2`}>LUUZ POSTER</p>
-                  <h1 className={`text-2xl md:text-3xl font-medium ${theme.text} mb-4`}>{selectedProduct.name}</h1>
-                  <p className={`${theme.textSecondary} text-sm leading-relaxed mb-6`}>{selectedProduct.description}</p>
+                  <h1 className={`text-2xl md:text-3xl font-medium ${theme.text} mb-3`}>{selectedProduct.name}</h1>
                   
                   {/* Dynamic Price Display */}
                   {(() => {
@@ -1364,40 +1552,27 @@ export default function WallArtShop() {
                   })()}
                   
                   {selectedProduct.stock > 0 ? (
-                    <p className={`text-xs ${theme.textMuted} flex items-center gap-2`}><Check size={14} className="text-green-500" />Stokta mevcut</p>
+                    <p className={`text-xs ${theme.textMuted} flex items-center gap-2 mb-4`}><Check size={14} className="text-green-500" />Stokta mevcut</p>
                   ) : (
-                    <p className="text-xs text-red-400">{t.outOfStock}</p>
+                    <p className="text-xs text-red-400 mb-4">{t.outOfStock}</p>
                   )}
                 </div>
 
-                {/* Reviews */}
-                {selectedProduct.reviews?.length > 0 && (
-                  <div className={`py-4 border-t ${theme.border}`}>
-                    <h4 className={`text-xs font-medium ${theme.textMuted} uppercase tracking-wider mb-3`}>Müşteri Yorumları ({selectedProduct.reviews.length})</h4>
-                    {selectedProduct.reviews.map((r, idx) => (
-                      <div key={idx} className="py-2">
-                        <div className="flex gap-0.5 mb-1">{[...Array(r.rating)].map((_, i) => <Star key={i} size={12} fill="#000" color="#000" />)}</div>
-                        <p className={`text-sm ${theme.textSecondary}`}>"{r.comment}" - <span className={theme.text}>{r.name}</span></p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Options Section - Minimal Design */}
-                <div className={`py-6 border-t ${theme.border} space-y-6`}>
+                {/* Options Section - Compact Design */}
+                <div className={`pt-4 border-t ${theme.border} space-y-4`}>
                   {/* Size Selection */}
                   <div>
-                    <p className={`text-xs font-medium ${theme.textMuted} uppercase tracking-wider mb-3`}>Boyut</p>
-                    <div className="flex gap-3">
+                    <p className={`text-xs font-medium ${theme.textMuted} uppercase tracking-wider mb-2`}>Boyut</p>
+                    <div className="flex gap-2">
                       <button 
                         onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedSize: '30x40'})}
-                        className={`px-6 py-3 text-sm font-medium transition border ${selectedProduct.selectedSize === '30x40' ? `${darkMode ? 'bg-white text-stone-900 border-white' : 'bg-stone-900 text-white border-stone-900'}` : `${theme.text} ${theme.border} hover:border-stone-900 dark:hover:border-white`}`}
+                        className={`px-5 py-2.5 text-sm font-medium transition border ${selectedProduct.selectedSize === '30x40' ? `${darkMode ? 'bg-white text-stone-900 border-white' : 'bg-stone-900 text-white border-stone-900'}` : `${theme.text} ${theme.border} hover:border-stone-900 dark:hover:border-white`}`}
                       >
                         30x40 cm
                       </button>
                       <button 
                         onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedSize: '50x70'})}
-                        className={`px-6 py-3 text-sm font-medium transition border ${selectedProduct.selectedSize === '50x70' ? `${darkMode ? 'bg-white text-stone-900 border-white' : 'bg-stone-900 text-white border-stone-900'}` : `${theme.text} ${theme.border} hover:border-stone-900 dark:hover:border-white`}`}
+                        className={`px-5 py-2.5 text-sm font-medium transition border ${selectedProduct.selectedSize === '50x70' ? `${darkMode ? 'bg-white text-stone-900 border-white' : 'bg-stone-900 text-white border-stone-900'}` : `${theme.text} ${theme.border} hover:border-stone-900 dark:hover:border-white`}`}
                       >
                         50x70 cm
                       </button>
@@ -1406,17 +1581,17 @@ export default function WallArtShop() {
 
                   {/* Frame Selection */}
                   <div>
-                    <p className={`text-xs font-medium ${theme.textMuted} uppercase tracking-wider mb-3`}>Çerçeve</p>
-                    <div className="flex gap-3">
+                    <p className={`text-xs font-medium ${theme.textMuted} uppercase tracking-wider mb-2`}>Çerçeve</p>
+                    <div className="flex gap-2">
                       <button 
                         onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: false})}
-                        className={`px-6 py-3 text-sm font-medium transition border ${selectedProduct.selectedFrame === false ? `${darkMode ? 'bg-white text-stone-900 border-white' : 'bg-stone-900 text-white border-stone-900'}` : `${theme.text} ${theme.border} hover:border-stone-900 dark:hover:border-white`}`}
+                        className={`px-5 py-2.5 text-sm font-medium transition border ${selectedProduct.selectedFrame === false ? `${darkMode ? 'bg-white text-stone-900 border-white' : 'bg-stone-900 text-white border-stone-900'}` : `${theme.text} ${theme.border} hover:border-stone-900 dark:hover:border-white`}`}
                       >
                         Çerçevesiz
                       </button>
                       <button 
                         onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: true})}
-                        className={`px-6 py-3 text-sm font-medium transition border ${selectedProduct.selectedFrame === true ? `${darkMode ? 'bg-white text-stone-900 border-white' : 'bg-stone-900 text-white border-stone-900'}` : `${theme.text} ${theme.border} hover:border-stone-900 dark:hover:border-white`}`}
+                        className={`px-5 py-2.5 text-sm font-medium transition border ${selectedProduct.selectedFrame === true ? `${darkMode ? 'bg-white text-stone-900 border-white' : 'bg-stone-900 text-white border-stone-900'}` : `${theme.text} ${theme.border} hover:border-stone-900 dark:hover:border-white`}`}
                       >
                         Çerçeveli
                       </button>
@@ -1425,25 +1600,25 @@ export default function WallArtShop() {
 
                   {/* Quantity Selection */}
                   <div>
-                    <p className={`text-xs font-medium ${theme.textMuted} uppercase tracking-wider mb-3`}>Adet</p>
-                    <div className="flex items-center gap-4">
+                    <p className={`text-xs font-medium ${theme.textMuted} uppercase tracking-wider mb-2`}>Adet</p>
+                    <div className="flex items-center gap-3">
                       <div className={`flex items-center border ${theme.border}`}>
                         <button 
                           onClick={() => selectedProduct.quantity > 1 && setSelectedProduct({...selectedProduct, quantity: (selectedProduct.quantity || 1) - 1})}
-                          className={`w-10 h-10 flex items-center justify-center ${theme.text} hover:bg-stone-100 dark:hover:bg-stone-800 transition disabled:opacity-50`}
+                          className={`w-9 h-9 flex items-center justify-center ${theme.text} hover:bg-stone-100 dark:hover:bg-stone-800 transition disabled:opacity-50`}
                           disabled={!selectedProduct.quantity || selectedProduct.quantity <= 1}
                         >
-                          <Minus size={16} />
+                          <Minus size={14} />
                         </button>
-                        <span className={`w-12 text-center text-sm font-medium ${theme.text}`}>
+                        <span className={`w-10 text-center text-sm font-medium ${theme.text}`}>
                           {selectedProduct.quantity || 1}
                         </span>
                         <button 
                           onClick={() => setSelectedProduct({...selectedProduct, quantity: (selectedProduct.quantity || 1) + 1})}
-                          className={`w-10 h-10 flex items-center justify-center ${theme.text} hover:bg-stone-100 dark:hover:bg-stone-800 transition`}
+                          className={`w-9 h-9 flex items-center justify-center ${theme.text} hover:bg-stone-100 dark:hover:bg-stone-800 transition`}
                           disabled={selectedProduct.stock <= (selectedProduct.quantity || 1)}
                         >
-                          <Plus size={16} />
+                          <Plus size={14} />
                         </button>
                       </div>
                       {selectedProduct.stock < 10 && selectedProduct.stock > 0 && (
@@ -1452,9 +1627,8 @@ export default function WallArtShop() {
                     </div>
                   </div>
                   
-                  {/* Buttons - Full Width Stacked */}
-                  <div className="space-y-3 pt-4">
-                    {/* Add to Cart Button */}
+                  {/* Buttons */}
+                  <div className="space-y-2 pt-2">
                     <button 
                       onClick={() => {
                         if (selectedProduct.selectedFrame === undefined) {
@@ -1466,12 +1640,11 @@ export default function WallArtShop() {
                         }
                       }} 
                       disabled={selectedProduct.stock === 0}
-                      className={`w-full py-4 text-sm font-medium uppercase tracking-wider transition ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'} ${darkMode ? 'bg-white text-stone-900' : 'bg-stone-900 text-white'}`}
+                      className={`w-full py-3.5 text-sm font-medium uppercase tracking-wider transition ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'} ${darkMode ? 'bg-white text-stone-900' : 'bg-stone-900 text-white'}`}
                     >
                       {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
                     </button>
 
-                    {/* WhatsApp Order Button */}
                     <button 
                       onClick={() => {
                         if (selectedProduct.selectedSize === undefined) {
@@ -1492,24 +1665,81 @@ export default function WallArtShop() {
                           window.open(`https://wa.me/905060342409?text=${encodeURIComponent(message)}`, '_blank');
                         }
                       }}
-                      className={`w-full py-4 text-sm font-medium uppercase tracking-wider border transition flex items-center justify-center gap-2 ${theme.text} ${theme.border} hover:bg-stone-100 dark:hover:bg-stone-800`}
+                      className={`w-full py-3.5 text-sm font-medium uppercase tracking-wider border transition flex items-center justify-center gap-2 ${theme.text} ${theme.border} hover:bg-stone-100 dark:hover:bg-stone-800`}
                     >
                       <MessageCircle size={16} />
                       WhatsApp ile Sipariş Ver
                     </button>
+                  </div>
+
+                  {/* Accordion - Detaylar, Kargo, Malzemeler */}
+                  <div className={`pt-4 border-t ${theme.border} space-y-0`}>
+                    {/* Detaylar */}
+                    <div className={`border-b ${theme.border}`}>
+                      <button 
+                        onClick={() => setOpenAccordion(openAccordion === 'details' ? null : 'details')}
+                        className={`w-full py-4 flex items-center justify-between ${theme.text}`}
+                      >
+                        <span className="text-sm font-medium">Detaylar</span>
+                        {openAccordion === 'details' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                      </button>
+                      {openAccordion === 'details' && (
+                        <div className={`pb-4 text-sm ${theme.textSecondary} leading-relaxed`}>
+                          <p>{selectedProduct.description || 'Bu poster, yüksek kaliteli baskı teknolojisi ile üretilmiştir. Canlı renkler ve keskin detaylar ile mekanlarınıza şıklık katacaktır.'}</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Kargo */}
+                    <div className={`border-b ${theme.border}`}>
+                      <button 
+                        onClick={() => setOpenAccordion(openAccordion === 'shipping' ? null : 'shipping')}
+                        className={`w-full py-4 flex items-center justify-between ${theme.text}`}
+                      >
+                        <span className="text-sm font-medium">Kargo</span>
+                        {openAccordion === 'shipping' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                      </button>
+                      {openAccordion === 'shipping' && (
+                        <div className={`pb-4 text-sm ${theme.textSecondary} leading-relaxed space-y-2`}>
+                          <p>• Türkiye geneli ücretsiz kargo</p>
+                          <p>• 2-4 iş günü içinde teslimat</p>
+                          <p>• Özel koruyucu ambalaj ile gönderim</p>
+                          <p>• Kargo takip numarası SMS ile iletilir</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Malzemeler */}
+                    <div>
+                      <button 
+                        onClick={() => setOpenAccordion(openAccordion === 'materials' ? null : 'materials')}
+                        className={`w-full py-4 flex items-center justify-between ${theme.text}`}
+                      >
+                        <span className="text-sm font-medium">Malzemeler</span>
+                        {openAccordion === 'materials' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                      </button>
+                      {openAccordion === 'materials' && (
+                        <div className={`pb-4 text-sm ${theme.textSecondary} leading-relaxed space-y-2`}>
+                          <p>• 200gr mat kuşe kağıt</p>
+                          <p>• UV dayanıklı mürekkep</p>
+                          <p>• Çerçeveli seçenekte: Siyah ahşap çerçeve</p>
+                          <p>• Anti-yansıma cam</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Similar Products */}
-            <div className={`mt-16 pt-12 border-t ${theme.border}`}>
-              <h3 className={`text-xl font-medium tracking-wide ${theme.text} uppercase mb-8`}>Benzer Ürünler</h3>
+            <div className={`mt-12 pt-8 border-t ${theme.border}`}>
+              <h3 className={`text-xl font-medium tracking-wide ${theme.text} uppercase mb-6`}>Benzer Ürünler</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">{products.filter(p => p.category === selectedProduct.category && p.id !== selectedProduct.id).slice(0, 4).map(p => (
                 <div 
                   key={p.id} 
                   className="group cursor-pointer" 
-                  onClick={() => { setSelectedProduct({...p, selectedSize: undefined, selectedFrame: undefined}); setActiveImageIndex(0); window.scrollTo(0, 0); }}
+                  onClick={() => { setSelectedProduct({...p, selectedSize: undefined, selectedFrame: undefined}); setActiveImageIndex(0); setOpenAccordion(null); window.scrollTo(0, 0); }}
                 >
                   <div className="relative aspect-[3/4] overflow-hidden bg-stone-100 mb-3">
                     <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
