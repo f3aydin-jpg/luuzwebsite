@@ -513,46 +513,28 @@ export default function WallArtShop() {
         <p className="text-xs">Yeni Müşterilere %15 İndirim — Kod: <span className={`font-medium ${darkMode ? 'text-white' : 'text-stone-900'}`}>HOSGELDIN15</span></p>
       </div>
 
-      {/* Hero with Dynamic Product Background */}
-      <section className="relative h-[50vh] min-h-[400px] overflow-hidden">
-        {/* Dynamic Product Grid Background */}
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 grid grid-cols-5 md:grid-cols-7 lg:grid-cols-9 gap-0.5">
-            {products.length > 0 && [...products, ...products, ...products, ...products].slice(0, 36).map((product, idx) => (
-              <div 
-                key={`hero-${idx}`} 
-                className="aspect-[3/4] overflow-hidden"
-                style={{
-                  opacity: 0.4,
-                }}
-              >
-                <img 
-                  src={product.images?.[0]} 
-                  alt="" 
-                  className="w-full h-full object-cover grayscale"
-                />
-              </div>
-            ))}
-          </div>
-          {/* Dark Overlay */}
-          <div className="absolute inset-0 bg-black/70"></div>
-        </div>
+      {/* Hero - Minimal Typography Focused */}
+      <section className="relative h-[70vh] min-h-[500px] bg-stone-950 overflow-hidden">
+        {/* Subtle Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-stone-900 via-stone-950 to-black"></div>
         
         {/* Content */}
-        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4">
-          <p className="text-xs text-stone-400 uppercase tracking-[0.3em] mb-4 animate-fade-in">Özgün Duvar Sanatı</p>
-          <h2 className="text-3xl md:text-5xl font-light mb-4 text-white animate-fade-in tracking-wide">
-            Duvarlarınıza Karakter Katın
-          </h2>
-          <p className="text-sm md:text-base text-stone-400 max-w-md mx-auto mb-10 animate-fade-in-delay">
-            Minimalist tasarımlarla mekanlarınızı dönüştürün
+        <div className="relative z-10 h-full max-w-7xl mx-auto px-4 flex flex-col items-center justify-center text-center">
+          <p className="text-[10px] text-stone-500 uppercase tracking-[0.4em] mb-6 animate-fade-in">Özgün Duvar Sanatı</p>
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-extralight mb-6 text-white animate-fade-in tracking-tight">
+            LUUZ
+          </h1>
+          <p className="text-lg md:text-xl text-stone-400 font-light mb-12 animate-fade-in-delay tracking-wide">
+            Duvarlarınıza karakter katın
           </p>
-          <button 
-            onClick={() => setShowCollection(true)} 
-            className={`px-10 py-4 text-sm font-medium uppercase tracking-wider animate-fade-in-delay-2 transition-all border ${darkMode ? 'bg-white text-stone-900 border-white hover:bg-transparent hover:text-white' : 'bg-white text-stone-900 border-white hover:bg-transparent hover:text-white'}`}
-          >
-            Koleksiyonu Keşfet
-          </button>
+          <div className="animate-fade-in-delay-2">
+            <button 
+              onClick={() => setShowCollection(true)} 
+              className="px-12 py-4 text-xs font-medium uppercase tracking-[0.2em] transition-all border border-white/30 text-white hover:bg-white hover:text-stone-900"
+            >
+              Koleksiyonu Keşfet
+            </button>
+          </div>
         </div>
       </section>
 
