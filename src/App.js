@@ -510,56 +510,48 @@ export default function WallArtShop() {
 
       {/* Promo */}
       <div className={`${theme.bgTertiary} ${theme.textSecondary} py-2.5 text-center border-b ${theme.border}`}>
-        <p className="text-xs">🎉 Yeni Müşterilere %15 İndirim - Kod: <span className={`font-semibold ${darkMode ? 'text-white' : 'text-stone-900'}`}>HOSGELDIN15</span></p>
+        <p className="text-xs">Yeni Müşterilere %15 İndirim — Kod: <span className={`font-medium ${darkMode ? 'text-white' : 'text-stone-900'}`}>HOSGELDIN15</span></p>
       </div>
 
       {/* Hero with Dynamic Product Background */}
-      <section className="relative h-[45vh] min-h-[350px] overflow-hidden">
+      <section className="relative h-[50vh] min-h-[400px] overflow-hidden">
         {/* Dynamic Product Grid Background */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 grid grid-cols-5 md:grid-cols-7 lg:grid-cols-9 gap-1 p-1">
+          <div className="absolute inset-0 grid grid-cols-5 md:grid-cols-7 lg:grid-cols-9 gap-0.5">
             {products.length > 0 && [...products, ...products, ...products, ...products].slice(0, 36).map((product, idx) => (
               <div 
                 key={`hero-${idx}`} 
                 className="aspect-[3/4] overflow-hidden"
                 style={{
-                  opacity: 0.35 + (Math.sin(idx * 0.5) * 0.15),
-                  animation: `heroPulse ${12 + (idx % 6) * 2}s ease-in-out infinite`,
-                  animationDelay: `${(idx % 12) * 1}s`
+                  opacity: 0.4,
                 }}
               >
                 <img 
                   src={product.images?.[0]} 
                   alt="" 
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover grayscale"
                 />
               </div>
             ))}
           </div>
-          {/* Smooth Gradient Overlays */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60"></div>
-          <div className={`absolute inset-0 bg-gradient-to-t ${darkMode ? 'from-stone-900/80' : 'from-stone-100/80'} via-transparent to-transparent`}></div>
-          <div className={`absolute inset-0 bg-gradient-to-b ${darkMode ? 'from-stone-900/40' : 'from-stone-100/40'} via-transparent to-transparent`}></div>
+          {/* Dark Overlay */}
+          <div className="absolute inset-0 bg-black/70"></div>
         </div>
         
         {/* Content */}
         <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white animate-fade-in">
-            Duvarlarınıza <span style={{color: theme.accent}}>Sanat</span> Katın
+          <p className="text-xs text-stone-400 uppercase tracking-[0.3em] mb-4 animate-fade-in">Özgün Duvar Sanatı</p>
+          <h2 className="text-3xl md:text-5xl font-light mb-4 text-white animate-fade-in tracking-wide">
+            Duvarlarınıza Karakter Katın
           </h2>
-          <p className="text-base md:text-lg text-stone-300 max-w-xl mx-auto mb-8 animate-fade-in-delay">
-            Özgün tasarımlarla mekanlarınıza karakter katın
+          <p className="text-sm md:text-base text-stone-400 max-w-md mx-auto mb-10 animate-fade-in-delay">
+            Minimalist tasarımlarla mekanlarınızı dönüştürün
           </p>
           <button 
             onClick={() => setShowCollection(true)} 
-            className="group relative px-10 py-4 rounded-full font-bold text-base overflow-hidden animate-fade-in-delay-2 transition-all duration-500 hover:scale-105 hover:shadow-[0_0_40px_rgba(232,220,196,0.4)]"
-            style={{background: `linear-gradient(135deg, ${theme.accent} 0%, #d4a574 50%, ${theme.accent} 100%)`, backgroundSize: '200% 200%'}}
+            className={`px-10 py-4 text-sm font-medium uppercase tracking-wider animate-fade-in-delay-2 transition-all border ${darkMode ? 'bg-white text-stone-900 border-white hover:bg-transparent hover:text-white' : 'bg-white text-stone-900 border-white hover:bg-transparent hover:text-white'}`}
           >
-            <span className="relative z-10 flex items-center gap-2 text-stone-900">
-              Koleksiyonu Keşfet
-              <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
-            </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+            Koleksiyonu Keşfet
           </button>
         </div>
       </section>
@@ -754,54 +746,80 @@ export default function WallArtShop() {
 
       {/* Compare Bar */}
       {compareProducts.length > 0 && (
-        <div className={`fixed bottom-20 left-1/2 transform -translate-x-1/2 ${theme.bgSecondary} rounded-full shadow-2xl border ${theme.border} px-4 py-2 flex items-center gap-3 z-30`}>
+        <div className={`fixed bottom-20 left-1/2 transform -translate-x-1/2 ${theme.bgSecondary} shadow-2xl border ${theme.border} px-4 py-2 flex items-center gap-3 z-30`}>
           <span className={`text-xs ${theme.textSecondary}`}>{compareProducts.length} ürün</span>
-          <div className="flex -space-x-2">{compareProducts.map(p => <img key={p.id} src={p.images[0]} alt="" className="w-8 h-8 rounded-full border-2 border-stone-700 object-cover" />)}</div>
-          <button onClick={() => setShowCompare(true)} className="text-stone-900 px-3 py-1 rounded-full text-xs font-medium" style={{background: theme.accent}}>{t.compare}</button>
+          <div className="flex -space-x-2">{compareProducts.map(p => <img key={p.id} src={p.images[0]} alt="" className="w-8 h-8 border-2 border-stone-700 object-cover" />)}</div>
+          <button onClick={() => setShowCompare(true)} className={`px-3 py-1 text-xs font-medium ${darkMode ? 'bg-white text-stone-900' : 'bg-stone-900 text-white'}`}>{t.compare}</button>
           <button onClick={() => setCompareProducts([])} className={theme.textMuted}><X size={16} /></button>
         </div>
       )}
 
-      {/* Features - Compact */}
-      <section className={`py-4 ${theme.bgSecondary} border-y ${theme.border}`}>
-        <div className="max-w-5xl mx-auto px-4 flex flex-wrap justify-center gap-6 md:gap-10">
+      {/* Features - Minimal */}
+      <section className={`py-6 border-y ${theme.border}`}>
+        <div className="max-w-5xl mx-auto px-4 flex flex-wrap justify-center gap-8 md:gap-12">
           {[{icon: Truck, title: 'Ücretsiz Kargo'}, {icon: Shield, title: 'Güvenli Ödeme'}, {icon: RotateCcw, title: '14 Gün İade'}, {icon: Package, title: 'Özenli Paket'}].map((item, idx) => (
             <div key={idx} className="flex items-center gap-2">
-              <item.icon size={16} style={{color: theme.accent}} />
-              <span className={`text-xs font-medium ${theme.textSecondary}`}>{item.title}</span>
+              <item.icon size={14} className={theme.textMuted} />
+              <span className={`text-xs ${theme.textMuted}`}>{item.title}</span>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Newsletter - Compact */}
-      <section className={`py-8 ${darkMode ? 'bg-stone-800' : 'bg-stone-100'}`}>
-        <div className="max-w-2xl mx-auto px-4 text-center">
-          <h3 className={`text-lg font-bold ${theme.text} mb-2`}>{t.newsletter}</h3>
-          <p className={`${theme.textSecondary} mb-4 text-xs`}>İndirimlerden ilk siz haberdar olun</p>
-          <div className="flex gap-2 max-w-sm mx-auto">
-            <input type="email" placeholder="E-posta" className={`flex-1 px-3 py-2 rounded-lg text-sm ${theme.input} border`} />
-            <button className="text-stone-900 px-4 py-2 rounded-lg text-sm font-medium" style={{background: theme.accent}}>{t.subscribe}</button>
+      {/* Newsletter - Minimal */}
+      <section className={`py-12 border-b ${theme.border}`}>
+        <div className="max-w-xl mx-auto px-4 text-center">
+          <p className={`text-[10px] ${theme.textMuted} uppercase tracking-[0.2em] mb-2`}>Bülten</p>
+          <h3 className={`text-xl font-medium ${theme.text} mb-3`}>{t.newsletter}</h3>
+          <p className={`${theme.textMuted} mb-6 text-xs`}>İndirimlerden ve yeni ürünlerden ilk siz haberdar olun</p>
+          <div className="flex gap-0 max-w-md mx-auto">
+            <input type="email" placeholder="E-posta adresiniz" className={`flex-1 px-4 py-3 text-sm ${theme.input} border ${theme.border} border-r-0 focus:outline-none`} />
+            <button className={`px-6 py-3 text-xs font-medium uppercase tracking-wider transition ${darkMode ? 'bg-white text-stone-900 hover:bg-stone-200' : 'bg-stone-900 text-white hover:bg-stone-800'}`}>{t.subscribe}</button>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className={`${theme.bgTertiary} py-12 border-t ${theme.border}`}>
+      {/* Footer - Minimal */}
+      <footer className={`py-16 ${theme.bg}`}>
         <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
             <div>
-              <img src={darkMode ? "/luuz-logo-white.png" : "/luuz-logo-black.png"} alt="LUUZ" className="h-8 mb-4" />
-              <p className={`${theme.textMuted} text-xs`}>Özgün duvar sanatı tasarımları.</p>
-              <div className="flex gap-3 mt-4"><button className={theme.textMuted}><Instagram size={18} /></button><button className={theme.textMuted}><Twitter size={18} /></button><button className={theme.textMuted}><Facebook size={18} /></button></div>
+              <img src={darkMode ? "/luuz-logo-white.png" : "/luuz-logo-black.png"} alt="LUUZ" className="h-6 mb-4" />
+              <p className={`${theme.textMuted} text-xs leading-relaxed`}>Özgün duvar sanatı tasarımları ile mekanlarınıza karakter katın.</p>
             </div>
-            <div><h5 className={`font-medium mb-3 text-sm ${theme.text}`}>Linkler</h5><ul className={`space-y-2 ${theme.textMuted} text-xs`}><li><button onClick={() => document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' })}>{t.collection}</button></li><li><button onClick={() => setShowAbout(true)}>{t.about}</button></li><li><button onClick={() => setShowFAQ(true)}>{t.faq}</button></li></ul></div>
-            <div><h5 className={`font-medium mb-3 text-sm ${theme.text}`}>Yardım</h5><ul className={`space-y-2 ${theme.textMuted} text-xs`}><li>Kargo Bilgileri</li><li>İade & Değişim</li><li><button onClick={() => setShowOrderHistory(true)}>{t.orderHistory}</button></li></ul></div>
-            <div><h5 className={`font-medium mb-3 text-sm ${theme.text}`}>İletişim</h5><ul className={`space-y-2 ${theme.textMuted} text-xs`}><li>info@luuz.com.tr</li><li>+90 212 555 00 00</li><li>İstanbul, Türkiye</li></ul></div>
+            <div>
+              <h5 className={`text-xs font-medium uppercase tracking-wider mb-4 ${theme.text}`}>Linkler</h5>
+              <ul className={`space-y-3 ${theme.textMuted} text-xs`}>
+                <li><button onClick={() => setShowCollection(true)} className="hover:underline">{t.collection}</button></li>
+                <li><button onClick={() => setShowAbout(true)} className="hover:underline">{t.about}</button></li>
+                <li><button onClick={() => setShowFAQ(true)} className="hover:underline">{t.faq}</button></li>
+              </ul>
+            </div>
+            <div>
+              <h5 className={`text-xs font-medium uppercase tracking-wider mb-4 ${theme.text}`}>Yardım</h5>
+              <ul className={`space-y-3 ${theme.textMuted} text-xs`}>
+                <li className="hover:underline cursor-pointer">Kargo Bilgileri</li>
+                <li className="hover:underline cursor-pointer">İade & Değişim</li>
+                <li><button onClick={() => setShowOrderHistory(true)} className="hover:underline">{t.orderHistory}</button></li>
+              </ul>
+            </div>
+            <div>
+              <h5 className={`text-xs font-medium uppercase tracking-wider mb-4 ${theme.text}`}>İletişim</h5>
+              <ul className={`space-y-3 ${theme.textMuted} text-xs`}>
+                <li>info@luuz.com.tr</li>
+                <li>+90 212 555 00 00</li>
+                <li>İstanbul, Türkiye</li>
+              </ul>
+              <div className="flex gap-4 mt-4">
+                <button className={`${theme.textMuted} hover:${theme.text} transition`}><Instagram size={16} /></button>
+                <button className={`${theme.textMuted} hover:${theme.text} transition`}><Twitter size={16} /></button>
+                <button className={`${theme.textMuted} hover:${theme.text} transition`}><Facebook size={16} /></button>
+              </div>
+            </div>
           </div>
-          <div className={`border-t ${theme.border} mt-8 pt-8 flex justify-between items-center ${theme.textMuted} text-xs`}>
+          <div className={`border-t ${theme.border} pt-8 flex justify-between items-center ${theme.textMuted} text-xs`}>
             <span>© 2025 LUUZ. Tüm hakları saklıdır.</span>
-            <button onClick={() => setShowAdmin(true)} className="flex items-center gap-1 hover:text-amber-500 transition"><Settings size={14} /> Admin</button>
+            <button onClick={() => setShowAdmin(true)} className={`hover:${theme.text} transition`}><Settings size={14} /></button>
           </div>
         </div>
       </footer>
@@ -1010,22 +1028,20 @@ export default function WallArtShop() {
             </div>
 
             {/* Categories */}
-            <div className="mb-6">
+            <div className="mb-8">
               {/* Special Filters - Best Sellers & New Arrivals */}
-              <div className="flex gap-2 mb-4 justify-center">
+              <div className="flex gap-3 mb-6 justify-center">
                 <button 
                   onClick={() => setSpecialFilter(specialFilter === 'bestSeller' ? null : 'bestSeller')}
-                  className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all ${specialFilter === 'bestSeller' ? 'bg-amber-500 text-stone-900' : `${theme.card} ${theme.textSecondary} border hover:border-amber-500`}`}
+                  className={`px-5 py-2.5 text-xs font-medium uppercase tracking-wider transition-all border ${specialFilter === 'bestSeller' ? `${darkMode ? 'bg-white text-stone-900 border-white' : 'bg-stone-900 text-white border-stone-900'}` : `${theme.text} ${theme.border} hover:border-stone-900 dark:hover:border-white`}`}
                 >
-                  <TrendingUp size={14} />
-                  <span>Çok Satanlar</span>
+                  Çok Satanlar
                 </button>
                 <button 
                   onClick={() => setSpecialFilter(specialFilter === 'newArrival' ? null : 'newArrival')}
-                  className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all ${specialFilter === 'newArrival' ? 'bg-green-500 text-white' : `${theme.card} ${theme.textSecondary} border hover:border-green-500`}`}
+                  className={`px-5 py-2.5 text-xs font-medium uppercase tracking-wider transition-all border ${specialFilter === 'newArrival' ? `${darkMode ? 'bg-white text-stone-900 border-white' : 'bg-stone-900 text-white border-stone-900'}` : `${theme.text} ${theme.border} hover:border-stone-900 dark:hover:border-white`}`}
                 >
-                  <Star size={14} />
-                  <span>Yeni Ürünler</span>
+                  Yeni Ürünler
                 </button>
               </div>
 
@@ -1035,8 +1051,7 @@ export default function WallArtShop() {
                   <button 
                     key={cat} 
                     onClick={() => setSelectedCategory(cat)} 
-                    className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all ${selectedCategory === cat ? 'text-stone-900' : `${theme.textSecondary} hover:${theme.text}`}`} 
-                    style={selectedCategory === cat ? {background: theme.accent} : {}}
+                    className={`px-4 py-2 text-xs font-medium transition-all border ${selectedCategory === cat ? `${darkMode ? 'bg-white text-stone-900 border-white' : 'bg-stone-900 text-white border-stone-900'}` : `${theme.textSecondary} ${theme.border} hover:${theme.text} hover:border-stone-500`}`}
                   >
                     {cat}
                   </button>
@@ -1045,31 +1060,30 @@ export default function WallArtShop() {
             </div>
 
             {/* Filters & Sort - Minimalist */}
-            <div className="flex items-center justify-between gap-4 mb-6 pb-4 border-b" style={{borderColor: theme.border}}>
+            <div className={`flex items-center justify-between gap-4 mb-8 pb-4 border-b ${theme.border}`}>
               <span className={`text-xs ${theme.textMuted}`}>{filteredProducts.length} ürün</span>
-              <div className="flex items-center gap-2">
-                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className={`px-3 py-1.5 rounded-lg text-xs ${theme.bg} ${theme.text} border ${theme.border} focus:outline-none`}>
+              <div className="flex items-center gap-3">
+                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className={`px-3 py-2 text-xs ${theme.bg} ${theme.text} border ${theme.border} focus:outline-none`}>
                   <option value="popular">Popüler</option>
                   <option value="newest">En Yeni</option>
                   <option value="priceLow">Fiyat ↑</option>
                   <option value="priceHigh">Fiyat ↓</option>
                 </select>
-                <div className={`flex items-center gap-1 p-1 rounded-lg border ${theme.border}`}>
-                  <button onClick={() => setViewMode('grid')} className={`p-1 rounded ${viewMode === 'grid' ? theme.bgSecondary : ''}`}><Grid size={14} className={theme.textMuted} /></button>
-                  <button onClick={() => setViewMode('list')} className={`p-1 rounded ${viewMode === 'list' ? theme.bgSecondary : ''}`}><List size={14} className={theme.textMuted} /></button>
+                <div className={`flex items-center border ${theme.border}`}>
+                  <button onClick={() => setViewMode('grid')} className={`p-2 ${viewMode === 'grid' ? (darkMode ? 'bg-white text-stone-900' : 'bg-stone-900 text-white') : ''}`}><Grid size={14} /></button>
+                  <button onClick={() => setViewMode('list')} className={`p-2 ${viewMode === 'list' ? (darkMode ? 'bg-white text-stone-900' : 'bg-stone-900 text-white') : ''}`}><List size={14} /></button>
                 </div>
               </div>
             </div>
 
             {/* Products Grid */}
             {isLoading ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {[...Array(8)].map((_, idx) => (
                   <div key={idx} className="animate-pulse">
-                    <div className={`${theme.card} rounded-2xl overflow-hidden border`}>
-                      <div className="skeleton aspect-square"></div>
-                    </div>
-                    <div className="skeleton h-10 rounded-xl mt-3"></div>
+                    <div className="skeleton aspect-[3/4] bg-stone-200 dark:bg-stone-700"></div>
+                    <div className="skeleton h-4 mt-3 bg-stone-200 dark:bg-stone-700"></div>
+                    <div className="skeleton h-4 w-1/2 mt-2 bg-stone-200 dark:bg-stone-700"></div>
                   </div>
                 ))}
               </div>
