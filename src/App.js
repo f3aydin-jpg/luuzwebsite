@@ -905,13 +905,13 @@ export default function WallArtShop() {
                     <div className="flex gap-2">
                       <button 
                         onClick={() => setQuickViewProduct({...quickViewProduct, selectedSize: '30x40'})}
-                        className={`px-4 py-2 text-sm font-medium transition border ${quickViewProduct.selectedSize === '30x40' ? 'bg-white text-black border-stone-900 dark:bg-white dark:text-stone-900 dark:border-white' : 'text-stone-900 border-stone-400 hover:border-stone-900 dark:text-white dark:border-stone-500 dark:hover:border-white'}`}
+                        className={`px-4 py-2 text-sm font-medium transition border ${quickViewProduct.selectedSize === '30x40' ? 'bg-stone-900 text-black border-stone-900 dark:bg-white dark:text-stone-900 dark:border-white' : 'text-black border-stone-400 hover:border-stone-900 dark:text-white dark:border-stone-500 dark:hover:border-white'}`}
                       >                                                                                                            
                         30x40 cm
                       </button>
                       <button 
                         onClick={() => setQuickViewProduct({...quickViewProduct, selectedSize: '50x70'})}
-                        className={`px-4 py-2 text-sm font-medium transition border ${quickViewProduct.selectedSize === '50x70' ? 'bg-white text-black border-stone-900 dark:bg-white dark:text-stone-900 dark:border-white' : 'text-stone-900 border-stone-400 hover:border-stone-900 dark:text-white dark:border-stone-500 dark:hover:border-white'}`}
+                        className={`px-4 py-2 text-sm font-medium transition border ${quickViewProduct.selectedSize === '50x70' ? 'bg-stone-900 text-black border-stone-900 dark:bg-white dark:text-stone-900 dark:border-white' : 'text-black border-stone-400 hover:border-stone-900 dark:text-white dark:border-stone-500 dark:hover:border-white'}`}
                       >
                         50x70 cm
                       </button>
