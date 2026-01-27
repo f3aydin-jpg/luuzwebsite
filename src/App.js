@@ -204,6 +204,10 @@ export default function WallArtShop() {
 
   // Favorileri kaydet
   const saveFavorites = async (newFavorites) => {
+    // Her zaman localStorage'a kaydet (giriş yapmamış kullanıcılar için)
+    localStorage.setItem('luuz_favorites', JSON.stringify(newFavorites));
+    
+    // Giriş yapmış kullanıcılar için Firebase'e de kaydet
     if (user) {
       try {
         await updateDoc(doc(db, 'users', user.uid), {
@@ -335,6 +339,12 @@ export default function WallArtShop() {
 
   useEffect(() => {
     fetchProducts();
+    
+    // localStorage'dan favorileri yükle (giriş yapmamış kullanıcılar için)
+    const savedFavorites = localStorage.getItem('luuz_favorites');
+    if (savedFavorites) {
+      setFavorites(JSON.parse(savedFavorites));
+    }
     
     // Auth durumunu dinle
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
