@@ -379,10 +379,14 @@ export default function WallArtShop() {
     return matchesCategory && matchesSearch && matchesPrice && matchesSize && matchesSpecial;
   }).sort((a, b) => sortBy === 'priceLow' ? a.priceUnframed - b.priceUnframed : sortBy === 'priceHigh' ? b.priceUnframed - a.priceUnframed : sortBy === 'newest' ? b.isNew - a.isNew : b.isBestSeller - a.isBestSeller);
 
+  // Helper: ID'nin favorilerde olup olmadığını kontrol et (string karşılaştırması)
+  const isFavorite = (id) => favorites.includes(String(id));
+
   const toggleFavorite = (id) => {
-    const newFavorites = favorites.includes(id) 
-      ? favorites.filter(f => f !== id) 
-      : [...favorites, id];
+    const stringId = String(id); // ID'yi her zaman string yap
+    const newFavorites = favorites.includes(stringId) 
+      ? favorites.filter(f => f !== stringId) 
+      : [...favorites, stringId];
     setFavorites(newFavorites);
     saveFavorites(newFavorites);
   };
@@ -670,7 +674,7 @@ export default function WallArtShop() {
                     {/* Hover Icons */}
                     <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                       <button onClick={(e) => { e.stopPropagation(); toggleFavorite(product.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
-                        <Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={favorites.includes(product.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
+                        <Heart size={16} fill={isFavorite(product.id) ? theme.accent : 'none'} color={isFavorite(product.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
                       </button>
                       <button onClick={(e) => { e.stopPropagation(); setQuickViewProduct({...product, selectedSize: undefined, selectedFrame: undefined, quantity: 1}); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
                         <ZoomIn size={16} className={darkMode ? 'text-white' : 'text-stone-900'} />
@@ -727,7 +731,7 @@ export default function WallArtShop() {
                     {/* Hover Icons */}
                     <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                       <button onClick={(e) => { e.stopPropagation(); toggleFavorite(product.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
-                        <Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={favorites.includes(product.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
+                        <Heart size={16} fill={isFavorite(product.id) ? theme.accent : 'none'} color={isFavorite(product.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
                       </button>
                       <button onClick={(e) => { e.stopPropagation(); setQuickViewProduct({...product, selectedSize: undefined, selectedFrame: undefined, quantity: 1}); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
                         <ZoomIn size={16} className={darkMode ? 'text-white' : 'text-stone-900'} />
@@ -897,9 +901,9 @@ export default function WallArtShop() {
                     <h2 className={`text-xl md:text-2xl font-medium ${theme.text}`}>{quickViewProduct.name}</h2>
                     <button 
                       onClick={() => toggleFavorite(quickViewProduct.id)}
-                      className={`flex-shrink-0 p-2 transition ${favorites.includes(quickViewProduct.id) ? 'text-red-500' : theme.textMuted}`}
+                      className={`flex-shrink-0 p-2 transition ${isFavorite(quickViewProduct.id) ? 'text-red-500' : theme.textMuted}`}
                     >
-                      <Heart size={20} fill={favorites.includes(quickViewProduct.id) ? 'currentColor' : 'none'} />
+                      <Heart size={20} fill={isFavorite(quickViewProduct.id) ? 'currentColor' : 'none'} />
                     </button>
                   </div>
                   
@@ -1179,7 +1183,7 @@ export default function WallArtShop() {
                     {/* Hover Icons */}
                     <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button onClick={(e) => { e.stopPropagation(); toggleFavorite(product.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
-                        <Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={favorites.includes(product.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
+                        <Heart size={16} fill={isFavorite(product.id) ? theme.accent : 'none'} color={isFavorite(product.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
                       </button>
                       <button className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
                         <ZoomIn size={16} className={darkMode ? 'text-white' : 'text-stone-900'} />
@@ -1255,7 +1259,7 @@ export default function WallArtShop() {
                     {/* Hover Icons */}
                     <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button onClick={(e) => { e.stopPropagation(); toggleFavorite(product.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
-                        <Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={favorites.includes(product.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
+                        <Heart size={16} fill={isFavorite(product.id) ? theme.accent : 'none'} color={isFavorite(product.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
                       </button>
                       <button className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
                         <ZoomIn size={16} className={darkMode ? 'text-white' : 'text-stone-900'} />
@@ -1439,7 +1443,7 @@ export default function WallArtShop() {
                       {/* Hover Icons */}
                       <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button onClick={(e) => { e.stopPropagation(); toggleFavorite(product.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
-                          <Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={favorites.includes(product.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
+                          <Heart size={16} fill={isFavorite(product.id) ? theme.accent : 'none'} color={isFavorite(product.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
                         </button>
                         <button className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
                           <ZoomIn size={16} className={darkMode ? 'text-white' : 'text-stone-900'} />
@@ -1484,7 +1488,7 @@ export default function WallArtShop() {
                           <p className={`text-xs ${theme.textMuted}`}>{product.category}</p>
                         </div>
                         <button onClick={(e) => { e.stopPropagation(); toggleFavorite(product.id); }}>
-                          <Heart size={16} fill={favorites.includes(product.id) ? theme.accent : 'none'} color={favorites.includes(product.id) ? theme.accent : (darkMode ? '#a8a29e' : '#78716c')} />
+                          <Heart size={16} fill={isFavorite(product.id) ? theme.accent : 'none'} color={isFavorite(product.id) ? theme.accent : (darkMode ? '#a8a29e' : '#78716c')} />
                         </button>
                       </div>
                       <div className="flex items-center justify-between mt-2">
@@ -1549,7 +1553,7 @@ export default function WallArtShop() {
               <div className="flex items-center gap-1">
                 <button onClick={() => setShowSearch(!showSearch)} className={`p-2 ${theme.textSecondary}`}><Search size={18} /></button>
                 <button onClick={() => toggleFavorite(selectedProduct.id)} className={`p-2 ${theme.textSecondary} rounded-full hover:scale-110 transition-transform`}>
-                  <Heart size={18} fill={favorites.includes(selectedProduct.id) ? theme.accent : 'none'} color={favorites.includes(selectedProduct.id) ? theme.accent : (darkMode ? '#a8a29e' : '#78716c')} />
+                  <Heart size={18} fill={isFavorite(selectedProduct.id) ? theme.accent : 'none'} color={isFavorite(selectedProduct.id) ? theme.accent : (darkMode ? '#a8a29e' : '#78716c')} />
                 </button>
                 {user ? (
                   <button onClick={() => setShowProfile(true)} className={`p-2 ${theme.textSecondary} relative`}>
@@ -1650,9 +1654,9 @@ export default function WallArtShop() {
                     <h1 className={`text-2xl md:text-3xl font-medium ${theme.text}`}>{selectedProduct.name}</h1>
                     <button 
                       onClick={() => toggleFavorite(selectedProduct.id)}
-                      className={`flex-shrink-0 p-2 transition ${favorites.includes(selectedProduct.id) ? 'text-red-500' : theme.textMuted}`}
+                      className={`flex-shrink-0 p-2 transition ${isFavorite(selectedProduct.id) ? 'text-red-500' : theme.textMuted}`}
                     >
-                      <Heart size={22} fill={favorites.includes(selectedProduct.id) ? 'currentColor' : 'none'} />
+                      <Heart size={22} fill={isFavorite(selectedProduct.id) ? 'currentColor' : 'none'} />
                     </button>
                   </div>
                   
@@ -1953,7 +1957,7 @@ export default function WallArtShop() {
                     <img src={p.images?.[1] || p.images?.[0]} alt={p.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100" />
                     <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                       <button onClick={(e) => { e.stopPropagation(); toggleFavorite(p.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
-                        <Heart size={16} fill={favorites.includes(p.id) ? theme.accent : 'none'} color={favorites.includes(p.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
+                        <Heart size={16} fill={isFavorite(p.id) ? theme.accent : 'none'} color={isFavorite(p.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
                       </button>
                       <button onClick={(e) => { e.stopPropagation(); setQuickViewProduct({...p, selectedSize: undefined, selectedFrame: undefined, quantity: 1, activeIndex: 0}); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
                         <ZoomIn size={16} className={darkMode ? 'text-white' : 'text-stone-900'} />
@@ -2091,7 +2095,7 @@ export default function WallArtShop() {
             <div className="p-5">
               {favorites.length === 0 ? <div className="text-center py-12"><Heart size={48} className={`mx-auto mb-4 ${theme.textMuted}`} /><p className={theme.textMuted}>Henüz favori yok</p></div> : (
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {products.filter(p => favorites.includes(p.id)).map(product => (
+                  {products.filter(p => isFavorite(p.id)).map(product => (
                     <div key={product.id}>
                       <div className={`relative overflow-hidden ${theme.card} rounded-xl border`}>
                         <button onClick={() => toggleFavorite(product.id)} className="absolute top-2 right-2 z-10 bg-red-500/80 rounded-full p-1.5"><X size={12} className="text-white" /></button>
