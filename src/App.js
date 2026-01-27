@@ -387,10 +387,17 @@ export default function WallArtShop() {
   }).sort((a, b) => sortBy === 'priceLow' ? a.priceUnframed - b.priceUnframed : sortBy === 'priceHigh' ? b.priceUnframed - a.priceUnframed : sortBy === 'newest' ? b.isNew - a.isNew : b.isBestSeller - a.isBestSeller);
 
   // Helper: ID'nin favorilerde olup olmadığını kontrol et (string karşılaştırması)
-  const isFavorite = (id) => favorites.includes(String(id));
+  const isFavorite = (id) => {
+    if (!id) return false;
+    return favorites.includes(String(id));
+  };
 
   const toggleFavorite = (id) => {
-    const stringId = String(id); // ID'yi her zaman string yap
+    if (!id) {
+      console.error('toggleFavorite: ID tanımsız!');
+      return;
+    }
+    const stringId = String(id);
     const newFavorites = favorites.includes(stringId) 
       ? favorites.filter(f => f !== stringId) 
       : [...favorites, stringId];
@@ -1559,8 +1566,8 @@ export default function WallArtShop() {
               </button>
               <div className="flex items-center gap-1">
                 <button onClick={() => setShowSearch(!showSearch)} className={`p-2 ${theme.textSecondary}`}><Search size={18} /></button>
-                <button onClick={() => toggleFavorite(selectedProduct.id)} className={`p-2 ${theme.textSecondary} rounded-full hover:scale-110 transition-transform`}>
-                  <Heart size={18} fill={isFavorite(selectedProduct.id) ? theme.accent : 'none'} color={isFavorite(selectedProduct.id) ? theme.accent : (darkMode ? '#a8a29e' : '#78716c')} />
+                <button onClick={() => selectedProduct?.id && toggleFavorite(selectedProduct.id)} className={`p-2 ${theme.textSecondary} rounded-full hover:scale-110 transition-transform`}>
+                  <Heart size={18} fill={isFavorite(selectedProduct?.id) ? theme.accent : 'none'} color={isFavorite(selectedProduct?.id) ? theme.accent : (darkMode ? '#a8a29e' : '#78716c')} />
                 </button>
                 {user ? (
                   <button onClick={() => setShowProfile(true)} className={`p-2 ${theme.textSecondary} relative`}>
@@ -1660,10 +1667,10 @@ export default function WallArtShop() {
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <h1 className={`text-2xl md:text-3xl font-medium ${theme.text}`}>{selectedProduct.name}</h1>
                     <button 
-                      onClick={() => toggleFavorite(selectedProduct.id)}
-                      className={`flex-shrink-0 p-2 transition ${isFavorite(selectedProduct.id) ? 'text-red-500' : theme.textMuted}`}
+                      onClick={() => selectedProduct?.id && toggleFavorite(selectedProduct.id)}
+                      className={`flex-shrink-0 p-2 transition ${isFavorite(selectedProduct?.id) ? 'text-red-500' : theme.textMuted}`}
                     >
-                      <Heart size={22} fill={isFavorite(selectedProduct.id) ? 'currentColor' : 'none'} />
+                      <Heart size={22} fill={isFavorite(selectedProduct?.id) ? 'currentColor' : 'none'} />
                     </button>
                   </div>
                   
