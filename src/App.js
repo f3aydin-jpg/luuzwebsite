@@ -93,7 +93,11 @@ export default function WallArtShop() {
     if (page === 'collection') setShowCollection(true);
     else if (page === 'bestSellers') setShowBestSellers(true);
     else if (page === 'newArrivals') setShowNewArrivals(true);
-    else if (page === 'product' && product) setSelectedProduct(product);
+    else if (page === 'product' && product) {
+      setSelectedProduct(product);
+      setActiveImageIndex(0);
+      setOpenAccordion(null);
+    }
     
     // Browser history'ye ekle
     window.history.pushState({ page, product }, '', `#${page}`);
@@ -345,6 +349,9 @@ export default function WallArtShop() {
     if (savedFavorites) {
       setFavorites(JSON.parse(savedFavorites));
     }
+    
+    // Browser history başlangıç state'i
+    window.history.replaceState({ page: 'home' }, '', '#home');
     
     // Auth durumunu dinle
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -665,7 +672,7 @@ export default function WallArtShop() {
           <div id="bestSellerScroll" className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide scroll-smooth">
             {products.filter(p => p.isBestSeller).length > 0 ? (
               products.filter(p => p.isBestSeller).map((product) => (
-                <div key={product.id} className="flex-shrink-0 w-48 md:w-56 group cursor-pointer" onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
+                <div key={product.id} className="flex-shrink-0 w-48 md:w-56 group cursor-pointer" onClick={() => { navigateToPage('product', {...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
                   <div className="relative aspect-[3/4] mb-3 overflow-hidden bg-stone-100">
                     {/* First Image */}
                     <img src={product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out group-hover:opacity-0" />
@@ -722,7 +729,7 @@ export default function WallArtShop() {
           <div id="newArrivalsScroll" className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide scroll-smooth">
             {products.filter(p => p.isNew).length > 0 ? (
               products.filter(p => p.isNew).map((product) => (
-                <div key={product.id} className="flex-shrink-0 w-48 md:w-56 group cursor-pointer" onClick={() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
+                <div key={product.id} className="flex-shrink-0 w-48 md:w-56 group cursor-pointer" onClick={() => { navigateToPage('product', {...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
                   <div className="relative aspect-[3/4] mb-3 overflow-hidden bg-stone-100">
                     {/* First Image */}
                     <img src={product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out group-hover:opacity-0" />
@@ -1438,7 +1445,7 @@ export default function WallArtShop() {
                         alt={product.name} 
                         className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ${imagesLoaded[product.id] ? 'opacity-100' : 'opacity-0'}`}
                         onLoad={() => setImagesLoaded(prev => ({...prev, [product.id]: true}))}
-                        onClick={() => { setPageHistory(prev => [...prev, 'collection']); setShowCollection(false); setPageTransition(true); setTimeout(() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); setPageTransition(false); }, 150); }}
+                        onClick={() => { navigateToPage('product', {...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}
                       />
                       {/* Hover Icons */}
                       <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -1452,7 +1459,7 @@ export default function WallArtShop() {
                       {product.discount > 0 && <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 text-[10px] font-medium uppercase">İndirim</div>}
                       {product.stock === 0 && <div className="absolute inset-0 bg-black/60 flex items-center justify-center"><span className="text-white text-sm font-medium">{t.outOfStock}</span></div>}
                     </div>
-                    <div className="cursor-pointer" onClick={() => { setPageHistory(prev => [...prev, 'collection']); setShowCollection(false); setPageTransition(true); setTimeout(() => { setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); setPageTransition(false); }, 150); }}>
+                    <div className="cursor-pointer" onClick={() => { navigateToPage('product', {...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
                       <p className={`text-[10px] ${theme.textMuted} uppercase tracking-wider mb-1`}>LUUZ POSTER</p>
                       <h3 className={`text-sm ${theme.text} mb-1 line-clamp-2`}>{product.name}</h3>
                       <p className={`text-sm ${theme.text}`}>
@@ -1472,7 +1479,7 @@ export default function WallArtShop() {
             ) : (
               <div className="space-y-3">
                 {filteredProducts.map(product => (
-                  <div key={product.id} className={`flex gap-4 ${theme.card} border p-3 hover:bg-stone-100 dark:hover:bg-stone-800 transition-all cursor-pointer`} onClick={() => { setPageHistory(prev => [...prev, 'collection']); setShowCollection(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }}>
+                  <div key={product.id} className={`flex gap-4 ${theme.card} border p-3 hover:bg-stone-100 dark:hover:bg-stone-800 transition-all cursor-pointer`} onClick={() => { navigateToPage('product', {...product, selectedSize: undefined, selectedFrame: undefined}); }}>
                     <div className="w-24 h-24 overflow-hidden bg-stone-100">
                       <img 
                         src={product.images?.[0]} 
@@ -1503,7 +1510,7 @@ export default function WallArtShop() {
                           )}
                         </div>
                         <button 
-                          onClick={() => { setPageHistory(prev => [...prev, 'collection']); setShowCollection(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); }} 
+                          onClick={(e) => { e.stopPropagation(); navigateToPage('product', {...product, selectedSize: undefined, selectedFrame: undefined}); }} 
                           className="text-stone-900 px-4 py-1.5 rounded-lg text-xs font-medium" 
                           style={{background: theme.accent}}
                         >
@@ -1948,7 +1955,7 @@ export default function WallArtShop() {
                 <div 
                   key={p.id} 
                   className="flex-shrink-0 w-48 md:w-56 group cursor-pointer" 
-                  onClick={() => { setSelectedProduct({...p, selectedSize: undefined, selectedFrame: undefined}); setActiveImageIndex(0); setOpenAccordion(null); window.scrollTo(0, 0); }}
+                  onClick={() => navigateToPage('product', {...p, selectedSize: undefined, selectedFrame: undefined})}
                 >
                   <div className="relative aspect-[3/4] overflow-hidden bg-stone-100 mb-3">
                     {/* First Image */}
