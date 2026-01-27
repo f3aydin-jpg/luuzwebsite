@@ -78,9 +78,8 @@ export default function WallArtShop() {
 
   const t = { collection: 'Koleksiyon', about: 'Hakkımızda', howItWorks: 'Nasıl Çalışır', faq: 'SSS', search: 'Ürün ara...', cart: 'Sepetim', favorites: 'Favorilerim', addToCart: 'Sepete Ekle', checkout: 'Ödemeye Geç', total: 'Toplam', empty: 'Sepetiniz boş', filters: 'Filtreler', price: 'Fiyat', size: 'Boyut', bestSellers: 'Çok Satanlar', newArrivals: 'Yeni Gelenler', allCollection: 'Tüm Koleksiyon', framed: 'Çerçeveli', unframed: 'Çerçevesiz', inStock: 'Stokta', outOfStock: 'Tükendi', similarProducts: 'Benzer Ürünler', applyCoupon: 'Uygula', newsletter: 'Yeni Koleksiyonlardan Haberdar Olun', subscribe: 'Abone Ol', compare: 'Karşılaştır', recentlyViewed: 'Son Görüntülenenler', orderHistory: 'Sipariş Geçmişi' };
 
-  // Sayfa navigasyon fonksiyonları
-  // eslint-disable-next-line no-unused-vars
-  const navigateTo = (page) => {
+  // Sayfa navigasyon fonksiyonları - Browser History destekli
+  const navigateToPage = (page, product = null) => {
     const currentPage = showCollection ? 'collection' : showBestSellers ? 'bestSellers' : showNewArrivals ? 'newArrivals' : selectedProduct ? 'product' : 'home';
     if (currentPage !== 'home') {
       setPageHistory(prev => [...prev, currentPage]);
@@ -94,6 +93,11 @@ export default function WallArtShop() {
     if (page === 'collection') setShowCollection(true);
     else if (page === 'bestSellers') setShowBestSellers(true);
     else if (page === 'newArrivals') setShowNewArrivals(true);
+    else if (page === 'product' && product) setSelectedProduct(product);
+    
+    // Browser history'ye ekle
+    window.history.pushState({ page, product }, '', `#${page}`);
+    window.scrollTo(0, 0);
   };
 
   const goBack = () => {
@@ -119,6 +123,36 @@ export default function WallArtShop() {
       setSpecialFilter(null);
     }
   };
+
+  // Browser geri/ileri butonlarını dinle
+  useEffect(() => {
+    const handlePopState = (e) => {
+      if (e.state) {
+        const { page, product } = e.state;
+        // Tüm sayfaları kapat
+        setShowCollection(false);
+        setShowBestSellers(false);
+        setShowNewArrivals(false);
+        setSelectedProduct(null);
+        setSpecialFilter(null);
+        // İlgili sayfayı aç
+        if (page === 'collection') setShowCollection(true);
+        else if (page === 'bestSellers') setShowBestSellers(true);
+        else if (page === 'newArrivals') setShowNewArrivals(true);
+        else if (page === 'product' && product) setSelectedProduct(product);
+      } else {
+        // Ana sayfaya dön
+        setShowCollection(false);
+        setShowBestSellers(false);
+        setShowNewArrivals(false);
+        setSelectedProduct(null);
+        setSpecialFilter(null);
+      }
+    };
+    
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   // Firebase'den ürünleri çek
   const fetchProducts = async () => {
@@ -427,7 +461,7 @@ export default function WallArtShop() {
             </button>
           </div>
           <nav className={`hidden lg:flex items-center gap-6 text-sm font-semibold ${theme.textSecondary}`}>
-            <button onClick={() => setShowCollection(true)} className={`transition ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'}`}>Tüm Koleksiyon</button>
+            <button onClick={() => navigateToPage('collection')} className={`transition ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'}`}>Tüm Koleksiyon</button>
             <button onClick={() => setShowAbout(true)} className={`transition ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'}`}>{t.about}</button>
             <button onClick={() => setShowFAQ(true)} className={`transition ${darkMode ? 'hover:text-white' : 'hover:text-stone-900'}`}>{t.faq}</button>
           </nav>
@@ -463,7 +497,7 @@ export default function WallArtShop() {
               onChange={(e) => setSearchQuery(e.target.value)} 
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && searchQuery.trim()) {
-                  setShowCollection(true);
+                  navigateToPage('collection');
                   setShowSearch(false);
                 }
               }}
@@ -490,7 +524,7 @@ export default function WallArtShop() {
                 )}
                 {products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase())).length > 5 && (
                   <button 
-                    onClick={() => { setShowCollection(true); setShowSearch(false); }}
+                    onClick={() => { navigateToPage('collection'); setShowSearch(false); }}
                     className={`w-full px-4 py-3 text-sm font-medium text-center hover:${theme.bgTertiary} transition`}
                     style={{color: theme.accent}}
                   >
@@ -503,7 +537,7 @@ export default function WallArtShop() {
         )}
         {showMobileMenu && (
           <div className={`lg:hidden ${theme.bgSecondary} border-t ${theme.border} px-4 py-4 space-y-3`}>
-            <button onClick={() => { setShowCollection(true); setShowMobileMenu(false); }} className={`block py-2 ${theme.textSecondary} text-left w-full`}>Tüm Koleksiyon</button>
+            <button onClick={() => { navigateToPage('collection'); setShowMobileMenu(false); }} className={`block py-2 ${theme.textSecondary} text-left w-full`}>Tüm Koleksiyon</button>
             <button onClick={() => { setShowAbout(true); setShowMobileMenu(false); }} className={`block py-2 ${theme.textSecondary} text-left w-full`}>{t.about}</button>
             <button onClick={() => { setShowFAQ(true); setShowMobileMenu(false); }} className={`block py-2 ${theme.textSecondary} text-left w-full`}>{t.faq}</button>
           </div>
@@ -529,7 +563,7 @@ export default function WallArtShop() {
           </p>
           <div className="animate-fade-in-delay-2">
             <button 
-              onClick={() => setShowCollection(true)} 
+              onClick={() => navigateToPage('collection')} 
               className="px-10 py-3 text-xs font-medium uppercase tracking-[0.2em] transition-all border border-white/30 text-white hover:bg-white hover:text-stone-900"
             >
               Koleksiyonu Keşfet
@@ -778,7 +812,7 @@ export default function WallArtShop() {
             <div>
               <h5 className={`text-xs font-medium uppercase tracking-wider mb-4 ${theme.text}`}>Linkler</h5>
               <ul className={`space-y-3 ${theme.textMuted} text-xs`}>
-                <li><button onClick={() => setShowCollection(true)} className="hover:underline">{t.collection}</button></li>
+                <li><button onClick={() => navigateToPage('collection')} className="hover:underline">{t.collection}</button></li>
                 <li><button onClick={() => setShowAbout(true)} className="hover:underline">{t.about}</button></li>
                 <li><button onClick={() => setShowFAQ(true)} className="hover:underline">{t.faq}</button></li>
               </ul>
@@ -1957,7 +1991,7 @@ export default function WallArtShop() {
                   <p className={`${theme.textMuted} text-xs`}>Özgün duvar sanatı tasarımları.</p>
                   <div className="flex gap-3 mt-4"><button className={theme.textMuted}><Instagram size={18} /></button><button className={theme.textMuted}><Twitter size={18} /></button><button className={theme.textMuted}><Facebook size={18} /></button></div>
                 </div>
-                <div><h5 className={`font-medium mb-3 text-sm ${theme.text}`}>Linkler</h5><ul className={`space-y-2 ${theme.textMuted} text-xs`}><li><button onClick={() => { setSelectedProduct(null); setShowCollection(true); }}>{t.collection}</button></li><li><button onClick={() => setShowAbout(true)}>{t.about}</button></li><li><button onClick={() => setShowFAQ(true)}>{t.faq}</button></li></ul></div>
+                <div><h5 className={`font-medium mb-3 text-sm ${theme.text}`}>Linkler</h5><ul className={`space-y-2 ${theme.textMuted} text-xs`}><li><button onClick={() => navigateToPage('collection')}>{t.collection}</button></li><li><button onClick={() => setShowAbout(true)}>{t.about}</button></li><li><button onClick={() => setShowFAQ(true)}>{t.faq}</button></li></ul></div>
                 <div><h5 className={`font-medium mb-3 text-sm ${theme.text}`}>Yardım</h5><ul className={`space-y-2 ${theme.textMuted} text-xs`}><li>Kargo Bilgileri</li><li>İade & Değişim</li><li><button onClick={() => setShowOrderHistory(true)}>{t.orderHistory}</button></li></ul></div>
                 <div><h5 className={`font-medium mb-3 text-sm ${theme.text}`}>İletişim</h5><ul className={`space-y-2 ${theme.textMuted} text-xs`}><li>info@luuz.com.tr</li><li>+90 212 555 00 00</li><li>İstanbul, Türkiye</li></ul></div>
               </div>
