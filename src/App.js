@@ -2028,7 +2028,6 @@ export default function WallArtShop() {
             </div>
           </div>
 
-          {/* Newsletter - Product Page */}
           <section className={`py-8 ${darkMode ? 'bg-stone-800' : 'bg-stone-100'}`}>
             <div className="max-w-2xl mx-auto px-4 text-center">
               <h3 className={`text-lg font-bold ${theme.text} mb-2`}>{t.newsletter}</h3>
