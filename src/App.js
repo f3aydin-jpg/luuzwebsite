@@ -1866,32 +1866,7 @@ export default function WallArtShop() {
                   
                   
                   {/* Buttons */}
-                  <div className="space-y-2 pt-2">
-  <button 
-    onClick={() => {
-      if (selectedProduct.selectedFrame === undefined) {
-        alert('Lütfen çerçeve seçeneği seçin');
-      } else if (selectedProduct.selectedSize === undefined) {
-        alert('Lütfen boyut seçin');
-      } else {
-        addToCart(selectedProduct, selectedProduct.selectedFrame !== 'none');
-      }
-    }} 
-    disabled={selectedProduct.stock === 0}
-    // Tüm stilleri buraya, şablon dizisi (template literal) ile yazıyoruz
-    className={`
-      w-full py-4 text-sm font-medium uppercase tracking-wider rounded-none 
-      transition-all duration-300 ease-in-out
-      transform active:scale-95 active:brightness-90
-      flex items-center justify-center
-      ${darkMode 
-        ? 'bg-white text-stone-900 hover:bg-stone-200 shadow-white/10' 
-        : 'bg-stone-900 text-white hover:bg-stone-800 shadow-black/10'}
-      ${selectedProduct.stock === 0 ? 'opacity-40 cursor-not-allowed' : 'opacity-100 cursor-pointer shadow-md hover:shadow-lg'}
-    `}
-  >
-    {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
-  </button>
+                  üm stilleri buraya,
 
 
                   <button 
