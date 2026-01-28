@@ -683,11 +683,6 @@ export default function WallArtShop() {
               products.filter(p => p.isBestSeller).map((product) => (
                 <div key={product.id} className="flex-shrink-0 w-48 md:w-56 group cursor-pointer" onClick={() => { navigateToPage('product', {...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
                   <div className="relative aspect-[3/4] mb-3 overflow-hidden bg-stone-100">
-                    {/* First Image */}
-                    //<img src={product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out group-hover:opacity-0" />
-                    {/* Second Image (shown on hover) */}
-                  //<img src={product.images?.[1] || product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100" />
-                {/* First Image */}
 <img 
   src={product.images?.[0]} 
   alt={product.name} 
