@@ -687,7 +687,7 @@ export default function WallArtShop() {
                     <img src={product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out group-hover:opacity-0" />
             {/* Second Image (shown on hover) */}
                     <img src={product.images?.[1] || product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100" />
-                   <img 
+                  
  
 {/* Hover Icons */}
                     <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
