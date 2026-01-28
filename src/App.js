@@ -1901,7 +1901,10 @@ export default function WallArtShop() {
 >
   {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
 </button>
-                    <button 
+</div>
+
+
+                  <button 
                       onClick={() => {
                         if (selectedProduct.selectedSize === undefined) {
                           alert('Lütfen boyut seçin');
