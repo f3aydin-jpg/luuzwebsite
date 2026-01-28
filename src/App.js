@@ -1865,6 +1865,7 @@ export default function WallArtShop() {
                   </div>
                   
                   {/* Buttons */}
+                  <div className="space-y-2 pt-2">
                   <button 
   onClick={() => {
     if (selectedProduct.selectedFrame === undefined) {
