@@ -682,14 +682,28 @@ export default function WallArtShop() {
             {products.filter(p => p.isBestSeller).length > 0 ? (
               products.filter(p => p.isBestSeller).map((product) => (
                 <div key={product.id} className="flex-shrink-0 w-48 md:w-56 group cursor-pointer" onClick={() => { navigateToPage('product', {...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
-                  <div className="relative aspect-[3/4] mb-3 overflow-hidden bg-stone-100">
+                  //<div className="relative aspect-[3/4] mb-3 overflow-hidden bg-stone-100">
                     {/* First Image */}
-                    <img src={product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out group-hover:opacity-0" />
-            {/* Second Image (shown on hover) */}
-                    <img src={product.images?.[1] || product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100" />
-                  
+                   // <img src={product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out group-hover:opacity-0" />
+                    {/* Second Image (shown on hover) */}
+                    //<img src={product.images?.[1] || product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100" />
+        <div className="relative aspect-[3/4] mb-3 overflow-hidden bg-stone-100">
+  {/* Birinci Resim: Hover yapınca hem şeffaflaşır hem de hafif büyür */}
+  <img 
+    src={product.images?.[0]} 
+    alt={product.name} 
+    className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out group-hover:opacity-0 group-hover:scale-110" 
+  />
+
+  {/* İkinci Resim: Hover yapınca hem belirir hem de yakından başlar */}
+  <img 
+    src={product.images?.[1] || product.images?.[0]} 
+    alt={product.name} 
+    className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out opacity-0 group-hover:opacity-100 scale-100 group-hover:scale-110" 
+  />
+</div>
  
-{/* Hover Icons */}
+                    {/* Hover Icons */}
                     <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                       <button onClick={(e) => { e.stopPropagation(); toggleFavorite(product.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
                         <Heart size={16} fill={isFavorite(product.id) ? theme.accent : 'none'} color={isFavorite(product.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
