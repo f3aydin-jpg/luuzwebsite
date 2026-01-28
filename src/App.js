@@ -602,6 +602,12 @@ export default function WallArtShop() {
 
       {/* CSS Animations */}
       <style>{`
+      .ultra-smooth {
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes fadeIn { from { opacity: 0; }
+    to { opacity: 1; } 
+    }
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
@@ -660,12 +666,7 @@ export default function WallArtShop() {
         .animate-bounce-x {
           animation: bounceX 1s ease-in-out infinite;
         }
-  .ultra-smooth {
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  @keyframes fadeIn { from { opacity: 0; }
-    to { opacity: 1; } 
-    }
+  
       `}</style>
 
       {/* Best Sellers */}
