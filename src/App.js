@@ -682,25 +682,12 @@ export default function WallArtShop() {
             {products.filter(p => p.isBestSeller).length > 0 ? (
               products.filter(p => p.isBestSeller).map((product) => (
                 <div key={product.id} className="flex-shrink-0 w-48 md:w-56 group cursor-pointer" onClick={() => { navigateToPage('product', {...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
-                  //<div className="relative aspect-[3/4] mb-3 overflow-hidden bg-stone-100">
+                  <div className="relative aspect-[3/4] mb-3 overflow-hidden bg-stone-100">
                     {/* First Image */}
-                   // <img src={product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out group-hover:opacity-0" />
+                    <img src={product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out group-hover:opacity-0" />
                     {/* Second Image (shown on hover) */}
-                    //<img src={product.images?.[1] || product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100" />
-        <div className="relative aspect-[3/4] mb-3 overflow-hidden bg-stone-100">
-  {/* Birinci Resim: Hover yapınca hem şeffaflaşır hem de hafif büyür */}
-  <img 
-    src={product.images?.[0]} 
-    alt={product.name} 
-    className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out group-hover:opacity-0 group-hover:scale-110" 
-  />
-
-  {/* İkinci Resim: Hover yapınca hem belirir hem de yakından başlar */}
-  <img 
-    src={product.images?.[1] || product.images?.[0]} 
-    alt={product.name} 
-    className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out opacity-0 group-hover:opacity-100 scale-100 group-hover:scale-110" 
-  />
+                  <img src={product.images?.[1] || product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100" />
+        
 </div>
  
                     {/* Hover Icons */}
