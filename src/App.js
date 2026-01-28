@@ -603,7 +603,7 @@ export default function WallArtShop() {
       {/* CSS Animations */}
       <style>{`
       .ultra-smooth {
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(20px); }
