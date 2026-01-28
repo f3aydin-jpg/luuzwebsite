@@ -459,16 +459,10 @@ export default function WallArtShop() {
   };
 
   const theme = {
-    bg: darkMode ? 'bg-stone-900' : 'bg-[#FFFFF0]', 
-    bgSecondary: darkMode ? 'bg-stone-800' : 'bg-[#F5F5DC]', 
-    bgTertiary: darkMode ? 'bg-stone-950' : 'bg-[#FFFFF0]',
-    text: darkMode ? 'text-white' : 'text-[#654321]', 
-    textSecondary: darkMode ? 'text-stone-400' : 'text-[#654321]/70', 
-    textMuted: darkMode ? 'text-stone-500' : 'text-[#654321]/50',
-    border: darkMode ? 'border-stone-700' : 'border-[#654321]/20', 
-    card: darkMode ? 'bg-stone-800/50 border-stone-700/50' : 'bg-[#F5F5DC] border-[#654321]/20',
-    input: darkMode ? 'bg-stone-800 border-stone-700 text-white placeholder-stone-500' : 'bg-[#FFFFF0] border-[#654321]/30 text-[#654321]', 
-    accent: '#654321',
+    bg: darkMode ? 'bg-stone-900' : 'bg-stone-50', bgSecondary: darkMode ? 'bg-stone-800' : 'bg-white', bgTertiary: darkMode ? 'bg-stone-950' : 'bg-stone-100',
+    text: darkMode ? 'text-white' : 'text-stone-900', textSecondary: darkMode ? 'text-stone-400' : 'text-stone-600', textMuted: darkMode ? 'text-stone-500' : 'text-stone-400',
+    border: darkMode ? 'border-stone-700' : 'border-stone-200', card: darkMode ? 'bg-stone-800/50 border-stone-700/50' : 'bg-white border-stone-200',
+    input: darkMode ? 'bg-stone-800 border-stone-700 text-white placeholder-stone-500' : 'bg-white border-stone-300 text-stone-900', accent: '#e8dcc4',
   };
 
   if (isLoading) return (
@@ -509,7 +503,7 @@ export default function WallArtShop() {
             {user ? (
               <button onClick={() => setShowProfile(true)} className={`p-2 ${theme.textSecondary} relative`}>
                 <User size={18} />
-                <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2" style={{borderColor: darkMode ? '#654321' : '#fafaf9'}}></span>
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2" style={{borderColor: darkMode ? '#1c1917' : '#fafaf9'}}></span>
               </button>
             ) : (
               <button onClick={() => setShowAuthModal(true)} className={`p-2 ${theme.textSecondary}`}>
@@ -975,9 +969,9 @@ export default function WallArtShop() {
                         onClick={() => setQuickViewProduct({...quickViewProduct, selectedSize: '30x40'})}
                         className="px-4 py-2 text-sm font-medium transition rounded-sm"
                         style={{ 
-                          backgroundColor: quickViewProduct.selectedSize === '30x40' ? (darkMode ? '#FFFFF0' : '#654321') : 'transparent',
-                          color: quickViewProduct.selectedSize === '30x40' ? (darkMode ? '#654321' : '#FFFFF0') : (darkMode ? '#FFFFF0' : '#654321'),
-                          border: `1px solid ${quickViewProduct.selectedSize === '30x40' ? (darkMode ? '#FFFFF0' : '#654321') : '#654321'}`
+                          backgroundColor: quickViewProduct.selectedSize === '30x40' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: quickViewProduct.selectedSize === '30x40' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${quickViewProduct.selectedSize === '30x40' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
                         }}
                       >
                         30x40 cm
@@ -986,9 +980,9 @@ export default function WallArtShop() {
                         onClick={() => setQuickViewProduct({...quickViewProduct, selectedSize: '50x70'})}
                         className="px-4 py-2 text-sm font-medium transition rounded-sm"
                         style={{ 
-                          backgroundColor: quickViewProduct.selectedSize === '50x70' ? (darkMode ? '#FFFFF0' : '#654321') : 'transparent',
-                          color: quickViewProduct.selectedSize === '50x70' ? (darkMode ? '#654321' : '#FFFFF0') : (darkMode ? '#FFFFF0' : '#654321'),
-                          border: `1px solid ${quickViewProduct.selectedSize === '50x70' ? (darkMode ? '#FFFFF0' : '#654321') : '#654321'}`
+                          backgroundColor: quickViewProduct.selectedSize === '50x70' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: quickViewProduct.selectedSize === '50x70' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${quickViewProduct.selectedSize === '50x70' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
                         }}
                       >
                         50x70 cm
@@ -1004,9 +998,9 @@ export default function WallArtShop() {
                         onClick={() => setQuickViewProduct({...quickViewProduct, selectedFrame: 'none'})}
                         className="px-3 py-2 text-sm font-medium transition rounded-sm"
                         style={{ 
-                          backgroundColor: quickViewProduct.selectedFrame === 'none' ? (darkMode ? '#FFFFF0' : '#654321') : 'transparent',
-                          color: quickViewProduct.selectedFrame === 'none' ? (darkMode ? '#654321' : '#FFFFF0') : (darkMode ? '#FFFFF0' : '#654321'),
-                          border: `1px solid ${quickViewProduct.selectedFrame === 'none' ? (darkMode ? '#FFFFF0' : '#654321') : '#654321'}`
+                          backgroundColor: quickViewProduct.selectedFrame === 'none' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: quickViewProduct.selectedFrame === 'none' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${quickViewProduct.selectedFrame === 'none' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
                         }}
                       >
                         Çerçevesiz
@@ -1015,9 +1009,9 @@ export default function WallArtShop() {
                         onClick={() => setQuickViewProduct({...quickViewProduct, selectedFrame: 'wood'})}
                         className="px-3 py-2 text-sm font-medium transition rounded-sm"
                         style={{ 
-                          backgroundColor: quickViewProduct.selectedFrame === 'wood' ? (darkMode ? '#FFFFF0' : '#654321') : 'transparent',
-                          color: quickViewProduct.selectedFrame === 'wood' ? (darkMode ? '#654321' : '#FFFFF0') : (darkMode ? '#FFFFF0' : '#654321'),
-                          border: `1px solid ${quickViewProduct.selectedFrame === 'wood' ? (darkMode ? '#FFFFF0' : '#654321') : '#654321'}`
+                          backgroundColor: quickViewProduct.selectedFrame === 'wood' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: quickViewProduct.selectedFrame === 'wood' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${quickViewProduct.selectedFrame === 'wood' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
                         }}
                       >
                         Ahşap
@@ -1026,9 +1020,9 @@ export default function WallArtShop() {
                         onClick={() => setQuickViewProduct({...quickViewProduct, selectedFrame: 'black'})}
                         className="px-3 py-2 text-sm font-medium transition rounded-sm"
                         style={{ 
-                          backgroundColor: quickViewProduct.selectedFrame === 'black' ? (darkMode ? '#FFFFF0' : '#654321') : 'transparent',
-                          color: quickViewProduct.selectedFrame === 'black' ? (darkMode ? '#654321' : '#FFFFF0') : (darkMode ? '#FFFFF0' : '#654321'),
-                          border: `1px solid ${quickViewProduct.selectedFrame === 'black' ? (darkMode ? '#FFFFF0' : '#654321') : '#654321'}`
+                          backgroundColor: quickViewProduct.selectedFrame === 'black' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: quickViewProduct.selectedFrame === 'black' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${quickViewProduct.selectedFrame === 'black' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
                         }}
                       >
                         Siyah
@@ -1037,9 +1031,9 @@ export default function WallArtShop() {
                         onClick={() => setQuickViewProduct({...quickViewProduct, selectedFrame: 'white'})}
                         className="px-3 py-2 text-sm font-medium transition rounded-sm"
                         style={{ 
-                          backgroundColor: quickViewProduct.selectedFrame === 'white' ? (darkMode ? '#FFFFF0' : '#654321') : 'transparent',
-                          color: quickViewProduct.selectedFrame === 'white' ? (darkMode ? '#654321' : '#FFFFF0') : (darkMode ? '#FFFFF0' : '#654321'),
-                          border: `1px solid ${quickViewProduct.selectedFrame === 'white' ? (darkMode ? '#FFFFF0' : '#654321') : '#654321'}`
+                          backgroundColor: quickViewProduct.selectedFrame === 'white' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: quickViewProduct.selectedFrame === 'white' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${quickViewProduct.selectedFrame === 'white' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
                         }}
                       >
                         Beyaz
@@ -1052,20 +1046,20 @@ export default function WallArtShop() {
                     <p className={`text-xs font-medium ${theme.textMuted} uppercase tracking-wider mb-2`}>Adet</p>
                     <div 
                       className="inline-flex items-center rounded-sm"
-                      style={{ border: `1px solid ${darkMode ? '#78716c' : '#654321'}` }}
+                      style={{ border: `1px solid ${darkMode ? '#78716c' : '#a8a29e'}` }}
                     >
                       <button 
                         onClick={() => quickViewProduct.quantity > 1 && setQuickViewProduct({...quickViewProduct, quantity: quickViewProduct.quantity - 1})}
                         className="w-9 h-9 flex items-center justify-center"
-                        style={{ color: darkMode ? '#FFFFF0' : '#654321' }}
+                        style={{ color: darkMode ? '#ffffff' : '#1c1917' }}
                       >
                         <Minus size={14} />
                       </button>
-                      <span className="w-10 text-center text-sm font-medium" style={{ color: darkMode ? '#FFFFF0' : '#654321' }}>{quickViewProduct.quantity || 1}</span>
+                      <span className="w-10 text-center text-sm font-medium" style={{ color: darkMode ? '#ffffff' : '#1c1917' }}>{quickViewProduct.quantity || 1}</span>
                       <button 
                         onClick={() => setQuickViewProduct({...quickViewProduct, quantity: (quickViewProduct.quantity || 1) + 1})}
                         className="w-9 h-9 flex items-center justify-center"
-                        style={{ color: darkMode ? '#FFFFF0' : '#654321' }}
+                        style={{ color: darkMode ? '#ffffff' : '#1c1917' }}
                       >
                         <Plus size={14} />
                       </button>
@@ -1086,8 +1080,8 @@ export default function WallArtShop() {
                       disabled={quickViewProduct.stock === 0}
                       className={`w-full py-3 text-sm font-medium uppercase tracking-wider transition rounded-sm ${quickViewProduct.stock === 0 ? 'opacity-50' : 'hover:opacity-90'}`}
                       style={{ 
-                        backgroundColor: darkMode ? '#FFFFF0' : '#654321',
-                        color: darkMode ? '#654321' : '#FFFFF0'
+                        backgroundColor: darkMode ? '#ffffff' : '#1c1917',
+                        color: darkMode ? '#1c1917' : '#ffffff'
                       }}
                     >
                       {quickViewProduct.stock === 0 ? t.outOfStock : t.addToCart}
@@ -1181,7 +1175,7 @@ export default function WallArtShop() {
                 {user ? (
                   <button onClick={() => setShowProfile(true)} className={`p-2 ${theme.textSecondary} relative`}>
                     <User size={18} />
-                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2" style={{borderColor: darkMode ? '#654321' : '#fafaf9'}}></span>
+                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2" style={{borderColor: darkMode ? '#1c1917' : '#fafaf9'}}></span>
                   </button>
                 ) : (
                   <button onClick={() => setShowAuthModal(true)} className={`p-2 ${theme.textSecondary}`}><User size={18} /></button>
@@ -1257,7 +1251,7 @@ export default function WallArtShop() {
                 {user ? (
                   <button onClick={() => setShowProfile(true)} className={`p-2 ${theme.textSecondary} relative`}>
                     <User size={18} />
-                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 border-2" style={{borderColor: darkMode ? '#654321' : '#fafaf9'}}></span>
+                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 border-2" style={{borderColor: darkMode ? '#1c1917' : '#fafaf9'}}></span>
                   </button>
                 ) : (
                   <button onClick={() => setShowAuthModal(true)} className={`p-2 ${theme.textSecondary}`}><User size={18} /></button>
@@ -1336,7 +1330,7 @@ export default function WallArtShop() {
                 {user ? (
                   <button onClick={() => setShowProfile(true)} className={`p-2 ${theme.textSecondary} relative`}>
                     <User size={18} />
-                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2" style={{borderColor: darkMode ? '#654321' : '#fafaf9'}}></span>
+                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2" style={{borderColor: darkMode ? '#1c1917' : '#fafaf9'}}></span>
                   </button>
                 ) : (
                   <button onClick={() => setShowAuthModal(true)} className={`p-2 ${theme.textSecondary}`}><User size={18} /></button>
@@ -1370,9 +1364,9 @@ export default function WallArtShop() {
                   onClick={() => setSpecialFilter(specialFilter === 'bestSeller' ? null : 'bestSeller')}
                   className="px-5 py-2.5 text-xs font-medium uppercase tracking-wider transition-all rounded-sm"
                   style={{ 
-                    backgroundColor: specialFilter === 'bestSeller' ? (darkMode ? '#FFFFF0' : '#654321') : 'transparent',
-                    color: specialFilter === 'bestSeller' ? (darkMode ? '#654321' : '#FFFFF0') : (darkMode ? '#FFFFF0' : '#654321'),
-                    border: `1px solid ${specialFilter === 'bestSeller' ? (darkMode ? '#FFFFF0' : '#654321') : '#654321'}`
+                    backgroundColor: specialFilter === 'bestSeller' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                    color: specialFilter === 'bestSeller' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                    border: `1px solid ${specialFilter === 'bestSeller' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
                   }}
                 >
                   Çok Satanlar
@@ -1381,9 +1375,9 @@ export default function WallArtShop() {
                   onClick={() => setSpecialFilter(specialFilter === 'newArrival' ? null : 'newArrival')}
                   className="px-5 py-2.5 text-xs font-medium uppercase tracking-wider transition-all rounded-sm"
                   style={{ 
-                    backgroundColor: specialFilter === 'newArrival' ? (darkMode ? '#FFFFF0' : '#654321') : 'transparent',
-                    color: specialFilter === 'newArrival' ? (darkMode ? '#654321' : '#FFFFF0') : (darkMode ? '#FFFFF0' : '#654321'),
-                    border: `1px solid ${specialFilter === 'newArrival' ? (darkMode ? '#FFFFF0' : '#654321') : '#654321'}`
+                    backgroundColor: specialFilter === 'newArrival' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                    color: specialFilter === 'newArrival' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                    border: `1px solid ${specialFilter === 'newArrival' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
                   }}
                 >
                   Yeni Ürünler
@@ -1400,9 +1394,9 @@ export default function WallArtShop() {
                     style={{ 
                       fontFamily: 'Montserrat, sans-serif', 
                       fontWeight: 700,
-                      backgroundColor: selectedCategory === cat ? (darkMode ? '#FFFFF0' : '#654321') : 'transparent',
-                      color: selectedCategory === cat ? (darkMode ? '#654321' : '#FFFFF0') : (darkMode ? '#654321' : '#57534e'),
-                      border: `1px solid ${selectedCategory === cat ? (darkMode ? '#FFFFF0' : '#654321') : '#654321'}`
+                      backgroundColor: selectedCategory === cat ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                      color: selectedCategory === cat ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#a8a29e' : '#57534e'),
+                      border: `1px solid ${selectedCategory === cat ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
                     }}
                   >
                     {cat}
@@ -1508,7 +1502,7 @@ export default function WallArtShop() {
                           <p className={`text-xs ${theme.textMuted}`}>{product.category}</p>
                         </div>
                         <button onClick={(e) => { e.stopPropagation(); toggleFavorite(product.id); }}>
-                          <Heart size={16} fill={isFavorite(product.id) ? theme.accent : 'none'} color={isFavorite(product.id) ? theme.accent : (darkMode ? '#654321' : '#78716c')} />
+                          <Heart size={16} fill={isFavorite(product.id) ? theme.accent : 'none'} color={isFavorite(product.id) ? theme.accent : (darkMode ? '#a8a29e' : '#78716c')} />
                         </button>
                       </div>
                       <div className="flex items-center justify-between mt-2">
@@ -1573,12 +1567,12 @@ export default function WallArtShop() {
               <div className="flex items-center gap-1">
                 <button onClick={() => setShowSearch(!showSearch)} className={`p-2 ${theme.textSecondary}`}><Search size={18} /></button>
                 <button onClick={() => selectedProduct?.id && toggleFavorite(selectedProduct.id)} className={`p-2 ${theme.textSecondary} rounded-full hover:scale-110 transition-transform`}>
-                  <Heart size={18} fill={isFavorite(selectedProduct?.id) ? theme.accent : 'none'} color={isFavorite(selectedProduct?.id) ? theme.accent : (darkMode ? '#654321' : '#78716c')} />
+                  <Heart size={18} fill={isFavorite(selectedProduct?.id) ? theme.accent : 'none'} color={isFavorite(selectedProduct?.id) ? theme.accent : (darkMode ? '#a8a29e' : '#78716c')} />
                 </button>
                 {user ? (
                   <button onClick={() => setShowProfile(true)} className={`p-2 ${theme.textSecondary} relative`}>
                     <User size={18} />
-                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2" style={{borderColor: darkMode ? '#654321' : '#fafaf9'}}></span>
+                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2" style={{borderColor: darkMode ? '#1c1917' : '#fafaf9'}}></span>
                   </button>
                 ) : (
                   <button onClick={() => setShowAuthModal(true)} className={`p-2 ${theme.textSecondary}`}><User size={18} /></button>
@@ -1741,9 +1735,9 @@ export default function WallArtShop() {
                         onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedSize: '30x40'})}
                         className="px-4 py-2.5 text-sm font-medium transition rounded-sm"
                         style={{ 
-                          backgroundColor: selectedProduct.selectedSize === '30x40' ? (darkMode ? '#FFFFF0' : '#654321') : 'transparent',
-                          color: selectedProduct.selectedSize === '30x40' ? (darkMode ? '#654321' : '#FFFFF0') : (darkMode ? '#FFFFF0' : '#654321'),
-                          border: `1px solid ${selectedProduct.selectedSize === '30x40' ? (darkMode ? '#FFFFF0' : '#654321') : (darkMode ? '#78716c' : '#654321')}`
+                          backgroundColor: selectedProduct.selectedSize === '30x40' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: selectedProduct.selectedSize === '30x40' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${selectedProduct.selectedSize === '30x40' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
                         }}
                       >
                         30x40 cm
@@ -1752,9 +1746,9 @@ export default function WallArtShop() {
                         onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedSize: '50x70'})}
                         className="px-4 py-2.5 text-sm font-medium transition rounded-sm"
                         style={{ 
-                          backgroundColor: selectedProduct.selectedSize === '50x70' ? (darkMode ? '#FFFFF0' : '#654321') : 'transparent',
-                          color: selectedProduct.selectedSize === '50x70' ? (darkMode ? '#654321' : '#FFFFF0') : (darkMode ? '#FFFFF0' : '#654321'),
-                          border: `1px solid ${selectedProduct.selectedSize === '50x70' ? (darkMode ? '#FFFFF0' : '#654321') : (darkMode ? '#78716c' : '#654321')}`
+                          backgroundColor: selectedProduct.selectedSize === '50x70' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: selectedProduct.selectedSize === '50x70' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${selectedProduct.selectedSize === '50x70' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
                         }}
                       >
                         50x70 cm
@@ -1770,9 +1764,9 @@ export default function WallArtShop() {
                         onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: 'none'})}
                         className="px-3 py-2.5 text-sm font-medium transition rounded-sm"
                         style={{ 
-                          backgroundColor: selectedProduct.selectedFrame === 'none' ? (darkMode ? '#FFFFF0' : '#654321') : 'transparent',
-                          color: selectedProduct.selectedFrame === 'none' ? (darkMode ? '#654321' : '#FFFFF0') : (darkMode ? '#FFFFF0' : '#654321'),
-                          border: `1px solid ${selectedProduct.selectedFrame === 'none' ? (darkMode ? '#FFFFF0' : '#654321') : (darkMode ? '#78716c' : '#654321')}`
+                          backgroundColor: selectedProduct.selectedFrame === 'none' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: selectedProduct.selectedFrame === 'none' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${selectedProduct.selectedFrame === 'none' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
                         }}
                       >
                         Çerçevesiz
@@ -1781,9 +1775,9 @@ export default function WallArtShop() {
                         onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: 'wood'})}
                         className="px-3 py-2.5 text-sm font-medium transition rounded-sm"
                         style={{ 
-                          backgroundColor: selectedProduct.selectedFrame === 'wood' ? (darkMode ? '#FFFFF0' : '#654321') : 'transparent',
-                          color: selectedProduct.selectedFrame === 'wood' ? (darkMode ? '#654321' : '#FFFFF0') : (darkMode ? '#FFFFF0' : '#654321'),
-                          border: `1px solid ${selectedProduct.selectedFrame === 'wood' ? (darkMode ? '#FFFFF0' : '#654321') : (darkMode ? '#78716c' : '#654321')}`
+                          backgroundColor: selectedProduct.selectedFrame === 'wood' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: selectedProduct.selectedFrame === 'wood' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${selectedProduct.selectedFrame === 'wood' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
                         }}
                       >
                         Ahşap Çerçeve
@@ -1792,9 +1786,9 @@ export default function WallArtShop() {
                         onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: 'black'})}
                         className="px-3 py-2.5 text-sm font-medium transition rounded-sm"
                         style={{ 
-                          backgroundColor: selectedProduct.selectedFrame === 'black' ? (darkMode ? '#FFFFF0' : '#654321') : 'transparent',
-                          color: selectedProduct.selectedFrame === 'black' ? (darkMode ? '#654321' : '#FFFFF0') : (darkMode ? '#FFFFF0' : '#654321'),
-                          border: `1px solid ${selectedProduct.selectedFrame === 'black' ? (darkMode ? '#FFFFF0' : '#654321') : (darkMode ? '#78716c' : '#654321')}`
+                          backgroundColor: selectedProduct.selectedFrame === 'black' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: selectedProduct.selectedFrame === 'black' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${selectedProduct.selectedFrame === 'black' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
                         }}
                       >
                         Siyah Çerçeve
@@ -1803,9 +1797,9 @@ export default function WallArtShop() {
                         onClick={() => selectedProduct.stock > 0 && setSelectedProduct({...selectedProduct, selectedFrame: 'white'})}
                         className="px-3 py-2.5 text-sm font-medium transition rounded-sm"
                         style={{ 
-                          backgroundColor: selectedProduct.selectedFrame === 'white' ? (darkMode ? '#FFFFF0' : '#654321') : 'transparent',
-                          color: selectedProduct.selectedFrame === 'white' ? (darkMode ? '#654321' : '#FFFFF0') : (darkMode ? '#FFFFF0' : '#654321'),
-                          border: `1px solid ${selectedProduct.selectedFrame === 'white' ? (darkMode ? '#FFFFF0' : '#654321') : (darkMode ? '#78716c' : '#654321')}`
+                          backgroundColor: selectedProduct.selectedFrame === 'white' ? (darkMode ? '#ffffff' : '#1c1917') : 'transparent',
+                          color: selectedProduct.selectedFrame === 'white' ? (darkMode ? '#1c1917' : '#ffffff') : (darkMode ? '#ffffff' : '#1c1917'),
+                          border: `1px solid ${selectedProduct.selectedFrame === 'white' ? (darkMode ? '#ffffff' : '#1c1917') : '#a8a29e'}`
                         }}
                       >
                         Beyaz Çerçeve
@@ -1819,23 +1813,23 @@ export default function WallArtShop() {
                     <div className="flex items-center gap-3">
                       <div 
                         className="flex items-center rounded-sm"
-                        style={{ border: `1px solid ${darkMode ? '#78716c' : '#654321'}` }}
+                        style={{ border: `1px solid ${darkMode ? '#78716c' : '#a8a29e'}` }}
                       >
                         <button 
                           onClick={() => selectedProduct.quantity > 1 && setSelectedProduct({...selectedProduct, quantity: (selectedProduct.quantity || 1) - 1})}
                           className="w-9 h-9 flex items-center justify-center transition disabled:opacity-50"
-                          style={{ color: darkMode ? '#FFFFF0' : '#654321' }}
+                          style={{ color: darkMode ? '#ffffff' : '#1c1917' }}
                           disabled={!selectedProduct.quantity || selectedProduct.quantity <= 1}
                         >
                           <Minus size={14} />
                         </button>
-                        <span className="w-10 text-center text-sm font-medium" style={{ color: darkMode ? '#FFFFF0' : '#654321' }}>
+                        <span className="w-10 text-center text-sm font-medium" style={{ color: darkMode ? '#ffffff' : '#1c1917' }}>
                           {selectedProduct.quantity || 1}
                         </span>
                         <button 
                           onClick={() => setSelectedProduct({...selectedProduct, quantity: (selectedProduct.quantity || 1) + 1})}
                           className="w-9 h-9 flex items-center justify-center transition"
-                          style={{ color: darkMode ? '#FFFFF0' : '#654321' }}
+                          style={{ color: darkMode ? '#ffffff' : '#1c1917' }}
                           disabled={selectedProduct.stock <= (selectedProduct.quantity || 1)}
                         >
                           <Plus size={14} />
@@ -1862,8 +1856,8 @@ export default function WallArtShop() {
                       disabled={selectedProduct.stock === 0}
                       className={`w-full py-3.5 text-sm font-medium uppercase tracking-wider transition rounded-sm ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'}`}
                       style={{ 
-                        backgroundColor: darkMode ? '#FFFFF0' : '#654321',
-                        color: darkMode ? '#654321' : '#FFFFF0'
+                        backgroundColor: darkMode ? '#ffffff' : '#1c1917',
+                        color: darkMode ? '#1c1917' : '#ffffff'
                       }}
                     >
                       {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
@@ -1889,12 +1883,12 @@ export default function WallArtShop() {
                       }}
                       className="w-full py-3.5 text-sm font-medium uppercase tracking-wider transition flex items-center justify-center gap-2 rounded-sm group"
                       style={{ 
-                        border: `1px solid ${darkMode ? '#78716c' : '#654321'}`,
-                        color: darkMode ? '#FFFFF0' : '#654321',
+                        border: `1px solid ${darkMode ? '#78716c' : '#a8a29e'}`,
+                        color: darkMode ? '#ffffff' : '#1c1917',
                         backgroundColor: 'transparent'
                       }}
-                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#25D366'; e.currentTarget.style.borderColor = '#25D366'; e.currentTarget.style.color = '#FFFFF0'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.borderColor = darkMode ? '#78716c' : '#654321'; e.currentTarget.style.color = darkMode ? '#FFFFF0' : '#654321'; }}
+                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#25D366'; e.currentTarget.style.borderColor = '#25D366'; e.currentTarget.style.color = '#ffffff'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.borderColor = darkMode ? '#78716c' : '#a8a29e'; e.currentTarget.style.color = darkMode ? '#ffffff' : '#1c1917'; }}
                     >
                       <MessageCircle size={16} />
                       WhatsApp ile Sipariş Ver
