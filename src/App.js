@@ -1864,6 +1864,7 @@ export default function WallArtShop() {
                     </div>
                   </div>
                   
+                  
                   {/* Buttons */}
                   <div className="space-y-2 pt-2">
                   <button 
@@ -1877,19 +1878,29 @@ export default function WallArtShop() {
     }
   }} 
   disabled={selectedProduct.stock === 0}
-  className={`w-full py-3.5 text-sm font-medium uppercase tracking-wider transition-all duration-300 rounded-sm active:scale-[0.98] shadow-sm hover:shadow-md ${
-    selectedProduct.stock === 0 
-      ? 'opacity-50 cursor-not-allowed' 
-      : 'hover:opacity-90'
+  className={`w-full py-3.5 text-sm font-medium uppercase tracking-wider rounded-sm shadow-sm ${
+    selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
   }`}
   style={{ 
+    // RENKLER
     backgroundColor: darkMode ? '#ffffff' : '#1c1917',
-    color: darkMode ? '#1c1917' : '#ffffff'
+    color: darkMode ? '#1c1917' : '#ffffff',
+    
+    // GEÇİŞ EFEKTİ (Resimlerdeki gibi garantici yöntem)
+    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+    
+    // HOVER VE ACTIVE (Burası butona o ipeksi hissi verir)
+    transformOrigin: 'center'
   }}
+  // Üzerine gelince hafif şeffaflaşma (Hover efekti)
+  onMouseEnter={(e) => e.currentTarget.style.opacity = '0.85'}
+  onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+  // Tıklayınca hafif küçülme (Active efekti)
+  onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.96)'}
+  onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
 >
   {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
 </button>
-
                     <button 
                       onClick={() => {
                         if (selectedProduct.selectedSize === undefined) {
