@@ -1092,23 +1092,29 @@ export default function WallArtShop() {
                   {/* Buttons */}
                   <div className="space-y-3 pt-2">
                     <button 
-                      onClick={() => {
-                        if (quickViewProduct.selectedFrame === undefined || quickViewProduct.selectedSize === undefined) {
-                          alert('Lütfen boyut ve çerçeve seçin');
-                        } else {
-                          addToCart(quickViewProduct, quickViewProduct.selectedFrame !== 'none');
-                          setQuickViewProduct(null);
-                        }
-                      }}
-                      disabled={quickViewProduct.stock === 0}
-                      className={`w-full py-3 text-sm font-medium uppercase tracking-wider transition rounded-sm ${quickViewProduct.stock === 0 ? 'opacity-50' : 'hover:opacity-90'}`}
-                      style={{ 
-                        backgroundColor: darkMode ? '#ffffff' : '#1c1917',
-                        color: darkMode ? '#1c1917' : '#ffffff'
-                      }}
-                    >
-                      {quickViewProduct.stock === 0 ? t.outOfStock : t.addToCart}
-                    </button>
+  onClick={() => {
+    if (selectedProduct.selectedFrame === undefined) {
+      alert('Lütfen çerçeve seçeneği seçin');
+    } else if (selectedProduct.selectedSize === undefined) {
+      alert('Lütfen boyut seçin');
+    } else {
+      addToCart(selectedProduct, selectedProduct.selectedFrame !== 'none');
+    }
+  }} 
+  disabled={selectedProduct.stock === 0}
+  // DEĞİŞİKLİK BURADA: Hover ve Renk sınıflarını buraya topladık
+  className={`w-full py-3.5 text-sm font-medium uppercase tracking-wider transition-all duration-300 rounded-sm active:scale-[0.98] shadow-sm border
+    ${selectedProduct.stock === 0 
+      ? 'opacity-50 cursor-not-allowed' 
+      : darkMode 
+        ? 'bg-white text-stone-900 hover:bg-stone-100' 
+        : 'bg-stone-900 text-white hover:bg-white hover:text-stone-900 hover:border-stone-900'
+    }`}
+  // Style içinden backgroundColor ve color'ı sildik ki hover çalışabilsin!
+  style={{ transition: 'all 0.3s ease' }}
+>
+  {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
+</button>
                     <button 
                       onClick={() => { setSelectedProduct({...quickViewProduct}); setQuickViewProduct(null); addToRecentlyViewed(quickViewProduct); }}
                       className={`text-sm ${theme.textMuted} hover:${theme.text} underline transition`}
