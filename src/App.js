@@ -1867,41 +1867,32 @@ export default function WallArtShop() {
                   
                   {/* Buttons */}
                   <div className="space-y-2 pt-2">
-                  <button 
-  onClick={() => {
-    if (selectedProduct.selectedFrame === undefined) {
-      alert('Lütfen çerçeve seçeneği seçin');
-    } else if (selectedProduct.selectedSize === undefined) {
-      alert('Lütfen boyut seçin');
-    } else {
-      addToCart(selectedProduct, selectedProduct.selectedFrame !== 'none');
-    }
-  }} 
-  disabled={selectedProduct.stock === 0}
-  className={`w-full py-3.5 text-sm font-medium uppercase tracking-wider rounded-sm shadow-sm ${
-    selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-  }`}
-  style={{ 
-    // RENKLER
-    backgroundColor: darkMode ? '#ffffff' : '#1c1917',
-    color: darkMode ? '#1c1917' : '#ffffff',
-    
-    // GEÇİŞ EFEKTİ (Resimlerdeki gibi garantici yöntem)
-    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-    
-    // HOVER VE ACTIVE (Burası butona o ipeksi hissi verir)
-    transformOrigin: 'center'
-  }}
-  // Üzerine gelince hafif şeffaflaşma (Hover efekti)
-  onMouseEnter={(e) => e.currentTarget.style.opacity = '0.85'}
-  onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-  // Tıklayınca hafif küçülme (Active efekti)
-  onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.96)'}
-  onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
->
-  {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
-</button>
-
+  <button 
+    onClick={() => {
+      if (selectedProduct.selectedFrame === undefined) {
+        alert('Lütfen çerçeve seçeneği seçin');
+      } else if (selectedProduct.selectedSize === undefined) {
+        alert('Lütfen boyut seçin');
+      } else {
+        addToCart(selectedProduct, selectedProduct.selectedFrame !== 'none');
+      }
+    }} 
+    disabled={selectedProduct.stock === 0}
+    // Tüm stilleri buraya, şablon dizisi (template literal) ile yazıyoruz
+    className={`
+      w-full py-4 text-sm font-medium uppercase tracking-wider rounded-none 
+      transition-all duration-300 ease-in-out
+      transform active:scale-95 active:brightness-90
+      flex items-center justify-center
+      ${darkMode 
+        ? 'bg-white text-stone-900 hover:bg-stone-200 shadow-white/10' 
+        : 'bg-stone-900 text-white hover:bg-stone-800 shadow-black/10'}
+      ${selectedProduct.stock === 0 ? 'opacity-40 cursor-not-allowed' : 'opacity-100 cursor-pointer shadow-md hover:shadow-lg'}
+    `}
+  >
+    {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
+  </button>
+</div>
 
 
                   <button 
