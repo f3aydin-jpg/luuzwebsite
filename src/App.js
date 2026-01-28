@@ -1892,7 +1892,6 @@ export default function WallArtShop() {
   >
     {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
   </button>
-</div>
 
 
                   <button 
