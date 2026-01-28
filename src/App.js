@@ -660,6 +660,12 @@ export default function WallArtShop() {
         .animate-bounce-x {
           animation: bounceX 1s ease-in-out infinite;
         }
+  .ultra-smooth {
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes fadeIn { from { opacity: 0; }
+    to { opacity: 1; } 
+    }
       `}</style>
 
       {/* Best Sellers */}
@@ -682,9 +688,9 @@ export default function WallArtShop() {
                 <div key={product.id} className="flex-shrink-0 w-48 md:w-56 group cursor-pointer" onClick={() => { navigateToPage('product', {...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
                   <div className="relative aspect-[3/4] mb-3 overflow-hidden bg-stone-100">
                     {/* First Image */}
-                    <img src={product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out group-hover:opacity-0" />
+                    <img src={product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ultra-smooth group-hover:opacity-0" />
                     {/* Second Image (shown on hover) */}
-                    <img src={product.images?.[1] || product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out opacity-0 group-hover:opacity-100" />
+                    <img src={product.images?.[1] || product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ultra-smooth opacity-0 group-hover:opacity-100" />
                     {/* Hover Icons */}
                     <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                       <button onClick={(e) => { e.stopPropagation(); toggleFavorite(product.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
@@ -739,9 +745,9 @@ export default function WallArtShop() {
                 <div key={product.id} className="flex-shrink-0 w-48 md:w-56 group cursor-pointer" onClick={() => { navigateToPage('product', {...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
                   <div className="relative aspect-[3/4] mb-3 overflow-hidden bg-stone-100">
                     {/* First Image */}
-                    <img src={product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out group-hover:opacity-0" />
+                    <img src={product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ultra-smooth group-hover:opacity-0" />
                     {/* Second Image (shown on hover) */}
-                    <img src={product.images?.[1] || product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out opacity-0 group-hover:opacity-100" />
+                    <img src={product.images?.[1] || product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ultra-smooth opacity-0 group-hover:opacity-100" />
                     {/* Hover Icons */}
                     <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                       <button onClick={(e) => { e.stopPropagation(); toggleFavorite(product.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
