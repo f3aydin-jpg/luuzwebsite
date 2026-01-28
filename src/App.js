@@ -1865,26 +1865,29 @@ export default function WallArtShop() {
                   </div>
                   
                   {/* Buttons */}
-                  <div className="space-y-2 pt-2">
-                    <button 
-                      onClick={() => {
-                        if (selectedProduct.selectedFrame === undefined) {
-                          alert('Lütfen çerçeve seçeneği seçin');
-                        } else if (selectedProduct.selectedSize === undefined) {
-                          alert('Lütfen boyut seçin');
-                        } else {
-                          addToCart(selectedProduct, selectedProduct.selectedFrame !== 'none');
-                        }
-                      }} 
-                      disabled={selectedProduct.stock === 0}
-                      className={`w-full py-3.5 text-sm font-medium uppercase tracking-wider transition rounded-sm ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'}`}
-                      style={{ 
-                        backgroundColor: darkMode ? '#ffffff' : '#1c1917',
-                        color: darkMode ? '#1c1917' : '#ffffff'
-                      }}
-                    >
-                      {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
-                    </button>
+                  <button 
+  onClick={() => {
+    if (selectedProduct.selectedFrame === undefined) {
+      alert('Lütfen çerçeve seçeneği seçin');
+    } else if (selectedProduct.selectedSize === undefined) {
+      alert('Lütfen boyut seçin');
+    } else {
+      addToCart(selectedProduct, selectedProduct.selectedFrame !== 'none');
+    }
+  }} 
+  disabled={selectedProduct.stock === 0}
+  className={`w-full py-3.5 text-sm font-medium uppercase tracking-wider transition-all duration-300 rounded-sm active:scale-[0.98] shadow-sm hover:shadow-md ${
+    selectedProduct.stock === 0 
+      ? 'opacity-50 cursor-not-allowed' 
+      : 'hover:opacity-90'
+  }`}
+  style={{ 
+    backgroundColor: darkMode ? '#ffffff' : '#1c1917',
+    color: darkMode ? '#1c1917' : '#ffffff'
+  }}
+>
+  {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
+</button>
 
                     <button 
                       onClick={() => {
