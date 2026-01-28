@@ -1865,32 +1865,39 @@ export default function WallArtShop() {
                   </div>
                   
                   {/* Buttons */}
-                 <div className="space-y-2 pt-2">
-  <button 
-    onClick={() => {
-      if (selectedProduct.selectedFrame === undefined) {
-        alert('Lütfen çerçeve seçeneği seçin');
-      } else if (selectedProduct.selectedSize === undefined) {
-        alert('Lütfen boyut seçin');
-      } else {
-        addToCart(selectedProduct, selectedProduct.selectedFrame !== 'none');
-      }
-    }} 
-    disabled={selectedProduct.stock === 0}
-    className={`
-      w-full py-3.5 text-sm font-medium uppercase tracking-wider rounded-sm shadow-sm
-      transition-all duration-300 transform active:scale-[0.98] border
-      /* Dinamik Renk ve Hover Mantığı */
-      ${darkMode 
-        ? 'bg-white text-stone-900 border-white hover:bg-transparent hover:text-white' 
-        : 'bg-stone-900 text-white border-stone-900 hover:bg-white hover:text-stone-900'}
-      /* Stok Durumu */
-      ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-    `}
-  >
-    {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
-  </button>
-</div>
+{/* Üstteki elemanlarla çakışmaması için her şeyi tek bir kapsayıcıya alıyoruz */}
+<> 
+  {/* Quantity Selection Bölümü */}
+  <div className="mb-6">
+    <p className={`text-xs font-medium ${theme.textMuted} uppercase tracking-wider mb-2`}>Adet</p>
+    <div className="flex items-center gap-3">
+       {/* ... miktar butonların ... */}
+    </div>
+  </div>
+
+  {/* Buttons Bölümü */}
+  <div className="space-y-2 pt-2">
+    <button 
+      onClick={() => {
+        if (selectedProduct.selectedFrame === undefined) {
+          alert('Lütfen çerçeve seçeneği seçin');
+        } else if (selectedProduct.selectedSize === undefined) {
+          alert('Lütfen boyut seçin');
+        } else {
+          addToCart(selectedProduct, selectedProduct.selectedFrame !== 'none');
+        }
+      }} 
+      disabled={selectedProduct.stock === 0}
+      className={`w-full py-3.5 text-sm font-medium uppercase tracking-wider rounded-sm shadow-sm transition-all duration-300 transform active:scale-[0.98] border ${
+        darkMode 
+          ? 'bg-white text-stone-900 border-white hover:bg-transparent hover:text-white' 
+          : 'bg-stone-900 text-white border-stone-900 hover:bg-white hover:text-stone-900'
+      } ${selectedProduct.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+    >
+      {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
+    </button>
+  </div>
+</>
 
                     <button 
                       onClick={() => {
