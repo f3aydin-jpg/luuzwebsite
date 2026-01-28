@@ -1877,15 +1877,16 @@ export default function WallArtShop() {
     }
   }} 
   disabled={selectedProduct.stock === 0}
-  className={`w-full py-3.5 text-sm font-medium uppercase tracking-wider transition-all duration-300 rounded-sm active:scale-[0.98] shadow-sm hover:shadow-md ${
-    selectedProduct.stock === 0 
+  // DEĞİŞİKLİK BURADA: Hover ve Renk sınıflarını buraya topladık
+  className={`w-full py-3.5 text-sm font-medium uppercase tracking-wider transition-all duration-300 rounded-sm active:scale-[0.98] shadow-sm border
+    ${selectedProduct.stock === 0 
       ? 'opacity-50 cursor-not-allowed' 
-      : 'hover:opacity-90'
-  }`}
-  style={{ 
-    backgroundColor: darkMode ? '#ffffff' : '#1c1917',
-    color: darkMode ? '#1c1917' : '#ffffff'
-  }}
+      : darkMode 
+        ? 'bg-white text-stone-900 hover:bg-stone-100' 
+        : 'bg-stone-900 text-white hover:bg-white hover:text-stone-900 hover:border-stone-900'
+    }`}
+  // Style içinden backgroundColor ve color'ı sildik ki hover çalışabilsin!
+  style={{ transition: 'all 0.3s ease' }}
 >
   {selectedProduct.stock === 0 ? t.outOfStock : t.addToCart}
 </button>
