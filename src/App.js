@@ -127,7 +127,11 @@ export default function WallArtShop() {
       setSpecialFilter(null);
     }
   };
-
+// Yeni ürün seçildiğinde veya sayfa değiştiğinde en tepeye çıkmayı garanti eder
+useEffect(() => {
+  window.scrollTo(0, 0);
+}, [selectedProduct?.id, currentPage]);
+  
   // Browser geri/ileri butonlarını dinle
   useEffect(() => {
     const handlePopState = (e) => {
@@ -1995,6 +1999,7 @@ export default function WallArtShop() {
                   onClick={() => navigateToPage('product', {...p, selectedSize: undefined, selectedFrame: undefined})}
                 >
                   <div className="relative aspect-[3/4] overflow-hidden bg-stone-100 mb-3">
+                    
                     {/* First Image */}
 <img 
   src={p.images?.[0]} 
