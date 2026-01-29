@@ -1989,26 +1989,11 @@ export default function WallArtShop() {
               <h3 className={`text-xl font-medium tracking-wide ${theme.text} uppercase mb-6`}>Benzer Ürünler</h3>
               <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">{products.filter(p => p.category === selectedProduct.category && p.id !== selectedProduct.id).slice(0, 6).map(p => (
                
-              <div 
-  key={p.id} 
-  className="flex-shrink-0 w-48 md:w-56 group cursor-pointer" 
-  onClick={() => {
-  // Önce sayfa geçişini başlat
-  navigateToPage('product', {
-    ...p, 
-    selectedSize: undefined, 
-    selectedFrame: undefined
-  });
-
-  // 10 milisaniye sonra (sayfa değişmeye başladığında) yukarı fırlat
-  setTimeout(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'auto' // 'smooth' bazen sayfa değiştiği için takılabilir, 'auto' en sağlamıdır.
-    });
-  }, 10);
-}}
->
+        <div 
+                  key={p.id} 
+                  className="flex-shrink-0 w-48 md:w-56 group cursor-pointer" 
+                  onClick={() => navigateToPage('product', {...p, selectedSize: undefined, selectedFrame: undefined})}
+                >
                   <div className="relative aspect-[3/4] overflow-hidden bg-stone-100 mb-3">
                     {/* First Image */}
 <img 
