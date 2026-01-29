@@ -2010,7 +2010,8 @@ export default function WallArtShop() {
   className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 scale-100 group-hover:scale-110" 
 />
                     
-                    
+                                   <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+      
             <div 
   key={p.id} 
   className="flex-shrink-0 w-48 md:w-56 group cursor-pointer" 
@@ -2029,7 +2030,6 @@ export default function WallArtShop() {
     });
   }}
 >
-                     //<div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                       //<button onClick={(e) => { e.stopPropagation(); toggleFavorite(p.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
                         <Heart size={16} fill={isFavorite(p.id) ? theme.accent : 'none'} color={isFavorite(p.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
                       </button>
