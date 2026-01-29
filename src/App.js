@@ -130,7 +130,7 @@ export default function WallArtShop() {
 // Yeni ürün seçildiğinde veya sayfa değiştiğinde en tepeye çıkmayı garanti eder
 useEffect(() => {
   window.scrollTo(0, 0);
-}, [selectedProduct?.id, currentPage]);
+}, [selectedProduct?.id]); // Sadece selectedProduct.id'yi izliyoruz
   
   // Browser geri/ileri butonlarını dinle
   useEffect(() => {
