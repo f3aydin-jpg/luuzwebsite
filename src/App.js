@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect,} from 'react';
 import { ShoppingCart, X, Plus, Minus, Menu, Search, Heart, MessageCircle, Package, ChevronDown, ChevronUp, Grid, List, ArrowUp, Moon, Sun, Truck, Shield, RotateCcw, ChevronLeft, ChevronRight, Check, Tag, Instagram, Twitter, Facebook, ZoomIn, Settings, User, LogOut, Mail, Lock, Phone } from 'lucide-react';
 import { db, auth } from './firebase';
 import { collection, getDocs, doc, setDoc, getDoc, updateDoc, query, where, orderBy } from 'firebase/firestore';
@@ -6,7 +6,6 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, on
 import AdminPanel from './AdminPanel';
 
 export default function WallArtShop() {
-  const mainScrollRef = useRef(null);
   const [darkMode, setDarkMode] = useState(false);
   const [cart, setCart] = useState([]);
   const [favorites, setFavorites] = useState([]);
@@ -131,11 +130,6 @@ export default function WallArtShop() {
   
   // Browser geri/ileri butonlarını dinle
   useEffect(() => {
-  if (mainScrollRef.current) {
-    mainScrollRef.current.scrollTo(0, 0);
-  }
-}, [selectedProduct?.id]);
-    
     const handlePopState = (e) => {
       if (e.state) {
         const { page, product } = e.state;
@@ -472,10 +466,7 @@ export default function WallArtShop() {
   };
 
   if (isLoading) return (
-    <div 
-      ref={mainScrollRef}
-      className={`min-h-screen ${theme.bg} transition-colors duration-300 h-screen overflow-y-auto`}
-    >
+    <div className={`min-h-screen ${theme.bg} flex items-center justify-center`}>
       <div className="text-center">
         <h1 className="text-4xl tracking-widest font-light mb-8" style={{fontFamily: "'Raleway', sans-serif", letterSpacing: '0.3em', color: theme.accent}}>LUUZ</h1>
         <div className="flex gap-2 justify-center">{[0,1,2].map(i => <div key={i} className="w-3 h-3 rounded-full animate-bounce" style={{background: theme.accent, animationDelay: `${i*0.15}s`}}/>)}</div>
@@ -538,7 +529,7 @@ export default function WallArtShop() {
                   setShowSearch(false);
                 }
               }}
-              className={çw-full px-4 py-3 rounded-xl ${theme.input} border focus:outline-none`} 
+              className={`w-full px-4 py-3 rounded-xl ${theme.input} border focus:outline-none`} 
               autoFocus 
             />
             {searchQuery && (
