@@ -1993,9 +1993,21 @@ export default function WallArtShop() {
   key={p.id} 
   className="flex-shrink-0 w-48 md:w-56 group cursor-pointer" 
   onClick={() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' }); // Bu satırı ekledik
-    navigateToPage('product', {...p, selectedSize: undefined, selectedFrame: undefined});
-  }}
+  // Önce sayfa geçişini başlat
+  navigateToPage('product', {
+    ...p, 
+    selectedSize: undefined, 
+    selectedFrame: undefined
+  });
+
+  // 10 milisaniye sonra (sayfa değişmeye başladığında) yukarı fırlat
+  setTimeout(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'auto' // 'smooth' bazen sayfa değiştiği için takılabilir, 'auto' en sağlamıdır.
+    });
+  }, 10);
+}}
 >
                   <div className="relative aspect-[3/4] overflow-hidden bg-stone-100 mb-3">
                     {/* First Image */}
