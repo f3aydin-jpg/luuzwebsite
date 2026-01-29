@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,} from 'react';
 import { ShoppingCart, X, Plus, Minus, Menu, Search, Heart, MessageCircle, Package, ChevronDown, ChevronUp, Grid, List, ArrowUp, Moon, Sun, Truck, Shield, RotateCcw, ChevronLeft, ChevronRight, Check, Tag, Instagram, Twitter, Facebook, ZoomIn, Settings, User, LogOut, Mail, Lock, Phone } from 'lucide-react';
 import { db, auth } from './firebase';
 import { collection, getDocs, doc, setDoc, getDoc, updateDoc, query, where, orderBy } from 'firebase/firestore';
@@ -127,10 +127,6 @@ export default function WallArtShop() {
       setSpecialFilter(null);
     }
   };
-// Yeni ürün seçildiğinde veya sayfa değiştiğinde en tepeye çıkmayı garanti eder
-useEffect(() => {
-  window.scrollTo(0, 0);
-}, [selectedProduct?.id]); // Sadece selectedProduct.id'yi izliyoruz
   
   // Browser geri/ileri butonlarını dinle
   useEffect(() => {
