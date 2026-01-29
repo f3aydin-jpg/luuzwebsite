@@ -2010,27 +2010,8 @@ export default function WallArtShop() {
   className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 scale-100 group-hover:scale-110" 
 />
                     
-                                   <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-      
-            <div 
-  key={p.id} 
-  className="flex-shrink-0 w-48 md:w-56 group cursor-pointer" 
-  onClick={() => {
-    // 1. Önce sayfayı en yukarı taşı
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth' // İstersen 'auto' yaparak anında yukarı ışınlanmasını sağlayabilirsin
-    });
-    
-    // 2. Sonra yeni ürüne git
-    navigateToPage('product', {
-      ...p, 
-      selectedSize: undefined, 
-      selectedFrame: undefined
-    });
-  }}
->
-                      //<button onClick={(e) => { e.stopPropagation(); toggleFavorite(p.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
+                                 
+          <button onClick={(e) => { e.stopPropagation(); toggleFavorite(p.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
                         <Heart size={16} fill={isFavorite(p.id) ? theme.accent : 'none'} color={isFavorite(p.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
                       </button>
                       <button onClick={(e) => { e.stopPropagation(); setQuickViewProduct({...p, selectedSize: undefined, selectedFrame: undefined, quantity: 1, activeIndex: 0}); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
