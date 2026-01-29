@@ -1988,11 +1988,15 @@ export default function WallArtShop() {
             <div className={`mt-12 pt-8 border-t ${theme.border}`}>
               <h3 className={`text-xl font-medium tracking-wide ${theme.text} uppercase mb-6`}>Benzer Ürünler</h3>
               <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">{products.filter(p => p.category === selectedProduct.category && p.id !== selectedProduct.id).slice(0, 6).map(p => (
-                <div 
-                  key={p.id} 
-                  className="flex-shrink-0 w-48 md:w-56 group cursor-pointer" 
-                  onClick={() => navigateToPage('product', {...p, selectedSize: undefined, selectedFrame: undefined})}
-                >
+               
+              <div 
+  key={p.id} 
+  className="flex-shrink-0 w-48 md:w-56 group cursor-pointer" 
+  onClick={() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // Bu satırı ekledik
+    navigateToPage('product', {...p, selectedSize: undefined, selectedFrame: undefined});
+  }}
+>
                   <div className="relative aspect-[3/4] overflow-hidden bg-stone-100 mb-3">
                     {/* First Image */}
 <img 
@@ -2010,8 +2014,10 @@ export default function WallArtShop() {
   className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 scale-100 group-hover:scale-110" 
 />
                     
-                                 
-          <button onClick={(e) => { e.stopPropagation(); toggleFavorite(p.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
+                    
+            
+                     <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                      <button onClick={(e) => { e.stopPropagation(); toggleFavorite(p.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
                         <Heart size={16} fill={isFavorite(p.id) ? theme.accent : 'none'} color={isFavorite(p.id) ? theme.accent : (darkMode ? '#fff' : '#000')} />
                       </button>
                       <button onClick={(e) => { e.stopPropagation(); setQuickViewProduct({...p, selectedSize: undefined, selectedFrame: undefined, quantity: 1, activeIndex: 0}); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
