@@ -576,29 +576,36 @@ export default function WallArtShop() {
       <div className={`${theme.bgTertiary} ${theme.textSecondary} py-2.5 text-center border-b ${theme.border}`}>
         <p className="text-xs">Yeni Müşterilere %15 İndirim — Kod: <span className={`font-medium ${darkMode ? 'text-white' : 'text-stone-900'}`}>HOSGELDIN15</span></p>
       </div>
+{/* Hero - GitHub Resimli */}
+<section className="relative h-[50vh] min-h-[350px] bg-stone-950 overflow-hidden">
+  
+  {/* GitHub'dan gelen resim katmanı */}
+  <div 
+    className="absolute inset-0" 
+    style={{
+      backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/heroarkaplan.jpg')",
+      backgroundSize: 'cover',
+      backgroundPosition: 'center'
+    }}
+  ></div>
 
-      {/* Hero - Minimal with Logo */}
-      <section className="relative h-[50vh] min-h-[350px] bg-stone-950 overflow-hidden">
-        {/* Subtle Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-stone-900 via-stone-950 to-black"></div>
-        
-        {/* Content */}
-        <div className="relative z-10 h-full max-w-7xl mx-auto px-4 flex flex-col items-center justify-center text-center">
-          <p className="text-[10px] text-stone-500 uppercase tracking-[0.4em] mb-6 animate-fade-in">Özgün Duvar Sanatı</p>
-          <img src="/luuz-logo-white.png" alt="LUUZ" className="h-12 md:h-16 mb-6 animate-fade-in" />
-          <p className="text-base md:text-lg text-stone-400 font-light mb-8 animate-fade-in-delay tracking-wide">
-            Duvarlarınıza karakter katın
-          </p>
-          <div className="animate-fade-in-delay-2">
-            <button 
-              onClick={() => navigateToPage('collection')} 
-              className="px-10 py-3 text-xs font-medium uppercase tracking-[0.2em] transition-all border border-white/30 text-white hover:bg-white hover:text-stone-900"
-            >
-              Koleksiyonu Keşfet
-            </button>
-          </div>
-        </div>
-      </section>
+  {/* İçerik */}
+  <div className="relative z-10 h-full max-w-7xl mx-auto px-4 flex flex-col items-center justify-center text-center">
+    <p className="text-[10px] text-stone-300 uppercase tracking-[0.4em] mb-6 animate-fade-in">Özgün Duvar Sanatı</p>
+    <img src="/luuz-logo-white.png" alt="LUUZ" className="h-12 md:h-16 mb-6 animate-fade-in" />
+    <p className="text-base md:text-lg text-white font-light mb-8 animate-fade-in-delay tracking-wide">
+      Duvarlarınıza karakter katın
+    </p>
+    <div className="animate-fade-in-delay-2">
+      <button 
+        onClick={() => navigateToPage('collection')} 
+        className="px-10 py-3 text-xs font-medium uppercase tracking-[0.2em] transition-all border border-white text-white hover:bg-white hover:text-stone-900"
+      >
+        Koleksiyonu Keşfet
+      </button>
+    </div>
+  </div>
+</section>
 
       {/* CSS Animations */}
       <style>{`
