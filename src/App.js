@@ -853,50 +853,51 @@ export default function WallArtShop() {
       </section>
 
       {/* Footer - Minimal */}
-      <footer className={`py-16 ${theme.bg}`}>
+      <footer className="py-16 bg-black text-white">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
             <div>
-              <img src={darkMode ? "/luuz-logo-white.png" : "/luuz-logo-black.png"} alt="LUUZ" className="h-6 mb-4" />
-              <p className={`${theme.textMuted} text-xs leading-relaxed`}>Özgün duvar sanatı tasarımları ile mekanlarınıza karakter katın.</p>
+              {/* Logo her zaman beyaz görünsün diye zorladık */}
+              <img src="/luuz-logo-white.png" alt="LUUZ" className="h-6 mb-4" />
+              <p className="text-stone-400 text-xs leading-relaxed">Özgün duvar sanatı tasarımları ile mekanlarınıza karakter katın.</p>
             </div>
             <div>
-              <h5 className={`text-xs font-medium uppercase tracking-wider mb-4 ${theme.text}`}>Linkler</h5>
-              <ul className={`space-y-3 ${theme.textMuted} text-xs`}>
-                <li><button onClick={() => navigateToPage('collection')} className="hover:underline">{t.collection}</button></li>
-                <li><button onClick={() => setShowAbout(true)} className="hover:underline">{t.about}</button></li>
-                <li><button onClick={() => setShowFAQ(true)} className="hover:underline">{t.faq}</button></li>
+              <h5 className="text-xs font-medium uppercase tracking-wider mb-4 text-white">Linkler</h5>
+              <ul className="space-y-3 text-stone-400 text-xs">
+                <li><button onClick={() => navigateToPage('collection')} className="hover:text-white hover:underline transition-colors">{t.collection}</button></li>
+                <li><button onClick={() => setShowAbout(true)} className="hover:text-white hover:underline transition-colors">{t.about}</button></li>
+                <li><button onClick={() => setShowFAQ(true)} className="hover:text-white hover:underline transition-colors">{t.faq}</button></li>
               </ul>
             </div>
             <div>
-              <h5 className={`text-xs font-medium uppercase tracking-wider mb-4 ${theme.text}`}>Yardım</h5>
-              <ul className={`space-y-3 ${theme.textMuted} text-xs`}>
-                <li className="hover:underline cursor-pointer">Kargo Bilgileri</li>
-                <li className="hover:underline cursor-pointer">İade & Değişim</li>
-                <li><button onClick={() => setShowOrderHistory(true)} className="hover:underline">{t.orderHistory}</button></li>
+              <h5 className="text-xs font-medium uppercase tracking-wider mb-4 text-white">Yardım</h5>
+              <ul className="space-y-3 text-stone-400 text-xs">
+                <li className="hover:text-white hover:underline cursor-pointer transition-colors">Kargo Bilgileri</li>
+                <li className="hover:text-white hover:underline cursor-pointer transition-colors">İade & Değişim</li>
+                <li><button onClick={() => setShowOrderHistory(true)} className="hover:text-white hover:underline transition-colors">{t.orderHistory}</button></li>
               </ul>
             </div>
             <div>
-              <h5 className={`text-xs font-medium uppercase tracking-wider mb-4 ${theme.text}`}>İletişim</h5>
-              <ul className={`space-y-3 ${theme.textMuted} text-xs`}>
+              <h5 className="text-xs font-medium uppercase tracking-wider mb-4 text-white">İletişim</h5>
+              <ul className="space-y-3 text-stone-400 text-xs">
                 <li>info@luuz.com.tr</li>
                 <li>+90 212 555 00 00</li>
                 <li>İstanbul, Türkiye</li>
               </ul>
               <div className="flex gap-4 mt-4">
-                <button className={`${theme.textMuted} hover:${theme.text} transition`}><Instagram size={16} /></button>
-                <button className={`${theme.textMuted} hover:${theme.text} transition`}><Twitter size={16} /></button>
-                <button className={`${theme.textMuted} hover:${theme.text} transition`}><Facebook size={16} /></button>
+                <button className="text-stone-400 hover:text-white transition-colors"><Instagram size={16} /></button>
+                <button className="text-stone-400 hover:text-white transition-colors"><Twitter size={16} /></button>
+                <button className="text-stone-400 hover:text-white transition-colors"><Facebook size={16} /></button>
               </div>
             </div>
           </div>
-          <div className={`border-t ${theme.border} pt-8 flex justify-between items-center ${theme.textMuted} text-xs`}>
+          {/* Alt çizgi rengini koyulaştırdık ki siyah üzerinde şık dursun */}
+          <div className="border-t border-stone-800 pt-8 flex justify-between items-center text-stone-500 text-xs">
             <span>© 2025 LUUZ. Tüm hakları saklıdır.</span>
-            <button onClick={() => setShowAdmin(true)} className={`hover:${theme.text} transition`}><Settings size={14} /></button>
+            <button onClick={() => setShowAdmin(true)} className="hover:text-white transition-colors"><Settings size={14} /></button>
           </div>
         </div>
       </footer>
-
       {/* Quick View Modal */}
       {quickViewProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
