@@ -674,9 +674,25 @@ export default function WallArtShop() {
       {/* Best Sellers */}
       <section className="max-w-7xl mx-auto px-4 py-12">
         <div className="flex items-center justify-between mb-6">
-          <div>
+        <div>
+  <h3 
+    className={`tracking-[0.2em] ${theme.text} uppercase`} 
+    style={{ 
+      fontFamily: "'TAN - ST CANARD', serif", // Özel fontun
+      fontSize: 'clamp(1.5rem, 5vw, 2.5rem)', // Boyutu: Mobilde 1.5rem, ekran büyüdükçe 2.5rem'e kadar çıkar
+      fontWeight: '400',
+      lineHeight: '1.2'
+    }}
+  >
+    Çok Satanlar
+  </h3>
+</div>  
+        
+        
+        
+        /*<div>
             <h3 className={`text-xl md:text-2xl font-medium tracking-wide ${theme.text} uppercase`}>Çok Satanlar</h3>
-          </div>
+          </div>*/
           <button 
             onClick={() => setShowBestSellers(true)}
             className={`text-xs font-medium ${theme.textSecondary} hover:${theme.text} transition-colors flex items-center gap-1`}
