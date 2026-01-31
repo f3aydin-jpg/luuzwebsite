@@ -750,7 +750,15 @@ export default function WallArtShop() {
       <section className="max-w-7xl mx-auto px-4 py-12">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className={`text-xl md:text-2xl font-medium tracking-wide ${theme.text} uppercase`}>Yeni Gelenler</h3>
+          <h3 className={`${theme.text}`}
+    style={{ 
+      fontFamily: "'Montserrat', sans-serif", 
+      fontSize: 'clamp(1.5rem, 5vw, 2.5rem)', 
+      fontWeight: '600',           // En kalın seviyeye (Black) çıkardık
+      textTransform: 'uppercase',  // Bütün harfleri BÜYÜK yaptık
+      letterSpacing: '0.03em',    // Harfleri birbirine yaklaştırarak daha "bold" bir hava verdik
+      lineHeight: '1.1'}}>YENİ GELENLER</h3>
+            
           </div>
           <button 
             onClick={() => setShowNewArrivals(true)}
