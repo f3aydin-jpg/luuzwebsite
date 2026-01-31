@@ -688,10 +688,6 @@ export default function WallArtShop() {
           <div id="bestSellerScroll" className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide scroll-smooth">
             {products.filter(p => p.isBestSeller).length > 0 ? (
               products.filter(p => p.isBestSeller).map((product) => (
-               
- 
-                
-                
                  <div key={product.id} className="flex-shrink-0 w-72 md:w-80 group cursor-pointer" onClick={() => { navigateToPage('product', {...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
                   <div className="relative aspect-[3/4] mb-4 overflow-hidden bg-stone-100">
 <img 
@@ -760,8 +756,8 @@ export default function WallArtShop() {
           <div id="newArrivalsScroll" className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide scroll-smooth">
             {products.filter(p => p.isNew).length > 0 ? (
               products.filter(p => p.isNew).map((product) => (
-                <div key={product.id} className="flex-shrink-0 w-48 md:w-56 group cursor-pointer" onClick={() => { navigateToPage('product', {...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
-                  <div className="relative aspect-[3/4] mb-3 overflow-hidden bg-stone-100">
+                  <div key={product.id} className="flex-shrink-0 w-72 md:w-80 group cursor-pointer" onClick={() => { navigateToPage('product', {...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
+                  <div className="relative aspect-[3/4] mb-4 overflow-hidden bg-stone-100">
 {/* First Image */}
 <img 
   src={product.images?.[0]} 
