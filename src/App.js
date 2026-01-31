@@ -675,7 +675,7 @@ export default function WallArtShop() {
       <section className="max-w-7xl mx-auto px-4 py-12">
         <div className="flex items-center justify-between mb-6">
         <div>
-  <h3 className={`tracking-[0.2em] ${theme.text} uppercase`} 
+  <h3 className={`text-2xl md:text-3xl font-bold tracking-tight ${theme.text}`}
     style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 'clamp(1.5rem, 5vw, 2.5rem)', fontWeight: '400',lineHeight: '1.2'}}>Çok Satanlar</h3>
 </div>  
           <button 
