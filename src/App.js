@@ -678,10 +678,6 @@ export default function WallArtShop() {
   <h3 className={`tracking-[0.2em] ${theme.text} uppercase`} 
     style={{ fontFamily: "'TAN - ST CANARD', serif", fontSize: 'clamp(1.5rem, 5vw, 2.5rem)', fontWeight: '400',lineHeight: '1.2'}}>Çok Satanlar</h3>
 </div>  
-      
-        /*<div>
-            <h3 className={`text-xl md:text-2xl font-medium tracking-wide ${theme.text} uppercase`}>Çok Satanlar</h3>
-          </div>*/
           <button 
             onClick={() => setShowBestSellers(true)}
             className={`text-xs font-medium ${theme.textSecondary} hover:${theme.text} transition-colors flex items-center gap-1`}
