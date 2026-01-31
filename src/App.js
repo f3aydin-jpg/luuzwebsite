@@ -760,8 +760,8 @@ export default function WallArtShop() {
           <div id="newArrivalsScroll" className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide scroll-smooth">
             {products.filter(p => p.isNew).length > 0 ? (
               products.filter(p => p.isNew).map((product) => (
-                 <div key={product.id} className="flex-shrink-0 w-72 md:w-80 group cursor-pointer" onClick={() => { navigateToPage('product', {...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
-                  <div className="relative aspect-[3/4] mb-4 overflow-hidden bg-stone-100">
+                <div key={product.id} className="flex-shrink-0 w-48 md:w-56 group cursor-pointer" onClick={() => { navigateToPage('product', {...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
+                  <div className="relative aspect-[3/4] mb-3 overflow-hidden bg-stone-100">
 {/* First Image */}
 <img 
   src={product.images?.[0]} 
@@ -816,8 +816,8 @@ export default function WallArtShop() {
           <h3 className={`text-lg font-medium ${theme.text} mb-4 uppercase tracking-wide`}>{t.recentlyViewed}</h3>
           <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
             {recentlyViewed.map(p => (
-                 <div key={product.id} className="flex-shrink-0 w-72 md:w-80 group cursor-pointer" onClick={() => { navigateToPage('product', {...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
-                  <div className="relative aspect-[3/4] mb-4 overflow-hidden bg-stone-100">
+              <div key={p.id} className="flex-shrink-0 w-32 cursor-pointer group" onClick={() => setSelectedProduct(p)}>
+                <div className="aspect-square overflow-hidden bg-stone-100 mb-2">
                   <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
                 <p className={`text-xs ${theme.text} truncate`}>{p.name}</p>
