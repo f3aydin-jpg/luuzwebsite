@@ -681,7 +681,7 @@ export default function WallArtShop() {
       fontSize: 'clamp(1.5rem, 5vw, 2.5rem)', 
       fontWeight: '600',           // En kalın seviyeye (Black) çıkardık
       textTransform: 'uppercase',  // Bütün harfleri BÜYÜK yaptık
-      letterSpacing: '0.01em',    // Harfleri birbirine yaklaştırarak daha "bold" bir hava verdik
+      letterSpacing: '0.03em',    // Harfleri birbirine yaklaştırarak daha "bold" bir hava verdik
       lineHeight: '1.1'}}>Çok Satanlar</h3>
 </div>  
           <button 
