@@ -1236,22 +1236,8 @@ export default function WallArtShop() {
           </div>
           <div className="max-w-7xl mx-auto px-4 py-8">
             <h1 className={`text-2xl font-medium tracking-wide ${theme.text} uppercase mb-8 text-center`}>Çok Satanlar</h1>
-{/* Gap değerini 2 (mobilde) ve 3 (masaüstünde) yaparak ürünleri birbirine yaklaştırdık */}
-<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-2 md:gap-3">
-  {products.filter(p => p.isBestSeller).map((product, idx) => (
-    <div key={product.id} className="group cursor-pointer animate-fade-in" ...>
-      {/* mb-3 yerine mb-2 yaparak görsel ile altındaki isim arasındaki boşluğu da daraltabilirsin */}
-      <div className="relative aspect-[3/4] overflow-hidden bg-stone-100 mb-2">
-        <img 
-          src={product.images?.[0]} 
-          alt={product.name} 
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
-        />
-      </div>
-      {/* Ürün detayları buraya gelecek */}
-    </div>
-  ))}
-</div>
+          
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
               {products.filter(p => p.isBestSeller).map((product, idx) => (
                 <div key={product.id} className="group cursor-pointer animate-fade-in" style={{ animationDelay: `${idx * 0.05}s` }} onClick={() => { setPageHistory(prev => [...prev, 'bestSellers']); setShowBestSellers(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
                   <div className="relative aspect-[3/4] overflow-hidden bg-stone-100 mb-3">
