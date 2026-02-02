@@ -343,7 +343,7 @@ export default function WallArtShop() {
     }
   };
 
-  useEffect(() => {
+useEffect(() => {
     fetchProducts();
     
     // localStorage'dan favorileri yükle (giriş yapmamış kullanıcılar için)
@@ -352,8 +352,19 @@ export default function WallArtShop() {
       setFavorites(JSON.parse(savedFavorites));
     }
     
-    // Browser history başlangıç state'i
-    window.history.replaceState({ page: 'home' }, '', '#home');
+    // URL hash'ini kontrol et ve doğru sayfayı aç
+    const hash = window.location.hash.replace('#', '');
+    if (hash === 'collection') {
+      setShowCollection(true);
+    } else if (hash === 'bestSellers') {
+      setShowBestSellers(true);
+    } else if (hash === 'newArrivals') {
+      setShowNewArrivals(true);
+    }
+    // Başlangıç state'ini history'ye ekle
+    if (!hash) {
+      window.history.replaceState({ page: 'home' }, '', '#home');
+    }
     
     // Auth durumunu dinle
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
