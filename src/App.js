@@ -717,21 +717,14 @@ useEffect(() => {
             {products.filter(p => p.isBestSeller).length > 0 ? (
               products.filter(p => p.isBestSeller).map((product) => (
                  <div key={product.id} className="flex-shrink-0 w-72 md:w-80 group cursor-pointer" onClick={() => { navigateToPage('product', {...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
-                  <div className="relative aspect-[3/4] mb-4 overflow-hidden bg-stone-100">
-<img 
-  src={product.images?.[0]} 
-  alt={product.name} 
-  style={{ transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)' }}
-  className="absolute inset-0 w-full h-full object-cover group-hover:opacity-0 group-hover:scale-110" 
-/>
+<div className="relative aspect-[3/4] mb-4 overflow-hidden bg-stone-100">
 
-{/* Second Image */}
-<img 
-  src={product.images?.[1] || product.images?.[0]} 
-  alt={product.name} 
-  style={{ transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)' }}
-  className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 scale-100 group-hover:scale-110" 
-/>
+  {/* First Image */}
+                    <img src={product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out group-hover:opacity-0" />
+            {/* Second Image (shown on hover) */}
+                    <img src={product.images?.[1] || product.images?.[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100" />
+                  
+            
 
                     {/* Hover Icons */}
                     <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
