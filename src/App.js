@@ -99,6 +99,9 @@ export default function WallArtShop() {
       setSelectedProduct(product);
       setActiveImageIndex(0);
       setOpenAccordion(null);
+      // Ürün bilgisini localStorage'a kaydet (sayfa yenilemesi için)
+      localStorage.setItem('luuz_current_product_data', JSON.stringify(product));
+    
     }
     
     // Browser history'ye ekle
@@ -120,13 +123,15 @@ export default function WallArtShop() {
       if (prevPage === 'collection') setShowCollection(true);
       else if (prevPage === 'bestSellers') setShowBestSellers(true);
       else if (prevPage === 'newArrivals') setShowNewArrivals(true);
-    } else {
+      } else {
       // Geçmiş yoksa anasayfaya git
       setShowCollection(false);
       setShowBestSellers(false);
       setShowNewArrivals(false);
       setSelectedProduct(null);
       setSpecialFilter(null);
+      localStorage.removeItem('luuz_current_product_data');
+    
     }
   };
   
@@ -344,26 +349,34 @@ export default function WallArtShop() {
   };
 
 useEffect(() => {
-    fetchProducts();
-    
-    // localStorage'dan favorileri yükle (giriş yapmamış kullanıcılar için)
-    const savedFavorites = localStorage.getItem('luuz_favorites');
-    if (savedFavorites) {
-      setFavorites(JSON.parse(savedFavorites));
-    }
-    
-    // URL hash'ini kontrol et ve doğru sayfayı aç
+    // URL hash'ini ÖNCE kontrol et (flash'ı önlemek için)
     const hash = window.location.hash.replace('#', '');
+    const savedProductId = localStorage.getItem('luuz_current_product');
+    
     if (hash === 'collection') {
       setShowCollection(true);
     } else if (hash === 'bestSellers') {
       setShowBestSellers(true);
     } else if (hash === 'newArrivals') {
       setShowNewArrivals(true);
+    } else if (hash === 'product' && savedProductId) {
+      // Ürün detay sayfası için ürünü localStorage'dan al
+      const savedProduct = localStorage.getItem('luuz_current_product_data');
+      if (savedProduct) {
+        setSelectedProduct(JSON.parse(savedProduct));
+      }
     }
-    // Başlangıç state'ini history'ye ekle
+    
     if (!hash) {
       window.history.replaceState({ page: 'home' }, '', '#home');
+    }
+
+    fetchProducts();
+    
+    // localStorage'dan favorileri yükle
+    const savedFavorites = localStorage.getItem('luuz_favorites');
+    if (savedFavorites) {
+      setFavorites(JSON.parse(savedFavorites));
     }
     
     // Auth durumunu dinle
@@ -383,6 +396,7 @@ useEffect(() => {
       unsubscribe();
     };
   }, []);
+    
 
   const categories = ['Tümü', 'Minimal', 'Soyut', 'Doğa', 'Geometrik', 'Tipografi', 'Modern', 'Klasik', 'Portre', 'Manzara'];
   // eslint-disable-next-line no-unused-vars
