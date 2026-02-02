@@ -441,7 +441,6 @@ export default function WallArtShop() {
     } else {
       setCart([...cart, { ...cartItem, quantity }]);
     }
-    setSelectedProduct(null);
   };
 
   const updateQuantity = (cartId, change) => setCart(cart.map(item => item.cartId === cartId ? { ...item, quantity: Math.max(0, item.quantity + change) } : item).filter(item => item.quantity > 0));
