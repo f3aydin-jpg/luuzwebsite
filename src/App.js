@@ -57,6 +57,8 @@ export default function WallArtShop() {
   const [pageHistory, setPageHistory] = useState([]);
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [openAccordion, setOpenAccordion] = useState(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
   
   // Üyelik sistemi state'leri
   const [user, setUser] = useState(null);
@@ -404,6 +406,11 @@ export default function WallArtShop() {
     setFavorites(newFavorites);
     saveFavorites(newFavorites);
   };
+  const showToastMessage = (message) => {
+  setToastMessage(message);
+  setShowToast(true);
+  setTimeout(() => setShowToast(false), 1000);
+};
   const addToRecentlyViewed = (p) => setRecentlyViewed(prev => [p, ...prev.filter(x => x.id !== p.id)].slice(0, 6));
   // eslint-disable-next-line no-unused-vars
   const toggleCompare = (p) => compareProducts.find(x => x.id === p.id) ? setCompareProducts(compareProducts.filter(x => x.id !== p.id)) : compareProducts.length < 4 && setCompareProducts([...compareProducts, p]);
@@ -435,12 +442,14 @@ export default function WallArtShop() {
       cartId 
     };
     
+    
     const existing = cart.find(item => item.cartId === cartId);
-    if (existing) {
+  if (existing) {
       setCart(cart.map(item => item.cartId === cartId ? { ...item, quantity: item.quantity + quantity } : item));
     } else {
       setCart([...cart, { ...cartItem, quantity }]);
     }
+    showToastMessage('Ürün sepete eklendi ✓');
   };
 
   const updateQuantity = (cartId, change) => setCart(cart.map(item => item.cartId === cartId ? { ...item, quantity: Math.max(0, item.quantity + change) } : item).filter(item => item.quantity > 0));
@@ -2627,7 +2636,14 @@ export default function WallArtShop() {
           </div>
         </div>
       )}
-
+{/* Toast Notification */}
+      {showToast && (
+        <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
+          <div className={`${darkMode ? 'bg-white text-stone-900' : 'bg-stone-900 text-white'} px-6 py-3 rounded-lg shadow-2xl font-medium text-sm`}>
+            {toastMessage}
+          </div>
+        </div>
+      )}
       {/* WhatsApp Floating Button */}
       <a 
         href="https://wa.me/905060342409?text=Merhaba! LUUZ hakkında bilgi almak istiyorum."
