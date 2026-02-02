@@ -745,8 +745,10 @@ useEffect(() => {
                     {product.discount > 0 && <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 text-[10px] font-medium uppercase z-10">İndirim</div>}
                   </div>
                   <div>
-                    <p className={`text-[10px] ${theme.textMuted} uppercase tracking-wider mb-1`}>LUUZ POSTER</p>
-                    <h4 className={`text-sm ${theme.text} mb-1 line-clamp-2`}>{product.name}</h4>
+                    <p className={`text-[9px] ${theme.textMuted} uppercase tracking-[0.2em] mb-1.5 font-medium`}>
+    LUUZ
+  </p>
+                    <h4 className={`text-base ${theme.text} mb-1 line-clamp-2`}>{product.name}</h4>
                     <p className={`text-sm ${theme.text}`}>
                       {product.discount > 0 ? (
                         <>
@@ -979,7 +981,7 @@ useEffect(() => {
                 <div>
                   <p className={`text-[10px] ${theme.textMuted} uppercase tracking-wider mb-2`}>LUUZ POSTER</p>
                   <div className="flex items-start justify-between gap-3 mb-3">
-                    <h2 className={`text-xl md:text-2xl font-light ${theme.text}`}>{quickViewProduct.name}</h2>
+                    <h2 className={`text-xl md:text-2xl font-medium ${theme.text}`}>{quickViewProduct.name}</h2>
                     <button 
                       onClick={() => toggleFavorite(quickViewProduct.id)}
                       className={`flex-shrink-0 p-2 transition ${isFavorite(quickViewProduct.id) ? 'text-red-500' : theme.textMuted}`}
