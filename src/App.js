@@ -1275,9 +1275,19 @@ useEffect(() => {
                     {product.stock === 0 && <div className="absolute inset-0 bg-black/60 flex items-center justify-center"><span className="text-white text-sm font-medium">{t.outOfStock}</span></div>}
                   </div>
                   <div>
-                    <p className={`text-[10px] ${theme.textMuted} uppercase tracking-wider mb-1`}>LUUZ POSTER</p>
-                    <h3 className={`text-sm ${theme.text} mb-1 line-clamp-2`}>{product.name}</h3>
-                    <p className={`text-sm ${theme.text}`}>
+                    <p className={`text-[10px] ${theme.textMuted} uppercase tracking-wider mb-1`}>LUUZ</p>
+               
+                    <h4 
+  className={`${theme.text}`} 
+  style={{ 
+    fontFamily: "'Playfair Display', serif", 
+    fontWeight: '500', 
+    fontSize: '1.1rem', 
+    fontStyle: 'italic' // İtalik yaparak daha özel bir hava verebilirsin
+  }}
+>
+  {product.name}
+</h4>
                       {product.discount > 0 ? (
                         <>
                           <span className="line-through text-stone-400 mr-2">{product.priceUnframed} TL</span>
