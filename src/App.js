@@ -979,7 +979,7 @@ useEffect(() => {
                 <div>
                   <p className={`text-[10px] ${theme.textMuted} uppercase tracking-wider mb-2`}>LUUZ POSTER</p>
                   <div className="flex items-start justify-between gap-3 mb-3">
-                    <h2 className={`text-xl md:text-2xl font-medium ${theme.text}`}>{quickViewProduct.name}</h2>
+                    <h2 className={`text-xl md:text-2xl font-light ${theme.text}`}>{quickViewProduct.name}</h2>
                     <button 
                       onClick={() => toggleFavorite(quickViewProduct.id)}
                       className={`flex-shrink-0 p-2 transition ${isFavorite(quickViewProduct.id) ? 'text-red-500' : theme.textMuted}`}
@@ -1275,10 +1275,9 @@ useEffect(() => {
                     {product.stock === 0 && <div className="absolute inset-0 bg-black/60 flex items-center justify-center"><span className="text-white text-sm font-medium">{t.outOfStock}</span></div>}
                   </div>
                   <div>
-                   <p className={`text-[10px] ${theme.textMuted} uppercase tracking-wider mb-1`}>LUUZ</p>
+                    <p className={`text-[10px] ${theme.textMuted} uppercase tracking-wider mb-1`}>LUUZ POSTER</p>
                     <h3 className={`text-sm ${theme.text} mb-1 line-clamp-2`}>{product.name}</h3>
                     <p className={`text-sm ${theme.text}`}>
-
                       {product.discount > 0 ? (
                         <>
                           <span className="line-through text-stone-400 mr-2">{product.priceUnframed} TL</span>
@@ -1734,7 +1733,7 @@ useEffect(() => {
                 <div>
                   <p className={`text-[10px] ${theme.textMuted} uppercase tracking-wider mb-2`}>LUUZ POSTER</p>
                   <div className="flex items-start justify-between gap-3 mb-3">
-                    <h1 className={`text-2xl md:text-3xl font-light ${theme.text}`}>{selectedProduct.name}</h1>
+                    <h1 className={`text-2xl md:text-3xl font-medium ${theme.text}`}>{selectedProduct.name}</h1>
                     <button 
                       onClick={() => selectedProduct?.id && toggleFavorite(selectedProduct.id)}
                       className={`flex-shrink-0 p-2 transition ${isFavorite(selectedProduct?.id) ? 'text-red-500' : theme.textMuted}`}
@@ -2071,8 +2070,7 @@ useEffect(() => {
                   </div>
                   <div>
                     <p className={`text-[10px] ${theme.textMuted} uppercase tracking-wider mb-1`}>LUUZ POSTER</p>
-                         <p className={`text-[10px] ${theme.textMuted} uppercase tracking-wider mb-1`}>LUUZ</p>
-                    <h3 className={`text-sm ${theme.text} mb-1 line-clamp-2`}>{product.name}</h3>
+                    <h4 className={`text-sm ${theme.text} mb-1 line-clamp-2`}>{p.name}</h4>
                     <p className={`text-sm ${theme.text}`}>
                       {p.discount > 0 ? (
                         <>
