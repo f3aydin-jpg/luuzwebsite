@@ -717,12 +717,21 @@ useEffect(() => {
             {products.filter(p => p.isBestSeller).length > 0 ? (
               products.filter(p => p.isBestSeller).map((product) => (
                  <div key={product.id} className="flex-shrink-0 w-72 md:w-80 group cursor-pointer" onClick={() => { navigateToPage('product', {...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
-<div className="relative aspect-[3/4] mb-4 overflow-hidden bg-stone-100">
+                  <div className="relative aspect-[3/4] mb-4 overflow-hidden bg-stone-100">
+<img 
+  src={product.images?.[0]} 
+  alt={product.name} 
+  style={{ transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)' }}
+  className="absolute inset-0 w-full h-full object-cover group-hover:opacity-0 group-hover:scale-110" 
+/>
 
-   <div className="relative aspect-[3/4] overflow-hidden bg-stone-100 mb-3">
-                    <img src={product.images?.[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                     
-            
+{/* Second Image */}
+<img 
+  src={product.images?.[1] || product.images?.[0]} 
+  alt={product.name} 
+  style={{ transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)' }}
+  className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 scale-100 group-hover:scale-110" 
+/>
 
                     {/* Hover Icons */}
                     <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
@@ -1328,10 +1337,7 @@ useEffect(() => {
               {products.filter(p => p.isNew).map((product, idx) => (
                 <div key={product.id} className="group cursor-pointer animate-fade-in" style={{ animationDelay: `${idx * 0.05}s` }} onClick={() => { setPageHistory(prev => [...prev, 'newArrivals']); setShowNewArrivals(false); setSelectedProduct({...product, selectedSize: undefined, selectedFrame: undefined}); addToRecentlyViewed(product); }}>
                   <div className="relative aspect-[3/4] overflow-hidden bg-stone-100 mb-3">
-                    
                     <img src={product.images?.[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-
-                    
                     {/* Hover Icons */}
                     <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button onClick={(e) => { e.stopPropagation(); toggleFavorite(product.id); }} className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'bg-stone-800/80' : 'bg-white/80'} backdrop-blur-sm`}>
