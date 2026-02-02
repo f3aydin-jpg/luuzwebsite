@@ -11,7 +11,13 @@ export default function WallArtShop() {
   const [favorites, setFavorites] = useState([]);
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(() => {
+  if (window.location.hash === '#product') {
+    const saved = localStorage.getItem('luuz_current_product_data');
+    return saved ? JSON.parse(saved) : null;
+  }
+  return null;
+});
   const [showChat, setShowChat] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -46,13 +52,13 @@ export default function WallArtShop() {
   const [imagesLoaded, setImagesLoaded] = useState({});
   const [showAdmin, setShowAdmin] = useState(false);
   const [products, setProducts] = useState([]);
-  const [showCollection, setShowCollection] = useState(false);
+  const [showCollection, setShowCollection] = useState(() => window.location.hash === '#collection');
   // eslint-disable-next-line no-unused-vars
   const [bestSellerIndex, setBestSellerIndex] = useState(0);
   // eslint-disable-next-line no-unused-vars
   const [newArrivalIndex, setNewArrivalIndex] = useState(0);
-  const [showBestSellers, setShowBestSellers] = useState(false);
-  const [showNewArrivals, setShowNewArrivals] = useState(false);
+ const [showBestSellers, setShowBestSellers] = useState(() => window.location.hash === '#bestSellers');
+const [showNewArrivals, setShowNewArrivals] = useState(() => window.location.hash === '#newArrivals');
   const [specialFilter, setSpecialFilter] = useState(null);
   const [pageHistory, setPageHistory] = useState([]);
   const [quickViewProduct, setQuickViewProduct] = useState(null);
@@ -99,10 +105,9 @@ export default function WallArtShop() {
       setSelectedProduct(product);
       setActiveImageIndex(0);
       setOpenAccordion(null);
-      // Ürün bilgisini localStorage'a kaydet (sayfa yenilemesi için)
       localStorage.setItem('luuz_current_product_data', JSON.stringify(product));
-    
     }
+     
     
     // Browser history'ye ekle
     window.history.pushState({ page, product }, '', `#${page}`);
@@ -349,34 +354,17 @@ export default function WallArtShop() {
   };
 
 useEffect(() => {
-    // URL hash'ini ÖNCE kontrol et (flash'ı önlemek için)
-    const hash = window.location.hash.replace('#', '');
-    const savedProductId = localStorage.getItem('luuz_current_product');
-    
-    if (hash === 'collection') {
-      setShowCollection(true);
-    } else if (hash === 'bestSellers') {
-      setShowBestSellers(true);
-    } else if (hash === 'newArrivals') {
-      setShowNewArrivals(true);
-    } else if (hash === 'product' && savedProductId) {
-      // Ürün detay sayfası için ürünü localStorage'dan al
-      const savedProduct = localStorage.getItem('luuz_current_product_data');
-      if (savedProduct) {
-        setSelectedProduct(JSON.parse(savedProduct));
-      }
-    }
-    
-    if (!hash) {
-      window.history.replaceState({ page: 'home' }, '', '#home');
-    }
-
     fetchProducts();
     
     // localStorage'dan favorileri yükle
     const savedFavorites = localStorage.getItem('luuz_favorites');
     if (savedFavorites) {
       setFavorites(JSON.parse(savedFavorites));
+    }
+    
+    // Başlangıç state'ini history'ye ekle
+    if (!window.location.hash) {
+      window.history.replaceState({ page: 'home' }, '', '#home');
     }
     
     // Auth durumunu dinle
