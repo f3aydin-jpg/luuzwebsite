@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db, storage } from './firebase';
 import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { Plus, Trash2, Edit, Save, X, Upload, LogOut } from 'lucide-react';
+import { Plus, Trash2, Edit, Save, X, Upload, LogOut, Bold, Italic, Underline, List } from 'lucide-react';
 
 const ADMIN_PASSWORD = "luuz2025"; // Basit şifre - sonra değiştir
 
@@ -28,7 +28,21 @@ export default function AdminPanel({ onClose }) {
     discount: 0,
     images: []
   });
+const descriptionRef = React.useRef(null);
 
+  const formatText = (command, value = null) => {
+    document.execCommand(command, false, value);
+    descriptionRef.current?.focus();
+  };
+
+  const handleDescriptionChange = () => {
+    if (descriptionRef.current) {
+      setFormData(prev => ({
+        ...prev,
+        description: descriptionRef.current.innerHTML
+      }));
+    }
+  };
   const categories = ['Minimal', 'Soyut', 'Doğa', 'Geometrik', 'Tipografi', 'Modern', 'Klasik', 'Portre', 'Manzara'];
 
   useEffect(() => {
@@ -414,17 +428,55 @@ export default function AdminPanel({ onClose }) {
                 />
               </div>
 
-              {/* Description */}
+             {/* Description with Rich Text Editor */}
               <div>
                 <label className="block text-stone-300 text-sm mb-2">Açıklama *</label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full bg-stone-700 border border-stone-600 rounded-xl px-4 py-3 text-white h-24 resize-none"
-                  required
+                {/* Toolbar */}
+                <div className="flex gap-1 mb-2 p-2 bg-stone-600 rounded-t-xl border border-stone-600 border-b-0">
+                  <button
+                    type="button"
+                    onClick={() => formatText('bold')}
+                    className="p-2 hover:bg-stone-500 rounded text-white transition"
+                    title="Kalın"
+                  >
+                    <Bold size={16} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => formatText('italic')}
+                    className="p-2 hover:bg-stone-500 rounded text-white transition"
+                    title="İtalik"
+                  >
+                    <Italic size={16} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => formatText('underline')}
+                    className="p-2 hover:bg-stone-500 rounded text-white transition"
+                    title="Altı Çizili"
+                  >
+                    <Underline size={16} />
+                  </button>
+                  <div className="w-px bg-stone-500 mx-1"></div>
+                  <button
+                    type="button"
+                    onClick={() => formatText('insertUnorderedList')}
+                    className="p-2 hover:bg-stone-500 rounded text-white transition"
+                    title="Madde İşareti"
+                  >
+                    <List size={16} />
+                  </button>
+                </div>
+                {/* Editable Area */}
+                <div
+                  ref={descriptionRef}
+                  contentEditable
+                  onInput={handleDescriptionChange}
+                  dangerouslySetInnerHTML={{ __html: formData.description }}
+                  className="w-full bg-stone-700 border border-stone-600 rounded-b-xl px-4 py-3 text-white min-h-[100px] focus:outline-none focus:border-amber-500"
+                  style={{ whiteSpace: 'pre-wrap' }}
                 />
               </div>
-
               {/* Category */}
               <div>
                 <label className="block text-stone-300 text-sm mb-2">Kategori *</label>
