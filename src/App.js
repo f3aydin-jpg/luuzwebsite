@@ -1175,7 +1175,7 @@ useEffect(() => {
                       </button>
                       {openAccordion === 'qv-details' && (
                         <div className={`pb-3 text-sm ${theme.textSecondary}`}>
-                          <p>{quickViewProduct.description || 'Yüksek kaliteli baskı teknolojisi ile üretilmiş poster.'}</p>
+                          <p dangerouslySetInnerHTML={{ __html: quickViewProduct.description || 'Yüksek kaliteli baskı teknolojisi ile üretilmiş poster.' }} />
                         </div>
                       )}
                     </div>
@@ -1981,7 +1981,7 @@ useEffect(() => {
                       </button>
                       {openAccordion === 'details' && (
                         <div className={`pb-4 text-sm ${theme.textSecondary} leading-relaxed`}>
-                          <p>{selectedProduct.description || 'Bu poster, yüksek kaliteli baskı teknolojisi ile üretilmiştir. Canlı renkler ve keskin detaylar ile mekanlarınıza şıklık katacaktır.'}</p>
+                         <p dangerouslySetInnerHTML={{ __html: selectedProduct.description || 'Bu poster, yüksek kaliteli baskı teknolojisi ile üretilmiştir. Canlı renkler ve keskin detaylar ile mekanlarınıza şıklık katacaktır.' }} />
                         </div>
                       )}
                     </div>
