@@ -386,7 +386,7 @@ useEffect(() => {
   }, []);
     
 
-  const categories = ['Tümü', 'Minimal', 'Soyut', 'Pet Posters', 'Geometrik', 'Tipografi', 'Modern', 'Klasik', 'Portre', 'Manzara'];
+  const categories = ['Tümü', 'Minimal', 'Soyut', 'Doğa', 'Geometrik', 'Tipografi', 'Modern', 'Klasik', 'Portre', 'Manzara'];
   // eslint-disable-next-line no-unused-vars
   const sizes = ['40x60 cm', '50x70 cm', '60x80 cm', '70x100 cm'];
   const coupons = { 'HOSGELDIN15': { discount: 15, type: 'percent' }, 'YAZ50': { discount: 50, type: 'fixed' } };
