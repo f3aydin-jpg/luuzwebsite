@@ -162,59 +162,59 @@ const generateProductCode = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (formData.images.length === 0) {
-      alert('En az bir fotoğraf ekleyin');
-      return;
+  e.preventDefault();
+  
+  if (formData.images.length === 0) {
+    alert('En az bir fotoğraf ekleyin');
+    return;
+  }
+
+  if (formData.categories.length === 0) {
+    alert('En az bir kategori seçin');
+    return;
+  }
+
+  try {
+    const productData = {
+      name: formData.name,
+      description: formData.description,
+      // Düzeltilen kısım: categories dizisinden veriyi alıyoruz
+      category: formData.categories[0], 
+      categories: formData.categories, 
+      price30x40Unframed: Number(formData.price30x40Unframed) || 0,
+      price30x40Framed: Number(formData.price30x40Framed) || 0,
+      price50x70Unframed: Number(formData.price50x70Unframed) || 0,
+      price50x70Framed: Number(formData.price50x70Framed) || 0,
+      // Varsayılan fiyatlar
+      priceUnframed: Number(formData.price50x70Unframed) || 0,
+      priceFramed: Number(formData.price50x70Framed) || 0,
+      stock: Number(formData.stock) || 0,
+      discount: Number(formData.discount) || 0,
+      isNew: formData.isNew,
+      isBestSeller: formData.isBestSeller,
+      images: formData.images,
+      reviews: editingProduct ? (editingProduct.reviews || []) : [],
+      updatedAt: new Date().toISOString()
+    };
+
+    if (editingProduct) {
+      await updateDoc(doc(db, 'products', editingProduct.id), productData);
+      alert('Ürün güncellendi!');
+    } else {
+      productData.productCode = generateProductCode();
+      productData.createdAt = new Date().toISOString();
+      await addDoc(collection(db, 'products'), productData);
+      alert(`Ürün eklendi! Ürün Kodu: ${productData.productCode}`);
     }
 
-    if (formData.categories.length === 0) {
-      alert('En az bir kategori seçin');
-      return;
-    }
-    
-
-    try {
-      const productData = {
-        name: formData.name,
-        description: formData.description,
-        category: formData.category,
-        price30x40Unframed: Number(formData.price30x40Unframed),
-        price30x40Framed: Number(formData.price30x40Framed),
-        price50x70Unframed: Number(formData.price50x70Unframed),
-        price50x70Framed: Number(formData.price50x70Framed),
-        priceUnframed: Number(formData.price50x70Unframed),
-        priceFramed: Number(formData.price50x70Framed),
-        stock: Number(formData.stock),
-        discount: Number(formData.discount),
-        isNew: formData.isNew,
-        isBestSeller: formData.isBestSeller,
-        images: formData.images,
-        reviews: [],
-        updatedAt: new Date().toISOString()
-      };
-
-      if (editingProduct) {
-        // Düzenlemede mevcut kodu koru
-        await updateDoc(doc(db, 'products', editingProduct.id), productData);
-        alert('Ürün güncellendi!');
-      } else {
-        // Yeni ürün için kod oluştur
-        productData.productCode = generateProductCode();
-        productData.createdAt = new Date().toISOString();
-        await addDoc(collection(db, 'products'), productData);
-        alert(`Ürün eklendi! Ürün Kodu: ${productData.productCode}`);
-      }
-
-      resetForm();
-      fetchProducts();
-    } catch (error) {
-      console.error('Kaydetme hatası:', error);
-      alert('Bir hata oluştu');
-    }
-  };
-
+    resetForm();
+    fetchProducts();
+  } catch (error) {
+    // Hatayı daha net görmek için:
+    console.error('Firebase Kaydetme Hatası Detayı:', error);
+    alert('Bir hata oluştu: ' + error.message);
+  }
+};
   const handleDelete = async (product) => {
     if (!window.confirm(`"${product.name}" ürününü silmek istediğinize emin misiniz?`)) {
       return;
