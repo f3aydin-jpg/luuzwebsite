@@ -66,6 +66,41 @@ const descriptionRef = React.useRef(null);
     setLoading(false);
   };
 
+  const assignMissingCodes = async () => {
+    const productsWithoutCode = products.filter(p => !p.productCode);
+    
+    if (productsWithoutCode.length === 0) {
+      alert('Tüm ürünlerin zaten kodu var!');
+      return;
+    }
+
+    if (!window.confirm(`${productsWithoutCode.length} ürüne otomatik kod atanacak. Devam edilsin mi?`)) {
+      return;
+    }
+
+    try {
+      // Mevcut en yüksek kodu bul
+      const existingCodes = products
+        .map(p => p.productCode)
+        .filter(code => code)
+        .map(code => parseInt(code, 10));
+      
+      let nextCode = existingCodes.length > 0 ? Math.max(...existingCodes) + 1 : 1;
+
+      for (const product of productsWithoutCode) {
+        const code = nextCode.toString().padStart(5, '0');
+        await updateDoc(doc(db, 'products', product.id), { productCode: code });
+        nextCode++;
+      }
+
+      alert(`${productsWithoutCode.length} ürüne kod atandı!`);
+      fetchProducts();
+    } catch (error) {
+      console.error('Kod atama hatası:', error);
+      alert('Bir hata oluştu');
+    }
+  };
+
   const handleLogin = (e) => {
     e.preventDefault();
     if (password === ADMIN_PASSWORD) {
@@ -305,6 +340,21 @@ const generateProductCode = () => {
                 <p className="text-2xl font-bold text-amber-400">{products.filter(p => p.discount > 0).length}</p>
               </div>
             </div>
+{/* Kod Atama Butonu */}
+            {products.some(p => !p.productCode) && (
+              <div className="mb-6 p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center justify-between">
+                <div>
+                  <p className="text-amber-500 font-medium">Kodsuz Ürünler Tespit Edildi</p>
+                  <p className="text-stone-400 text-sm">{products.filter(p => !p.productCode).length} ürüne kod atanmamış</p>
+                </div>
+                <button
+                  onClick={assignMissingCodes}
+                  className="bg-amber-500 text-stone-900 px-4 py-2 rounded-lg font-medium hover:bg-amber-400 transition"
+                >
+                  Kodları Ata
+                </button>
+              </div>
+            )}
 
             {/* Products Table */}
             <div className="bg-stone-800 border border-stone-700 rounded-xl overflow-hidden">
