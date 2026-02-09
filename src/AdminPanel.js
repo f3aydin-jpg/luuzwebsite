@@ -45,7 +45,7 @@ const descriptionRef = React.useRef(null);
       }));
     }
   };
-  const categories = ['Minimal', 'Soyut', 'Doğa', 'Geometrik', 'Tipografi', 'Modern', 'Klasik', 'Portre', 'Manzara'];
+  const categories = ['Tümü', 'Line Art & Minimal', 'Soyut & Aura', 'Quotes', 'Geometrik', 'Tipografi', 'Modern', 'Kahve Molası', 'Portre', 'Film & Dizi'];
 
   useEffect(() => {
     if (isAuthenticated) {
