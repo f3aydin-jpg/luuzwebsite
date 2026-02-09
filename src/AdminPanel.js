@@ -44,8 +44,9 @@ const descriptionRef = React.useRef(null);
       }));
     }
   };
-  const categories = ['Tümü', 'Line Art & Minimal', 'Soyut & Aura', 'Quotes', 'Geometrik', 'Tipografi', 'Modern', 'Kahve Molası', 'Portre', 'Film & Dizi'];
 
+  const categories = ['Tümü', 'Line Art & Minimal', 'Soyut & Aura', 'Quotes', 'Geometrik', 'Tipografi', 'Set Posterler', 'Kahve Molası', 'Portre', 'Film & Dizi'];
+  
   useEffect(() => {
     if (isAuthenticated) {
       fetchProducts();
