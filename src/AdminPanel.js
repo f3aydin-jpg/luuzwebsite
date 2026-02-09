@@ -51,7 +51,7 @@ const descriptionRef = React.useRef(null);
     }
   }, [isAuthenticated]);
 
-  const fetchProducts = async () => {
+ const fetchProducts = async () => {
     setLoading(true);
     try {
       const querySnapshot = await getDocs(collection(db, 'products'));
@@ -59,13 +59,18 @@ const descriptionRef = React.useRef(null);
         id: doc.id,
         ...doc.data()
       }));
+      // Ürün koduna göre tersten sırala (en yeni en üstte)
+      productsData.sort((a, b) => {
+        const codeA = parseInt(a.productCode || '0', 10);
+        const codeB = parseInt(b.productCode || '0', 10);
+        return codeB - codeA;
+      });
       setProducts(productsData);
     } catch (error) {
       console.error('Ürünler yüklenirken hata:', error);
     }
     setLoading(false);
   };
-
   const assignMissingCodes = async () => {
     const productsWithoutCode = products.filter(p => !p.productCode);
     
