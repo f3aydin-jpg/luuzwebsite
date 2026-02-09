@@ -107,6 +107,18 @@ const descriptionRef = React.useRef(null);
     }));
   };
 
+const generateProductCode = () => {
+    // Mevcut ürünlerdeki en yüksek kodu bul
+    const existingCodes = products
+      .map(p => p.productCode)
+      .filter(code => code)
+      .map(code => parseInt(code, 10));
+    
+    const maxCode = existingCodes.length > 0 ? Math.max(...existingCodes) : 0;
+    const newCode = (maxCode + 1).toString().padStart(5, '0');
+    return newCode;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -124,7 +136,6 @@ const descriptionRef = React.useRef(null);
         price30x40Framed: Number(formData.price30x40Framed),
         price50x70Unframed: Number(formData.price50x70Unframed),
         price50x70Framed: Number(formData.price50x70Framed),
-        // Eski alanları da tutuyoruz geriye uyumluluk için
         priceUnframed: Number(formData.price50x70Unframed),
         priceFramed: Number(formData.price50x70Framed),
         stock: Number(formData.stock),
@@ -137,12 +148,15 @@ const descriptionRef = React.useRef(null);
       };
 
       if (editingProduct) {
+        // Düzenlemede mevcut kodu koru
         await updateDoc(doc(db, 'products', editingProduct.id), productData);
         alert('Ürün güncellendi!');
       } else {
+        // Yeni ürün için kod oluştur
+        productData.productCode = generateProductCode();
         productData.createdAt = new Date().toISOString();
         await addDoc(collection(db, 'products'), productData);
-        alert('Ürün eklendi!');
+        alert(`Ürün eklendi! Ürün Kodu: ${productData.productCode}`);
       }
 
       resetForm();
@@ -297,7 +311,9 @@ const descriptionRef = React.useRef(null);
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-stone-700">
+              
                     <tr>
+                      <th className="text-left px-4 py-3 text-stone-300 text-sm font-medium">Kod</th>
                       <th className="text-left px-4 py-3 text-stone-300 text-sm font-medium">Ürün</th>
                       <th className="text-left px-4 py-3 text-stone-300 text-sm font-medium">Kategori</th>
                       <th className="text-left px-4 py-3 text-stone-300 text-sm font-medium">Fiyat</th>
@@ -309,13 +325,16 @@ const descriptionRef = React.useRef(null);
                   <tbody>
                     {products.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="text-center py-12 text-stone-400">
+                        <td colSpan={7} className="text-center py-12 text-stone-400">
                           Henüz ürün eklenmemiş
                         </td>
                       </tr>
                     ) : (
                       products.map(product => (
                         <tr key={product.id} className="border-t border-stone-700 hover:bg-stone-700/50">
+                          <td className="px-4 py-3">
+                      <span className="text-amber-500 font-mono text-sm">#{product.productCode || '-----'}</span>
+                          </td>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-3">
                               {product.images?.[0] && (
