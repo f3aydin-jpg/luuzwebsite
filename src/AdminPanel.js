@@ -14,7 +14,9 @@ export default function AdminPanel({ onClose }) {
   const [showForm, setShowForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [formData, setFormData] = useState({
+    
     name: '',
     description: '',
     category: 'Minimal',
@@ -326,6 +328,16 @@ const generateProductCode = () => {
           </div>
         ) : (
           <>
+        {/* Search */}
+            <div className="mb-6">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Ürün kodu veya isim ile ara... (örn: #00001 veya Poster)"
+                className="w-full bg-stone-700 border border-stone-600 rounded-xl px-4 py-3 text-white placeholder-stone-400 focus:outline-none focus:border-amber-500"
+              />
+            </div>
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
               <div className="bg-stone-800 border border-stone-700 rounded-xl p-4">
@@ -384,8 +396,17 @@ const generateProductCode = () => {
                           Henüz ürün eklenmemiş
                         </td>
                       </tr>
+
                     ) : (
-                      products.map(product => (
+                      products
+                        .filter(product => {
+                          if (!searchQuery.trim()) return true;
+                          const query = searchQuery.toLowerCase().replace('#', '');
+                          const matchesCode = product.productCode?.toLowerCase().includes(query);
+                          const matchesName = product.name?.toLowerCase().includes(query);
+                          return matchesCode || matchesName;
+                        })
+                        .map(product => (
                         <tr key={product.id} className="border-t border-stone-700 hover:bg-stone-700/50">
                           <td className="px-4 py-3">
                       <span className="text-amber-500 font-mono text-sm">#{product.productCode || '-----'}</span>
