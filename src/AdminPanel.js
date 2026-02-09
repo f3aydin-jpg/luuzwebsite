@@ -16,10 +16,9 @@ export default function AdminPanel({ onClose }) {
   const [uploading, setUploading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [formData, setFormData] = useState({
-    
     name: '',
     description: '',
-    category: 'Minimal',
+    categories: [],
     price30x40Unframed: '',
     price30x40Framed: '',
     price50x70Unframed: '',
@@ -169,6 +168,12 @@ const generateProductCode = () => {
       return;
     }
 
+    if (formData.categories.length === 0) {
+      alert('En az bir kategori seçin');
+      return;
+    }
+    
+
     try {
       const productData = {
         name: formData.name,
@@ -226,10 +231,10 @@ const generateProductCode = () => {
 
   const handleEdit = (product) => {
     setEditingProduct(product);
-    setFormData({
+   setFormData({
       name: product.name,
       description: product.description,
-      category: product.category,
+      categories: product.categories || [product.category] || [],
       price30x40Unframed: product.price30x40Unframed || Math.round(product.priceUnframed * 0.7) || '',
       price30x40Framed: product.price30x40Framed || Math.round(product.priceFramed * 0.7) || '',
       price50x70Unframed: product.price50x70Unframed || product.priceUnframed || '',
@@ -247,7 +252,7 @@ const generateProductCode = () => {
     setFormData({
       name: '',
       description: '',
-      category: 'Minimal',
+      category: [],
       price30x40Unframed: '',
       price30x40Framed: '',
       price50x70Unframed: '',
@@ -573,17 +578,35 @@ const generateProductCode = () => {
                 />
               </div>
               {/* Category */}
+              {/* Categories - Multiple Select */}
               <div>
-                <label className="block text-stone-300 text-sm mb-2">Kategori *</label>
-                <select
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full bg-stone-700 border border-stone-600 rounded-xl px-4 py-3 text-white"
-                >
+                <label className="block text-stone-300 text-sm mb-2">Kategoriler * (birden fazla seçebilirsiniz)</label>
+                <div className="flex flex-wrap gap-2">
                   {categories.map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => {
+                        setFormData(prev => ({
+                          ...prev,
+                          categories: prev.categories.includes(cat)
+                            ? prev.categories.filter(c => c !== cat)
+                            : [...prev.categories, cat]
+                        }));
+                      }}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
+                        formData.categories.includes(cat)
+                          ? 'bg-amber-500 text-stone-900'
+                          : 'bg-stone-700 text-stone-300 hover:bg-stone-600'
+                      }`}
+                    >
+                      {cat}
+                    </button>
                   ))}
-                </select>
+                </div>
+                {formData.categories.length === 0 && (
+                  <p className="text-red-400 text-xs mt-2">En az bir kategori seçin</p>
+                )}
               </div>
 
               {/* Prices - 30x40 */}
