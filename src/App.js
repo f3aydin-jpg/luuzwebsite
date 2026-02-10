@@ -598,7 +598,7 @@ useEffect(() => {
         <p className="text-xs">Yeni Müşterilere %15 İndirim — Kod: <span className={`font-medium ${darkMode ? 'text-white' : 'text-stone-900'}`}>HOSGELDIN15</span></p>
       </div>
 {/* Hero - GitHub Resimli */}
-<section className="relative h-[50vh] min-h-[350px] bg-stone-950 overflow-hidden">
+<section className="relative h-[70vh] min-h-[500px] bg-stone-950 overflow-hidden">
   
   {/* GitHub'dan gelen resim katmanı */}
   <div 
